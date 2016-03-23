@@ -1,0 +1,6 @@
+**/*~
+**/*.o
+**/*.class
+sml/gc-pressure
+gcbench/gcbench
+perm9/perm9
