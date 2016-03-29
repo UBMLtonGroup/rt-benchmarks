@@ -196,3 +196,5 @@ struct
   fun testit out = TextIO.output (out, "OK\n")
   fun doit () = gcbench 18
 end
+
+val _ = gcbench(18)
