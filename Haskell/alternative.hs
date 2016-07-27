@@ -1,3 +1,5 @@
+--INCOMPLETE
+
 import Data.List
 import System.IO
 import Data.Bits
