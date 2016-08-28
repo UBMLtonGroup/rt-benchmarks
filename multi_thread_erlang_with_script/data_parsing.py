@@ -1,4 +1,8 @@
 import re
+#from pylab import*
+from numpy import*
+#from matplotlib.pyplot import *
+import matplotlib.pyplot as plt
 
 
 def getData (csv_file):
@@ -122,6 +126,7 @@ def writeAll ():
 	(fib_start_time,fib_run_time) = getFibData(Fib_lines)
 	linesToAdd.extend( writeResults(fib_start_time, fib_run_time) )
 
+
 	linesToAdd.append( Stars().stars)
 	linesToAdd.append( Stars().fourth_stars + "Threading GCBench Only" + Stars().fourth_stars )
 	linesToAdd.append( "\nBelow is the data from GCBench threading with 10 iterations of threading : \n")
@@ -129,6 +134,7 @@ def writeAll ():
 	GC_lines = getData("GCBench.csv")
 	(gc_start_time, gc_run_time) = getGCBenchData(GC_lines)
 	linesToAdd.extend( writeResults(gc_start_time, gc_run_time) )
+
 
 
 	linesToAdd.append( Stars().stars)
@@ -143,7 +149,64 @@ def writeAll ():
 	(gc_start_time2, gc_run_time2) = getGCBenchData(GC_Fib_lines)
 	linesToAdd.extend( writeResults(gc_start_time2, gc_run_time2) )
 
+
+	runtime_fib = getRuntime( fib_run_time )
+	runtime_gc = getRuntime ( gc_run_time )
+
+	runtime_fib2 = getRuntime( fib_run_time2 )
+
+	runtime_gc2 = getRuntime ( gc_run_time2 )
+
+	makeGraphs( runtime_fib, runtime_delta(runtime_fib), runtime_gc, runtime_delta(runtime_gc), \
+		"Threading Fibonacci (37th) and GCBench Separately " )
+	makeGraphs( runtime_fib2, runtime_delta(runtime_fib2), runtime_gc2, runtime_delta(runtime_gc2), \
+	"Multi-threading Fibonacci (37th) Calculation and GCBench " )
+
+
 	return linesToAdd
+
+
+def makeGraphs( fib_runtime, fib_delta,  gc_runtime, gc_delta, typeOfgraph ):
+	runtimeLen = len(fib_runtime)
+	k = list(range(1, runtimeLen + 1))
+
+
+	fig = plt.figure()
+	ax = plt.subplot(211)
+
+
+	ax.plot( k, fib_runtime, 'r-', linewidth = 1., label = 'Fib, runtime')
+	ax.plot( k, gc_runtime, 'b-', linewidth = 1. , label = 'GC, runtime')
+	box = ax.get_position()
+	ax.set_position([box.x0, box.y0, box.width * 0.8, box.height])
+
+	ax.legend(loc='center left', bbox_to_anchor=(1, 0.5))
+
+	#plt.xlabel('number of iterations')
+	plt.ylabel('runtime in milliseconds')
+	plt.title( typeOfgraph )
+	#plt.show()
+
+
+	deltaLen = len(fib_delta)
+	k2 = list(range(1, deltaLen + 1 ))
+
+	axx = plt.subplot(212)
+
+	axx.plot( k2, fib_delta, 'r-', linewidth = 1., label = 'Fib, delta')
+	axx.plot( k2, gc_delta,  'b-', linewidth = 1., label = 'GC, delta')
+	box = axx.get_position()
+	axx.set_position([box.x0, box.y0, box.width * 0.8, box.height])
+
+	axx.legend(loc='center left', bbox_to_anchor=(1, 0.5))
+
+	plt.xlabel('number of iterations')
+	plt.ylabel('delta in milliseconds')
+	#plt.title( typeOfgraph )#+ ' - runtime delta')
+	plt.show()
+
+#writeAll()
+
 
 def writeTotxt ():
 

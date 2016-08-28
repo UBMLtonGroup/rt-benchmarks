@@ -1,0 +1,300 @@
+1) Fibonacci calculation, start_time : 1) GCBench, start_time : 20:14:34.56244620:14:34.562456ok
+ok
+1) GCBench, completed in 712ms, end_time : 20:14:35.324244ok
+
+2) GCBench, start_time : 20:14:35.324388ok
+1) 37th Fibonacci calculation, completed in 844ms, end_time : 20:14:35.407022ok
+
+2) Fibonacci calculation, start_time : 20:14:35.407157ok
+2) GCBench, completed in 692ms, end_time : 20:14:36.034332ok
+
+3) GCBench, start_time : 20:14:36.034486ok
+2) 37th Fibonacci calculation, completed in 811ms, end_time : 20:14:36.218828ok
+
+3) Fibonacci calculation, start_time : 20:14:36.218960ok
+3) GCBench, completed in 661ms, end_time : 20:14:36.713323ok
+
+4) GCBench, start_time : 20:14:36.713564ok
+3) 37th Fibonacci calculation, completed in 810ms, end_time : 20:14:37.030094ok
+
+4) Fibonacci calculation, start_time : 20:14:37.030410ok
+4) GCBench, completed in 689ms, end_time : 20:14:37.419367ok
+
+5) GCBench, start_time : 20:14:37.419725ok
+4) 37th Fibonacci calculation, completed in 817ms, end_time : 20:14:37.848009ok
+
+5) Fibonacci calculation, start_time : 20:14:37.848153ok
+5) GCBench, completed in 666ms, end_time : 20:14:38.103541ok
+
+6) GCBench, start_time : 20:14:38.103941ok
+5) 37th Fibonacci calculation, completed in 819ms, end_time : 20:14:38.667509ok
+
+6) Fibonacci calculation, start_time : 20:14:38.667654ok
+6) GCBench, completed in 683ms, end_time : 20:14:38.806382ok
+
+7) GCBench, start_time : 20:14:38.806526ok
+7) GCBench, completed in 644ms, end_time : 20:14:39.469868ok
+
+8) GCBench, start_time : 20:14:39.470026ok
+6) 37th Fibonacci calculation, completed in 816ms, end_time : 20:14:39.483885ok
+
+7) Fibonacci calculation, start_time : 20:14:39.484283ok
+8) GCBench, completed in 686ms, end_time : 20:14:40.172069ok
+
+9) GCBench, start_time : 20:14:40.172496ok
+7) 37th Fibonacci calculation, completed in 820ms, end_time : 20:14:40.304967ok
+
+8) Fibonacci calculation, start_time : 20:14:40.305264ok
+9) GCBench, completed in 673ms, end_time : 20:14:40.863188ok
+
+10) GCBench, start_time : 20:14:40.863327ok
+8) 37th Fibonacci calculation, completed in 806ms, end_time : 20:14:41.111577ok
+
+9) Fibonacci calculation, start_time : 20:14:41.111990ok
+10) GCBench, completed in 685ms, end_time : 20:14:41.566005ok
+
+11) GCBench, start_time : 20:14:41.566162ok
+9) 37th Fibonacci calculation, completed in 809ms, end_time : 20:14:41.921553ok
+
+10) Fibonacci calculation, start_time : 20:14:41.921679ok
+11) GCBench, completed in 667ms, end_time : 20:14:42.249187ok
+
+12) GCBench, start_time : 20:14:42.249423ok
+10) 37th Fibonacci calculation, completed in 812ms, end_time : 20:14:42.734632ok
+
+11) Fibonacci calculation, start_time : 20:14:42.734838ok
+12) GCBench, completed in 699ms, end_time : 20:14:42.967188ok
+
+13) GCBench, start_time : 20:14:42.967557ok
+11) 37th Fibonacci calculation, completed in 815ms, end_time : 20:14:43.551075ok
+
+12) Fibonacci calculation, start_time : 20:14:43.551655ok
+13) GCBench, completed in 660ms, end_time : 20:14:43.646186ok
+
+14) GCBench, start_time : 20:14:43.646520ok
+14) GCBench, completed in 680ms, end_time : 20:14:44.346103ok
+
+15) GCBench, start_time : 20:14:44.346229ok
+12) 37th Fibonacci calculation, completed in 820ms, end_time : 20:14:44.372481ok
+
+13) Fibonacci calculation, start_time : 20:14:44.373040ok
+15) GCBench, completed in 660ms, end_time : 20:14:45.025182ok
+
+16) GCBench, start_time : 20:14:45.025748ok
+13) 37th Fibonacci calculation, completed in 806ms, end_time : 20:14:45.179337ok
+
+14) Fibonacci calculation, start_time : 20:14:45.179459ok
+16) GCBench, completed in 703ms, end_time : 20:14:45.745158ok
+
+17) GCBench, start_time : 20:14:45.745295ok
+14) 37th Fibonacci calculation, completed in 803ms, end_time : 20:14:45.983489ok
+
+15) Fibonacci calculation, start_time : 20:14:45.983635ok
+17) GCBench, completed in 680ms, end_time : 20:14:46.443205ok
+
+18) GCBench, start_time : 20:14:46.443694ok
+15) 37th Fibonacci calculation, completed in 805ms, end_time : 20:14:46.790036ok
+
+16) Fibonacci calculation, start_time : 20:14:46.790712ok
+18) GCBench, completed in 694ms, end_time : 20:14:47.154193ok
+
+19) GCBench, start_time : 20:14:47.154359ok
+16) 37th Fibonacci calculation, completed in 815ms, end_time : 20:14:47.606440ok
+
+17) Fibonacci calculation, start_time : 20:14:47.606599ok
+19) GCBench, completed in 668ms, end_time : 20:14:47.840585ok
+
+20) GCBench, start_time : 20:14:47.840890ok
+17) 37th Fibonacci calculation, completed in 811ms, end_time : 20:14:48.418186ok
+
+18) Fibonacci calculation, start_time : 20:14:48.418333ok
+20) GCBench, completed in 684ms, end_time : 20:14:48.543300ok
+
+21) GCBench, start_time : 20:14:48.543862ok
+18) 37th Fibonacci calculation, completed in 812ms, end_time : 20:14:49.231318ok
+
+19) Fibonacci calculation, start_time : 20:14:49.231494ok
+21) GCBench, completed in 676ms, end_time : 20:14:49.237444ok
+
+22) GCBench, start_time : 20:14:49.237690ok
+22) GCBench, completed in 676ms, end_time : 20:14:49.932472ok
+
+23) GCBench, start_time : 20:14:49.932813ok
+19) 37th Fibonacci calculation, completed in 814ms, end_time : 20:14:50.046611ok
+
+20) Fibonacci calculation, start_time : 20:14:50.046718ok
+23) GCBench, completed in 683ms, end_time : 20:14:50.633327ok
+
+24) GCBench, start_time : 20:14:50.633570ok
+20) 37th Fibonacci calculation, completed in 821ms, end_time : 20:14:50.868698ok
+
+21) Fibonacci calculation, start_time : 20:14:50.868988ok
+24) GCBench, completed in 686ms, end_time : 20:14:51.337411ok
+
+25) GCBench, start_time : 20:14:51.337652ok
+21) 37th Fibonacci calculation, completed in 814ms, end_time : 20:14:51.684000ok
+
+22) Fibonacci calculation, start_time : 20:14:51.684296ok
+25) GCBench, completed in 678ms, end_time : 20:14:52.033448ok
+
+26) GCBench, start_time : 20:14:52.033614ok
+22) 37th Fibonacci calculation, completed in 819ms, end_time : 20:14:52.503661ok
+
+23) Fibonacci calculation, start_time : 20:14:52.503776ok
+26) GCBench, completed in 692ms, end_time : 20:14:52.743549ok
+
+27) GCBench, start_time : 20:14:52.743914ok
+23) 37th Fibonacci calculation, completed in 810ms, end_time : 20:14:53.314292ok
+
+24) Fibonacci calculation, start_time : 20:14:53.314487ok
+27) GCBench, completed in 665ms, end_time : 20:14:53.426473ok
+
+28) GCBench, start_time : 20:14:53.426607ok
+24) 37th Fibonacci calculation, completed in 815ms, end_time : 20:14:54.130583ok
+
+25) Fibonacci calculation, start_time : 20:14:54.130948ok
+28) GCBench, completed in 690ms, end_time : 20:14:54.135514ok
+
+29) GCBench, start_time : 20:14:54.135632ok
+29) GCBench, completed in 678ms, end_time : 20:14:54.830944ok
+
+30) GCBench, start_time : 20:14:54.831101ok
+25) 37th Fibonacci calculation, completed in 828ms, end_time : 20:14:54.959350ok
+
+26) Fibonacci calculation, start_time : 20:14:54.959485ok
+30) GCBench, completed in 696ms, end_time : 20:14:55.544013ok
+
+31) GCBench, start_time : 20:14:55.544175ok
+26) 37th Fibonacci calculation, completed in 814ms, end_time : 20:14:55.774355ok
+
+27) Fibonacci calculation, start_time : 20:14:55.774736ok
+31) GCBench, completed in 656ms, end_time : 20:14:56.219014ok
+
+32) GCBench, start_time : 20:14:56.219161ok
+27) 37th Fibonacci calculation, completed in 816ms, end_time : 20:14:56.591045ok
+
+28) Fibonacci calculation, start_time : 20:14:56.591189ok
+32) GCBench, completed in 677ms, end_time : 20:14:56.913993ok
+
+33) GCBench, start_time : 20:14:56.914187ok
+28) 37th Fibonacci calculation, completed in 823ms, end_time : 20:14:57.415281ok
+
+29) Fibonacci calculation, start_time : 20:14:57.415564ok
+33) GCBench, completed in 686ms, end_time : 20:14:57.616988ok
+
+34) GCBench, start_time : 20:14:57.617159ok
+29) 37th Fibonacci calculation, completed in 821ms, end_time : 20:14:58.237851ok
+
+30) Fibonacci calculation, start_time : 20:14:58.237970ok
+34) GCBench, completed in 686ms, end_time : 20:14:58.321163ok
+
+35) GCBench, start_time : 20:14:58.321561ok
+35) GCBench, completed in 662ms, end_time : 20:14:59.001054ok
+
+36) GCBench, start_time : 20:14:59.001224ok
+30) 37th Fibonacci calculation, completed in 817ms, end_time : 20:14:59.055709ok
+
+31) Fibonacci calculation, start_time : 20:14:59.056536ok
+36) GCBench, completed in 677ms, end_time : 20:14:59.697103ok
+
+37) GCBench, start_time : 20:14:59.697283ok
+31) 37th Fibonacci calculation, completed in 807ms, end_time : 20:14:59.864562ok
+
+32) Fibonacci calculation, start_time : 20:14:59.865138ok
+37) GCBench, completed in 679ms, end_time : 20:15:00.395132ok
+
+38) GCBench, start_time : 20:15:00.395594ok
+32) 37th Fibonacci calculation, completed in 816ms, end_time : 20:15:00.681352ok
+
+33) Fibonacci calculation, start_time : 20:15:00.681729ok
+38) GCBench, completed in 684ms, end_time : 20:15:01.097163ok
+
+39) GCBench, start_time : 20:15:01.097293ok
+33) 37th Fibonacci calculation, completed in 809ms, end_time : 20:15:01.491172ok
+
+34) Fibonacci calculation, start_time : 20:15:01.491310ok
+39) GCBench, completed in 661ms, end_time : 20:15:01.776135ok
+
+40) GCBench, start_time : 20:15:01.776261ok
+34) 37th Fibonacci calculation, completed in 822ms, end_time : 20:15:02.313934ok
+
+35) Fibonacci calculation, start_time : 20:15:02.314072ok
+40) GCBench, completed in 694ms, end_time : 20:15:02.488177ok
+
+41) GCBench, start_time : 20:15:02.488335ok
+35) 37th Fibonacci calculation, completed in 810ms, end_time : 20:15:03.124958ok
+
+36) Fibonacci calculation, start_time : 20:15:03.125336ok
+41) GCBench, completed in 671ms, end_time : 20:15:03.177070ok
+
+42) GCBench, start_time : 20:15:03.177212ok
+42) GCBench, completed in 685ms, end_time : 20:15:03.878305ok
+
+43) GCBench, start_time : 20:15:03.878527ok
+36) 37th Fibonacci calculation, completed in 815ms, end_time : 20:15:03.941219ok
+
+37) Fibonacci calculation, start_time : 20:15:03.941333ok
+43) GCBench, completed in 662ms, end_time : 20:15:04.558249ok
+
+44) GCBench, start_time : 20:15:04.558392ok
+37) 37th Fibonacci calculation, completed in 812ms, end_time : 20:15:04.754179ok
+
+38) Fibonacci calculation, start_time : 20:15:04.754296ok
+44) GCBench, completed in 696ms, end_time : 20:15:05.274485ok
+
+45) GCBench, start_time : 20:15:05.274771ok
+38) 37th Fibonacci calculation, completed in 850ms, end_time : 20:15:05.605180ok
+
+39) Fibonacci calculation, start_time : 20:15:05.605535ok
+45) GCBench, completed in 693ms, end_time : 20:15:05.987458ok
+
+46) GCBench, start_time : 20:15:05.987879ok
+39) 37th Fibonacci calculation, completed in 835ms, end_time : 20:15:06.440818ok
+
+40) Fibonacci calculation, start_time : 20:15:06.441014ok
+46) GCBench, completed in 695ms, end_time : 20:15:06.699309ok
+
+47) GCBench, start_time : 20:15:06.699420ok
+40) 37th Fibonacci calculation, completed in 817ms, end_time : 20:15:07.258932ok
+
+41) Fibonacci calculation, start_time : 20:15:07.259236ok
+47) GCBench, completed in 662ms, end_time : 20:15:07.379690ok
+
+48) GCBench, start_time : 20:15:07.380300ok
+41) 37th Fibonacci calculation, completed in 826ms, end_time : 20:15:08.085469ok
+
+42) Fibonacci calculation, start_time : 20:15:08.085592ok
+48) GCBench, completed in 701ms, end_time : 20:15:08.099425ok
+
+49) GCBench, start_time : 20:15:08.099674ok
+49) GCBench, completed in 676ms, end_time : 20:15:08.792355ok
+
+50) GCBench, start_time : 20:15:08.792494ok
+42) 37th Fibonacci calculation, completed in 816ms, end_time : 20:15:08.902421ok
+
+43) Fibonacci calculation, start_time : 20:15:08.902539ok
+50) GCBench, completed in 689ms, end_time : 20:15:09.498477ok
+
+43) 37th Fibonacci calculation, completed in 793ms, end_time : 20:15:09.696418ok
+
+44) Fibonacci calculation, start_time : 20:15:09.696555ok
+44) 37th Fibonacci calculation, completed in 758ms, end_time : 20:15:10.455220ok
+
+45) Fibonacci calculation, start_time : 20:15:10.455383ok
+45) 37th Fibonacci calculation, completed in 750ms, end_time : 20:15:11.206397ok
+
+46) Fibonacci calculation, start_time : 20:15:11.206554ok
+46) 37th Fibonacci calculation, completed in 750ms, end_time : 20:15:11.957516ok
+
+47) Fibonacci calculation, start_time : 20:15:11.957677ok
+47) 37th Fibonacci calculation, completed in 755ms, end_time : 20:15:12.713409ok
+
+48) Fibonacci calculation, start_time : 20:15:12.713571ok
+48) 37th Fibonacci calculation, completed in 750ms, end_time : 20:15:13.464466ok
+
+49) Fibonacci calculation, start_time : 20:15:13.464597ok
+49) 37th Fibonacci calculation, completed in 754ms, end_time : 20:15:14.218962ok
+
+50) Fibonacci calculation, start_time : 20:15:14.219124ok
+50) 37th Fibonacci calculation, completed in 752ms, end_time : 20:15:14.972329ok
+

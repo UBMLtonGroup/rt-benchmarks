@@ -1,5 +1,5 @@
 
--module(gcBench_fib).
+-module(test).
 
 -export([make_node/2, make_empty_tree/0]).
 -export([kStretchTreeDepth/0, kLongLivedTreeDepth/0, kArraySize/0,
@@ -10,14 +10,9 @@
 -export([timeConstruction/1, printDiagnostics/0]).
 -export([makeArr/0, loop_arr/3]).
 -export([loop_timeConstruction/2]).
--export([fib/1, execute_fib/2]).
--export([start_time/1, print_time/3]).
--export([main/2, start/0]).
-
-% Execution:
-%  1> c(gcBench_fib).
-%  2> gcBench_fib:start().
-
+-export([fib/1, execute_fib/3]).
+-export([start_time/1, print_time/4]).
+-export([main/3, start_gc/1, start_fib/1, start_both/1, start/1]).
 
 
 
@@ -131,9 +126,9 @@ start_time(Out) ->
 
 	io:format(Out, "~2w:~2..0w:~2..0w.~6..0w", [H, M, S, Micro]).
 
-print_time(N, S, Out)->
+print_time(N, K, S, Out)->
 
-    io:format(Out, "~s", [integer_to_list(11 - N) ++ ")" ++ S ++ " start_time : "] ),
+    io:format(Out, "~s", [integer_to_list(K - N) ++ ")" ++ S ++ " start_time : "] ),
     io:format(Out, "~s~n", [gcBench:start_time(Out)]).
 
 
@@ -143,24 +138,24 @@ fib (N) when N >= 3 ->
   fib (N - 1) + fib (N - 2).
 
 
-execute_fib (N, Out) when N > 0 ->
-	print_time(N, " Fibonacci calculation,", Out),
+execute_fib (N, K, Out) when N > 0 ->
+	print_time(N, K, " Fibonacci calculation,", Out),
 
 	_tStart = os:timestamp(),
 	fib(37), % runtime similar to GCBench
 	_tElapsed = timer:now_diff(os:timestamp(), _tStart),
 
-    io:format(Out, "~s", [integer_to_list(11 - N) ++ ") 37th Fibonacci calculation, completed in "
+    io:format(Out, "~s", [integer_to_list(K - N) ++ ") 37th Fibonacci calculation, completed in "
 			++ integer_to_list( trunc(_tElapsed/1000) ) ++ "ms, end_time : "]),
     io:format(Out, "~s~n~n", [gcBench_fib:start_time(Out)]),
 
-    execute_fib (N - 1, Out);
-execute_fib (0, _) ->
+    execute_fib (N - 1, K, Out);
+execute_fib (0, _, _) ->
     ok.
 
 
-main(N, Out) when N > 0 ->
-	print_time(N, " GCBench,", Out),
+main(N, K, Out) when N > 0 ->
+	print_time(N, K, " GCBench,", Out),
 
 	io:fwrite("Garbage Collector Test\n"),
 	io:fwrite(" Stretching memory with a binary tree of depth "
@@ -203,25 +198,34 @@ main(N, Out) when N > 0 ->
 
 	printDiagnostics(),
 
-    io:format(Out, "~s", [integer_to_list(11 - N) ++ ") GCBench, completed in "
+    io:format(Out, "~s", [integer_to_list(K - N) ++ ") GCBench, completed in "
 			++ integer_to_list( trunc(_tElapsed/1000) ) ++ "ms, end_time : "]),
     io:format(Out, "~s~n~n", [gcBench_fib:start_time(Out)]),
 
-	main(N - 1, Out);
-main(0, _) ->
+	main(N - 1, K, Out);
+main(0, _, _) ->
 	ok.
 
 
 
-start() ->
+start_both(N) ->
 	{_, Out} = file:open("GCBench_Fib.csv", write),
 
-    spawn(gcBench_fib, execute_fib, [10, Out]), % loop 10 times
-    spawn(gcBench_fib, main, [10, Out]).
+    spawn(test, execute_fib, [N, N + 1, Out]), % loop 10 times
+    spawn(test, main, [N, N + 1, Out]).
+
+start_gc(N) ->
+	{_, Out} = file:open("GCBench.csv", write),
+    spawn(test, main, [N, N + 1, Out]).  % main loop 10 times
+
+start_fib(N) ->
+	{_, Out} = file:open("fibonacci.csv", write),
+    spawn(test, execute_fib, [N, N + 1, Out]).
 
 
 
-
-
-
-%
+%everything in one function
+start(N) ->
+	start_gc(N),
+	start_fib(N),
+	start_both(N).
