@@ -1,14 +1,11 @@
+(deftype Node [left right])						;(def x (Node. (Tree. nil) (Tree. nil)))
+												;retrieve val in left (.node (.left x))
 
-;(def x (Node. (Tree. nil) (Tree. nil)))
-;retrieve val in left (.node (.left x))
-(deftype Node [left right])
+(deftype Tree [node])							;(def x (Tree. nil)) for dummy
 
-;(def x (Tree. nil)) for dummy
-(deftype Tree [node])
+(defn make_empty_node [] (Node. (Tree. nil) (Tree. nil)))		;makes empty node properly 
 
-(defn make_empty_node [] (Node. (Tree. nil) (Tree. nil)))
-
-(defn make_node [l r] (Node. l r))
+(defn make_node [l r] (Node. l r))				;
 
 (defn PrintDiagnostics [] 
 	(let [lFreeMemory (.freeMemory (Runtime/getRuntime)) 
@@ -20,6 +17,11 @@
 (defn TreeSize [i] (let [a (expt 2 (+ i 1))] (- a 1)))
 
 (defn NumIters [i kStretchTreeDepth] (/ (* 2 (TreeSize kStretchTreeDepth)) (TreeSize i)))
+
+(defn MakeTree [iDepth]
+	(if (<= iDepth 0) 
+		(make_empty_node)
+		(make_node ((recur (- iDepth 1)) (recur (- iDepth 1))))))
 
 (defn gcbench [kStretchTreeDepth]
 	(let [kLongLivedTreeDepth (- kStretchTreeDepth 2)
@@ -36,10 +38,7 @@
 							 (dosync (ref-set rr (make_empty_node)))
 							 (Populate iDepth (deref lr)) 
 							 (Populate iDepth (deref rr)))))))
-				 (MakeTree [iDepth]
-					(if (<= iDepth 0) 
-						(make_empty_node)
-						(make_node ((MakeTree (- iDepth 1)) (MakeTree (- iDepth 1)))) ))
+				 
 				 (TimeConstruction [depth] 
 					(let [iNumIters (NumIters depth kStretchTreeDepth)] 
 						((print (str "Creating " iNumIters " trees of depth " depth))
@@ -88,5 +87,8 @@
 				 (main()) )
 		))
 
-(defn main [] ())
+(defn main [] 
+	(gcbench(18)))
+	
+(main)
 
