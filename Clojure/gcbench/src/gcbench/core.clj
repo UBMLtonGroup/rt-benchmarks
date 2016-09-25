@@ -54,31 +54,29 @@
 
 (defn bst [& [k v]] (Node. k v nil nil))
 
-;; ./yourprogram -ct <#> -ci <#> -cs <#> -gt <#> -ts <#> -m <#> -s -h
-
 (def cli-options
   ;; An option with a required argument
-  [["-ct" "--compute-threads NUM" "Compute Threads"
+  [["-t" "--compute-threads NUM" "Compute Threads"
     :default 1
     :parse-fn #(Integer/parseInt %)
     :validate [#(< 0 % 0x10000) "Must be a number between 0 and 65536"]]
-   ["-cd" "--compute-depth NUM" "Compute Depth"
+   ["-d" "--compute-depth NUM" "Compute Depth"
     :default 37
     :parse-fn #(Integer/parseInt %)
     :validate [#(< 1 % 0x10000) "Must be a number between 0 and 65536"]]
-   ["-ci" "--compute-iterations NUM" "Compute Iterations"
+   ["-i" "--compute-iterations NUM" "Compute Iterations"
     :default 10
     :parse-fn #(Integer/parseInt %)
     :validate [#(< 1 % 0x10000) "Must be a number between 0 and 65536"]]
-   ["-cs" "--compute-sleep NUM" "Compute Sleep"
+   ["-s" "--compute-sleep NUM" "Compute Sleep"
     :default 1
     :parse-fn #(Integer/parseInt %)
     :validate [#(< 0 % 0x10000) "Must be a number between 0 and 65536"]]
-   ["-gt" "--gc-threads NUM" "GC Threads"
+   ["-g" "--gc-threads NUM" "GC Threads"
     :default 1
     :parse-fn #(Integer/parseInt %)
     :validate [#(< 0 % 0x10000) "Must be a number between 0 and 65536"]]
-   ["-td" "--tree-depth NUM" "Maximum tree depth to allocate"
+   ["-e" "--tree-depth NUM" "Maximum tree depth to allocate"
     :default 50
     :parse-fn #(Integer/parseInt %)
     :validate [#(< 1 % 0x10000) "Must be a number between 0 and 65536"]]
@@ -87,7 +85,7 @@
     :parse-fn #(Integer/parseInt %)
     :validate [#(< 0 % 0x10000) "Must be a number between 0 and 65536"]]
    ;; A non-idempotent option
-   ["-s" "--gc-stats" "Print GC stats"]
+   ["-S" "--gc-stats" "Print GC stats"]
    ;; A boolean option defaulting to nil
    ["-h" "--help"]])
 
