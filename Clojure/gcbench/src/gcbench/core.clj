@@ -107,13 +107,13 @@
   (println msg)
   (System/exit status))
 
+(defn make-tree [x] (println "make-tree"))
 
 (defn -main [& args]
   (let [{:keys [options arguments errors summary]} (parse-opts args cli-options)]
     ;; Handle help and error conditions
     (cond
       (:help options) (exit 0 (usage summary))
-      (not= (count arguments) 1) (exit 1 (usage summary))
       errors (exit 1 (error-msg errors)))
-  (println "Hello, World!")))
+  (println 1)))
   
