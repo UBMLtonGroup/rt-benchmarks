@@ -54,6 +54,11 @@
 
 (defn bst [& [k v]] (Node. k v nil nil))
 
+(defn exp [x n]
+  (loop [acc 1 n n]
+    (if (zero? n) acc
+        (recur (* x acc) (dec n)))))
+
 (def cli-options
   ;; An option with a required argument
   [["-t" "--compute-threads NUM" "Compute Threads"
@@ -77,7 +82,7 @@
     :parse-fn #(Integer/parseInt %)
     :validate [#(< 0 % 0x10000) "Must be a number between 0 and 65536"]]
    ["-e" "--tree-depth NUM" "Maximum tree depth to allocate"
-    :default 50
+    :default 10
     :parse-fn #(Integer/parseInt %)
     :validate [#(< 1 % 0x10000) "Must be a number between 0 and 65536"]]
    ["-m" "--maxheap NUM" "Maximum heap to allocate (in MB)"
@@ -88,6 +93,16 @@
    ["-S" "--gc-stats" "Print GC stats"]
    ;; A boolean option defaulting to nil
    ["-h" "--help"]])
+
+;; https://groups.google.com/forum/#!topic/clojure/dzelKZrIoH4
+(defmulti sizeof class) 
+(defmethod sizeof Number ([_] 4)) ; or decide by size if you prefer 
+(defmethod sizeof java.util.Collection 
+  ([coll] 
+    (reduce + 4 (map sizeof (seq coll))))) 
+(defmethod sizeof clojure.lang.ISeq 
+  ([coll] 
+    (reduce + 4 (map sizeof (seq coll))))) 
 
 (defn usage [options-summary]
   (->> ["Clojure MT/GC Bench"
@@ -107,7 +122,7 @@
   (println msg)
   (System/exit status))
 
-(defn make-tree [x] (println "make-tree"))
+(defn make-tree [x] (println (exp 2 x)))
 
 (defn -main [& args]
   (let [{:keys [options arguments errors summary]} (parse-opts args cli-options)]
@@ -115,5 +130,7 @@
     (cond
       (:help options) (exit 0 (usage summary))
       errors (exit 1 (error-msg errors)))
-  (println 1)))
+  (make-tree (:tree-depth options))
+  )
+)
   
