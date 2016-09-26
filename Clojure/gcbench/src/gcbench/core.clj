@@ -3,14 +3,12 @@
   (:require [clojure.string :as string] 
             ;; https://github.com/clojure/tools.cli
             [clojure.tools.cli :refer [parse-opts]])
+  (:use [gcbench.tree] [gcbench.memstats])
   (:gen-class))
 
 
 
-(defn exp [x n]
-  (loop [acc 1 n n]
-    (if (zero? n) acc
-        (recur (* x acc) (dec n)))))
+
 
 (def cli-options
   ;; An option with a required argument
@@ -47,15 +45,7 @@
    ;; A boolean option defaulting to nil
    ["-h" "--help"]])
 
-;; https://groups.google.com/forum/#!topic/clojure/dzelKZrIoH4
-(defmulti sizeof class) 
-(defmethod sizeof Number ([_] 4)) ; or decide by size if you prefer 
-(defmethod sizeof java.util.Collection 
-  ([coll] 
-    (reduce + 4 (map sizeof (seq coll))))) 
-(defmethod sizeof clojure.lang.ISeq 
-  ([coll] 
-    (reduce + 4 (map sizeof (seq coll))))) 
+
 
 (defn usage [options-summary]
   (->> ["Clojure MT/GC Bench"
@@ -75,7 +65,6 @@
   (println msg)
   (System/exit status))
 
-(defn make-tree [x] (println (exp 2 x)))
 
 (defn -main [& args]
   (let [{:keys [options arguments errors summary]} (parse-opts args cli-options)]

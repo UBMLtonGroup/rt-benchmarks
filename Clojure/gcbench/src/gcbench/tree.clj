@@ -1,3 +1,5 @@
+(ns gcbench.tree)
+
 ;; http://macromancy.com/2014/04/09/data-structures-clojure-trees.html
 
 (def gt? (comp pos? compare))
@@ -48,3 +50,10 @@
         (and (lt? k key) left) (.lookup left k)))))
 
 (defn bst [& [k v]] (Node. k v nil nil))
+
+(defn exp [x n]
+  (loop [acc 1 n n]
+    (if (zero? n) acc
+        (recur (* x acc) (dec n)))))
+
+(defn make-tree [x] (println (exp 2 x)))
