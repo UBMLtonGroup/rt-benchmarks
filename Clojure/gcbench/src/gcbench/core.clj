@@ -42,6 +42,7 @@
     :validate [#(< 0 % 0x10000) "Must be a number between 0 and 65536"]]
    ;; A non-idempotent option
    ["-S" "--gc-stats" "Print GC stats"]
+   ["-D" "--debug" "Tell us what you are doing."]
    ;; A boolean option defaulting to nil
    ["-h" "--help"]])
 
@@ -73,6 +74,10 @@
       (:help options) (exit 0 (usage summary))
       errors (exit 1 (error-msg errors)))
   (make-tree (:tree-depth options))
+  (make-gc-threads (:gc-threads options)
+                   (:tree-depth options)
+                   true 
+                   (:debug options))
   )
 )
   
