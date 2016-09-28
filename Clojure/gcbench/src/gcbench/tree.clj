@@ -24,28 +24,40 @@ to get time in nanosecs: (quot (System/nanoTime) 1)
 (def ^{:dynamic true} long-lived-tree nil)
 (def ^{:dynamic true} long-lived-array nil)
 
+;; global state management 
+;; really just stashing long-lived objects
+
+(def state (atom {}))
+
+(defn get-state [key]
+  (@state key))
+
+(defn update-state [key val]
+  (swap! state assoc key val))
+
 (defn exp [x n]
   (loop [acc 1 n n]
     (if (zero? n) acc
         (recur (* x acc) (dec n)))))
 
+
 (defn make-tree [x] (exp 2 x))
+
+;; TODO
+(defn gc-thread [tree-depth id debug]
+  (println "gc-thread " tree-depth id debug))
 
 (defn make-gc-threads [num-threads tree-depth warm-up debug]
   (if (> num-threads 0) 
     (do 
-      (cond (true? warm-up)
-         (do (
-               cond (true? debug)
-               (do
-                 (println "warm up")
-                 (binding [long-lived-tree (make-tree tree-depth)])
-                 (binding [long-lived-array (make-array Integer/TYPE 1000)])
-               )
-             )
+      (if (true? warm-up)
+         (do 
+               (if (true? debug) (println "warm up"))
+               (update-state 'long-lived-tree' (make-tree tree-depth))
+               (update-state 'long-lived-array' (make-array Integer/TYPE 1000))           
          )
-         (dotimes [i num-threads] (.start (Thread. (fn [] (println i debug)))))
-      )
+       )
+       (dotimes [i num-threads] (.start (Thread. (fn [] (gc-thread tree-depth i debug)))))
     )
   )
 )
