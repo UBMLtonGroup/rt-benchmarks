@@ -1,6 +1,7 @@
 **/*~
 **/*.o
 **/*.class
+**/.DS_Store
 sml/gc-pressure
 gcbench/gcbench
 perm9/perm9
