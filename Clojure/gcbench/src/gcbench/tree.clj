@@ -41,15 +41,31 @@ to get time in nanosecs: (quot (System/nanoTime) 1)
 
 (definterface INode)
 (deftype Node
-  [^:volatile-mutable ^INode left
+  [^:volatile-mutable ^INode key
+   ^:volatile-mutable ^INode val
+   ^:volatile-mutable ^INode left
    ^:volatile-mutable ^INode right])
-(deftype Tree [node])							                          ;(def x (Tree. nil)) for dummy
-(defn make_empty_node [] (Node. (Tree. nil) (Tree. nil)))		;makes empty node properly
-(defn make_node [l r] (Node. l r))		
+
+(deftype Tree [node])
+(defn make_empty_node [] 
+        (Node. 0 0 nil nil))
+(defn make_node2 [l r depth] 
+  (do (println "makenode at depth " depth)
+        (Node. 0 0 l r)))
+(defn make-tree2 [iDepth]
+        (if (<= iDepth 0) 
+                (make_empty_node) 
+                (let [n (make-tree2 (- iDepth 1))] 
+                        (make_node2 n n iDepth))))
+
+(defn make_node [l r]
+  (Node. 0 0 l r))
+
 (defn make-tree [iDepth]
-	(if (<= iDepth 0) 
-		(make_empty_node)
-		(make_node ((recur (- iDepth 1)) (recur (- iDepth 1))))))
+  (if (<= iDepth 0)
+      (make_empty_node)
+      (make_node (make-tree (- iDepth 1))
+                 (make-tree (- iDepth 1)))))
 
 ;; TODO
 (defn gc-thread [tree-depth id debug]
