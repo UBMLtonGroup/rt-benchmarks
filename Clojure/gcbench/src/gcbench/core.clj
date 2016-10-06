@@ -20,7 +20,7 @@
     :default 37
     :parse-fn #(Integer/parseInt %)
     :validate [#(< 1 % 0x10000) "Must be a number between 0 and 65536"]]
-   ["-i" "--compute-iterations NUM" "Compute Iterations"
+   ["-i" "--iterations NUM" "Iterations"
     :default 10
     :parse-fn #(Integer/parseInt %)
     :validate [#(< 1 % 0x10000) "Must be a number between 0 and 65536"]]
@@ -76,6 +76,7 @@
   (make-tree (:tree-depth options))
   (make-gc-threads (:gc-threads options)
                    (:tree-depth options)
+                   (:iterations options)
                    true 
                    (:debug options))
   )

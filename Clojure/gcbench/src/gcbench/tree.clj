@@ -61,17 +61,26 @@ to get time in nanosecs: (quot (System/nanoTime) 1)
 (defn make_node [l r]
   (Node. 0 0 l r))
 
-(defn make-tree [iDepth]
+(defn make-tree 
+  "Create a btree of given depth. Build is top down."
+  [iDepth]
   (if (<= iDepth 0)
       (make_empty_node)
       (make_node (make-tree (- iDepth 1))
                  (make-tree (- iDepth 1)))))
 
 ;; TODO
-(defn gc-thread [tree-depth id debug]
-  (println "gc-thread " tree-depth id debug))
+(defn gc-thread 
+  "1. collect start time
+   2. make-tree tree-depth
+   3. destroy tree
+   4. collect stop time
+   5. output delta time with id
+   6. recurse until niter is zero"
+  [tree-depth id niter debug]
+  (println "gc-thread " tree-depth id niter debug))
 
-(defn make-gc-threads [num-threads tree-depth warm-up debug]
+(defn make-gc-threads [num-threads tree-depth niter warm-up debug]
   (if (> num-threads 0) 
     (do 
       (if (true? warm-up)
@@ -81,7 +90,7 @@ to get time in nanosecs: (quot (System/nanoTime) 1)
                (update-state 'long-lived-array' (make-array Integer/TYPE 1000))           
          )
        )
-       (dotimes [i num-threads] (.start (Thread. (fn [] (gc-thread tree-depth i debug)))))
+       (dotimes [i num-threads] (.start (Thread. (fn [] (gc-thread tree-depth i niter debug)))))
     )
   )
 )
