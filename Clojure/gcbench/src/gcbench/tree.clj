@@ -63,6 +63,19 @@ to get time in nanosecs: (quot (System/nanoTime) 1)
 (defn make_node [l r]
   (Node. 0 0 l r))
 
+
+;; bottom up
+ 
+(defn make-tree-bottom-up
+  "Create a btree of given depth. Build is bottom up."
+  [iDepth]
+  (if (<= iDepth 0) 
+    (make_empty_node)
+    (make_node (make-tree-bottom-up (- iDepth 1))
+               (make-tree-bottom-up (- iDepth 1))
+               )))
+
+;; top down
 (defn make-tree 
   "Create a btree of given depth. Build is top down."
   [iDepth]
@@ -75,7 +88,7 @@ to get time in nanosecs: (quot (System/nanoTime) 1)
 (defn gc-thread-helper
   [tree-depth niter debug]
   (if (> niter 0)
-    (do(make-tree tree-depth)
+    (do(make-tree-bottom-up tree-depth)
        (gc-thread-helper tree-depth (- niter 1) debug))
     )
   )
@@ -85,7 +98,7 @@ to get time in nanosecs: (quot (System/nanoTime) 1)
    2. call gc-thread-helper which will iterate and:
        a. make-tree tree-depth
        b. destroy tree
-       c. repeate for N iters
+       c. repeat for N iters
    4. collect stop time
    5. output delta time with id"
   [tree-depth id niter debug]
