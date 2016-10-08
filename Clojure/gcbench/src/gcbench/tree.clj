@@ -1,4 +1,6 @@
-(ns gcbench.tree)
+(ns gcbench.tree
+    (:use [gcbench.memstats])
+)
 
 (comment "
   notes on implementation:
@@ -15,7 +17,7 @@ gc-thread id tree-depth
    make-tree tree-depth
    collect stop time
    output delta time with id
-   recurse: gc-thread id tree-depth ;; ie forever
+   recurse: gc-thread id tree-depth
 
 to get time in millisecs: (quot (System/currentTimeMillis) 1)
 to get time in nanosecs: (quot (System/nanoTime) 1)
@@ -69,16 +71,29 @@ to get time in nanosecs: (quot (System/nanoTime) 1)
       (make_node (make-tree (- iDepth 1))
                  (make-tree (- iDepth 1)))))
 
-;; TODO
+;; 
+(defn gc-thread-helper
+  [tree-depth niter debug]
+  (if (> niter 0)
+    (do(make-tree tree-depth)
+       (gc-thread-helper tree-depth (- niter 1) debug))
+    )
+  )
+
 (defn gc-thread 
   "1. collect start time
-   2. make-tree tree-depth
-   3. destroy tree
+   2. call gc-thread-helper which will iterate and:
+       a. make-tree tree-depth
+       b. destroy tree
+       c. repeate for N iters
    4. collect stop time
-   5. output delta time with id
-   6. recurse until niter is zero"
+   5. output delta time with id"
   [tree-depth id niter debug]
-  (println "gc-thread " tree-depth id niter debug))
+  do 
+     (println (format "gc:start:%d:%d" id (System/currentTimeMillis)))
+     (gc-thread-helper tree-depth niter debug)
+     (println (format "gc:stop:%d:%d" id (System/currentTimeMillis))) 
+)
 
 (defn make-gc-threads [num-threads tree-depth niter warm-up debug]
   (if (> num-threads 0) 
@@ -87,7 +102,7 @@ to get time in nanosecs: (quot (System/nanoTime) 1)
          (do 
                (if (true? debug) (println "warm up"))
                (update-state 'long-lived-tree' (make-tree tree-depth))
-               (update-state 'long-lived-array' (make-array Integer/TYPE 1000))           
+               (update-state 'long-lived-array' (make-array Double/TYPE 500000))
          )
        )
        (dotimes [i num-threads] (.start (Thread. (fn [] (gc-thread tree-depth i niter debug)))))
