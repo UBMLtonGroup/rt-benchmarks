@@ -17,11 +17,11 @@
     :parse-fn #(Integer/parseInt %)
     :validate [#(<= 0 % 0x10000) "Must be a number between 0 and 65536"]]
    ["-d" "--compute-depth NUM" "Compute Depth"
-    :default 37
+    :default 100
     :parse-fn #(Integer/parseInt %)
     :validate [#(< 0 % 0x10000) "Must be a number between 1 and 65536"]]
    ["-i" "--iterations NUM" "Iterations"
-    :default 10
+    :default 100
     :parse-fn #(Integer/parseInt %)
     :validate [#(< 0 % 0x10000) "Must be a number between 1 and 65536"]]
    ["-s" "--compute-sleep NUM" "Compute Sleep"
@@ -33,7 +33,7 @@
     :parse-fn #(Integer/parseInt %)
     :validate [#(<= 0 % 0x10000) "Must be a number between 0 and 65536"]]
    ["-e" "--tree-depth NUM" "Maximum tree depth to allocate"
-    :default 10
+    :default 20
     :parse-fn #(Integer/parseInt %)
     :validate [#(< 0 % 0x10000) "Must be a number between 1 and 65536"]]
    ["-m" "--maxheap NUM" "Maximum heap to allocate (in MB)"

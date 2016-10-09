@@ -86,10 +86,13 @@ to get time in nanosecs: (quot (System/nanoTime) 1)
 
 ;; 
 (defn gc-thread-helper
-  [tree-depth niter debug]
+  [tree-depth id niter debug]
   (if (> niter 0)
-    (do(make-tree-bottom-up tree-depth)
-       (gc-thread-helper tree-depth (- niter 1) debug))
+    (do
+      (println (format "gc:start:%d:%d:%d" id niter (System/currentTimeMillis)))
+      (make-tree-bottom-up tree-depth)
+      (println (format "gc:stop:%d:%d:%d" id niter (System/currentTimeMillis))) 
+      (gc-thread-helper tree-depth id (- niter 1) debug))
     )
   )
 
@@ -103,9 +106,7 @@ to get time in nanosecs: (quot (System/nanoTime) 1)
    5. output delta time with id"
   [tree-depth id niter debug]
   do 
-     (println (format "gc:start:%d:%d" id (System/currentTimeMillis)))
-     (gc-thread-helper tree-depth niter debug)
-     (println (format "gc:stop:%d:%d" id (System/currentTimeMillis))) 
+     (gc-thread-helper tree-depth id niter debug)
 )
 
 (defn make-gc-threads [num-threads tree-depth niter warm-up debug]

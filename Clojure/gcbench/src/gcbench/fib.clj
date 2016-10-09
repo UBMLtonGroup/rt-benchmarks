@@ -9,12 +9,15 @@
 
 ;; 
 (defn compute-thread-helper
-  [compute-depth niter compute-sleep debug]
+  [compute-depth id niter compute-sleep debug]
   (if (> niter 0)
-    (do(fib compute-depth)
-       (Thread/sleep compute-sleep)
-       (compute-thread-helper compute-depth (- niter 1) compute-sleep debug)
-       )
+    (do
+      (println (format "compute:start:%d:%d:%d" id niter (System/currentTimeMillis)))
+      (fib compute-depth)
+      (println (format "compute:stop:%d:%d:%d" id niter (System/currentTimeMillis))) 
+      (Thread/sleep compute-sleep)
+      (compute-thread-helper compute-depth id (- niter 1) compute-sleep debug)
+     )
     )
   )
 
@@ -27,9 +30,7 @@
    5. output delta time with id"
   [compute-depth id niter compute-sleep debug]
   do 
-     (println (format "compute:start:%d:%d" id (System/currentTimeMillis)))
-     (compute-thread-helper compute-depth niter compute-sleep debug)
-     (println (format "compute:stop:%d:%d" id (System/currentTimeMillis))) 
+     (compute-thread-helper compute-depth id niter compute-sleep debug)
 )
 
 (defn make-compute-threads [num-threads compute-depth niter compute-sleep debug]
