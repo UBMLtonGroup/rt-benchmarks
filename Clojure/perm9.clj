@@ -13,15 +13,6 @@
 	(if (zero? n)
 		x0
 		(recur (tl x0) (- n 1))))
-		
-;(defn F [n] 
-;	(do (print "F ")(print (deref x))(print "\n")
-;	(dosync (ref-set x (revloop (deref x) n (list_tail (deref x) n))))
-;	(dosync (ref-set perms (into [(deref x)] (deref perms))))
-;	(print (deref x))
-;	(print "\n")
-;	(print (deref perms))
-;	(print "\n")))
 
 (defn F [n] 
 	(let [x0 (deref x)]
@@ -29,33 +20,22 @@
 	(dosync (ref-set perms (into [(deref x)] (deref perms)))))))
 
 (declare loop1)	
-	
-;(defn P [n] 
-;	(do (print "n ")(print n) (print "\n")
-;	(if (> n 1)
-;		(loop1 (- n 1))
-;		())))
 
 (defn P [n] 
 	(if (> n 1)
-		(loop1 (- n 1))
+		(loop1 (- n 1) n)
 		()))
 		
-;(defn loop1 [j] 
-;	(do (print "j ") (print j) (print "\n")
-;	(if (zero? j) 
-;		(P j) 
-;		(do (P j) (F (+ j 1)) (loop1 (- j 1))))))	
-
-(defn loop1 [j] 
+(defn loop1 [j n] 
 	(if (zero? j) 
-		(P j) 
-		(do (P j) (F (+ j 1)) (loop1 (- j 1)))))	
+		(P (- n 1)) 
+		(do (P (- n 1)) (F n) (loop1 (- j 1) n))))	
 		
 (defn permutations [x0] 
 	(do (dosync (ref-set x (vec x0)))
-	 (dosync (ref-set perms [(deref x)]))
-	 (P (count x0))))
+	(dosync (ref-set perms [(deref x)]))
+	(P (count x0)) 
+	(deref perms)))
 
 (defn sumlists [x0] 
 	(letfn [(loop [sum x0] 
