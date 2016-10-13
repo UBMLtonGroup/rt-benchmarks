@@ -7,12 +7,12 @@
 (defn revloop [x0 n y]
 	(if (zero? n) 
 		y
-		(recur (tl x0) (- n 1) (into [(first x0)] y))))
+		(revloop (tl x0) (- n 1) (into [(first x0)] y))))
 		
 (defn list_tail [x0 n]
 	(if (zero? n)
 		x0
-		(recur (tl x0) (- n 1))))
+		(list_tail (tl x0) (- n 1))))
 
 (defn F [n] 
 	(let [x0 (deref x)]
@@ -38,19 +38,19 @@
 	(deref perms)))
 
 (defn sumlists [x0] 
-	(letfn [(loop [sum x0] 
+	(letfn [(loop2 [sum x0] 
 				(if (empty? (first x0)) 
 					sum 
-					(recur (apply + sum (first x0)) (rest x0))))]
-	(loop 0 x0)))()
+					(loop2 (apply + sum (first x0)) (rest x0))))]
+	(loop2 0 x0)))
 
 
 (defn one2n [n] 
-	(letfn [(loop [n p] 
+	(letfn [(loop2 [n p] 
 				(if (zero? n) 
 					p 
-					(recur (- n 1) (cons n p) )))]
-	(loop n [])))
+					(loop2 (- n 1) (cons n p) )))]
+	(loop2 n [])))
 
 (defn factorial [n] 
 	(if (= n 1) 
