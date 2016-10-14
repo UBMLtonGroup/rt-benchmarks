@@ -76,11 +76,23 @@ to get time in nanosecs: (quot (System/nanoTime) 1)
                )))
 
 ;; top down
-(defn make-tree 
+	static void Populate(int iDepth, Node thisNode) {
+		if (iDepth<=0) {
+			return;
+		} else {
+			iDepth--;
+			thisNode.left  = new Node();
+			thisNode.right = new Node();
+			Populate (iDepth, thisNode.left);
+			Populate (iDepth, thisNode.right);
+		}
+	}
+ 
+(defn make-tree-top-down
   "Create a btree of given depth. Build is top down."
-  [iDepth]
-  (if (<= iDepth 0)
-      (make_empty_node)
+  [iDepth thisNode]
+  (if (> iDepth 0)
+    (do (t
       (make_node (make-tree (- iDepth 1))
                  (make-tree (- iDepth 1)))))
 
@@ -91,6 +103,7 @@ to get time in nanosecs: (quot (System/nanoTime) 1)
     (do
       (println (format "gc:start:%d:%d:%d" id niter (System/currentTimeMillis)))
       (make-tree-bottom-up tree-depth)
+      (make-tree-top-down (make-empty-node) tree-depth)
       (println (format "gc:stop:%d:%d:%d" id niter (System/currentTimeMillis))) 
       (gc-thread-helper tree-depth id (- niter 1) debug))
     )

@@ -1,0 +1,69 @@
+(+ 1 1)
+(** 2 2)
+(^ 2 2)
+(pow 2 2)
+(use 'clojure.contrib.math)
+(require 'clojure.contrib.math)
+(defn exp [x n]
+  (loop [acc 1 n n]
+    (if (zero? n) acc
+        (recur (* x acc) (dec n)))))
+(exp 2 2)
+(defmulti sizeof class) 
+(defmethod sizeof Number ([_] 4)) ; or decide by size if you prefer 
+(defmethod sizeof java.util.Collection 
+  ([coll] 
+    (reduce + 4 (map sizeof (seq coll))))) 
+(defmethod sizeof clojure.lang.ISeq 
+  ([coll] 
+    (reduce + 4 (map sizeof (seq coll))))) 
+(sizeof [1 2 [1 2]]) 
+(require '[clj-time.core :as time]
+         '[clj-time.coerce :as tc])
+(quot (System/currentTimeMillis) 1000)
+(quot (System/nanoTime) 1000)
+(quot (System/nanoTime) 1)
+(quot (System/currentTimeMillis) 1)
+(pprint (make-array Double/TYPE 3))
+do(+ 1 1)
+(do (+ 1 1))
+(def ^{:dynamic true} long-lived-array nil)
+               (binding [long-lived-array (make-array Integer/TYPE 1000)])
+(binding [long-lived-array (make-array Integer/TYPE 1000)])
+binding [long-lived-array (make-array Integer/TYPE 1000)]
+(binding [long-lived-array (make-array Integer/TYPE 1000)])
+(binding [long-lived-array 1])
+(set! long-lived-array 1)
+(def ^:dynamic x 1)
+(set! x 2)
+(nth (iterate (partial vector 1) []) 1000)
+(loop [res [0 1]]
+        (if (>= (count res) 1000)
+          res
+          (recur (conj res (+' (inc (last res)) (dec (last (butlast res))))))))
+(defn fib [max]
+  (loop [res max [0 1]]
+          (if (>= (count res) max)
+            res
+            (recur (conj res (+' (inc (last res)) (dec (last (butlast res))))))))
+)
+(defn fib [max]
+  (loop [res [0 1] max]
+          (if (>= (count res) max)
+            res
+            (recur (conj res (+' (inc (last res)) (dec (last (butlast res))))))))
+)
+(defn fib [max]
+  (loop [res [0 1], max]
+          (if (>= (count res) max)
+            res
+            (recur (conj res (+' (inc (last res)) (dec (last (butlast res))))))))
+)
+(defn fib [max]
+  (loop [res [0 1]]
+          (if (>= (count res) max)
+            res
+            (recur (conj res (+' (inc (last res)) (dec (last (butlast res))))))))
+)
+(fib 37)
+(fib 100)
