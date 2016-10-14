@@ -60,18 +60,11 @@ to get time in nanosecs: (quot (System/nanoTime) 1)
 )
 
 (deftype Tree [node])
-(defn make_empty_node [] 
-        (Node. 0 0 nil nil))
-(defn make_node2 [l r depth] 
-  (do (println "makenode at depth " depth)
-        (Node. 0 0 l r)))
-(defn make-tree2 [iDepth]
-        (if (<= iDepth 0) 
-                (make_empty_node) 
-                (let [n (make-tree2 (- iDepth 1))] 
-                        (make_node2 n n iDepth))))
 
-(defn make_node [l r]
+(defn make-empty-node [] 
+        (Node. 0 0 nil nil))
+
+(defn make-node [l r]
   (Node. 0 0 l r))
 
 
@@ -81,12 +74,13 @@ to get time in nanosecs: (quot (System/nanoTime) 1)
   "Create a btree of given depth. Build is bottom up."
   [iDepth]
   (if (<= iDepth 0) 
-    (make_empty_node)
-    (make_node (make-tree-bottom-up (- iDepth 1))
+    (make-empty-node)
+    (make-node (make-tree-bottom-up (- iDepth 1))
                (make-tree-bottom-up (- iDepth 1))
                )))
 
 ;; top down
+
 (comment "
       (define (Populate iDepth thisNode)
         (if (<= iDepth 0)
@@ -103,10 +97,12 @@ to get time in nanosecs: (quot (System/nanoTime) 1)
   "Create a btree of given depth. Build is top down."
   [iDepth thisNode]
   (if (<= iDepth 0)
-    (let (iDepth (- iDepth 1))
+    (let [iDepth (- iDepth 1)]
       (do 
-         (make_node (make-tree (- iDepth 1))
-                    (make-tree (- iDepth 1)))))
+         (.setLeft thisNode (make-empty-node))
+         (.setRight thisNode (make-empty-node))
+         (make-tree-top-down iDepth (.getLeft thisNode))
+         (make-tree-top-down iDepth (.getRight thisNode))))))
 
 ;; 
 (defn gc-thread-helper
@@ -115,7 +111,7 @@ to get time in nanosecs: (quot (System/nanoTime) 1)
     (do
       (println (format "gc:start:%d:%d:%d" id niter (System/currentTimeMillis)))
       (make-tree-bottom-up tree-depth)
-      (make-tree-top-down (make-empty-node) tree-depth)
+      (make-tree-top-down tree-depth make-empty-node)
       (println (format "gc:stop:%d:%d:%d" id niter (System/currentTimeMillis))) 
       (gc-thread-helper tree-depth id (- niter 1) debug))
     )
@@ -140,7 +136,7 @@ to get time in nanosecs: (quot (System/nanoTime) 1)
       (if (true? warm-up)
          (do 
                (if (true? debug) (println "warm up"))
-               (update-state 'long-lived-tree' (make-tree tree-depth))
+               (update-state 'long-lived-tree' (make-tree-top-down tree-depth make-empty-node))
                (update-state 'long-lived-array' (make-array Double/TYPE 500000))
          )
        )

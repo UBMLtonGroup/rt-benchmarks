@@ -73,7 +73,7 @@
     (cond
       (:help options) (exit 0 (usage summary))
       errors (exit 1 (error-msg errors)))
-  (make-tree (+ 2 (:tree-depth options))) ;; stretch memory
+  (make-tree-bottom-up (+ 2 (:tree-depth options))) ;; stretch memory
   (make-gc-threads (:gc-threads options)
                    (:tree-depth options)
                    (:iterations options)
