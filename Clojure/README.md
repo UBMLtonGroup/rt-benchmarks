@@ -9,7 +9,9 @@ http://macromancy.com/2014/04/09/data-structures-clojure-trees.html
 
 ## Prep'ing the benchmark
 
-> ubuntu$ sudo apt-get install lieiningen
+Easy way to run Clojure is to install [Leiningen](http://leiningen.org/)
+
+> ubuntu$ sudo apt-get install leiningen
 
 ## Running the benchmark
 

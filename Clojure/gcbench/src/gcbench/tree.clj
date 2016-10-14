@@ -19,7 +19,7 @@
     (if (zero? n) acc
         (recur (* x acc) (dec n)))))
 
-;; build tree bottom up
+;; tree definition
 
 (definterface INode
   (getLeft [])
