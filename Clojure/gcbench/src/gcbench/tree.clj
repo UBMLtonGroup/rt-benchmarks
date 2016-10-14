@@ -41,12 +41,23 @@ to get time in nanosecs: (quot (System/nanoTime) 1)
 
 ;; build tree bottom up
 
-(definterface INode)
+(definterface INode
+  (getLeft [])
+  (getRight [])
+  (setLeft [l])
+  (setRight [r]))
+
 (deftype Node
   [^:volatile-mutable ^INode key
    ^:volatile-mutable ^INode val
    ^:volatile-mutable ^INode left
-   ^:volatile-mutable ^INode right])
+   ^:volatile-mutable ^INode right]
+  INode
+  (getLeft [_] left)
+  (getRight [_] right)
+  (setLeft [_ l] (set! left l))
+  (setRight [_ r] (set! right r))
+)
 
 (deftype Tree [node])
 (defn make_empty_node [] 
@@ -76,25 +87,26 @@ to get time in nanosecs: (quot (System/nanoTime) 1)
                )))
 
 ;; top down
-	static void Populate(int iDepth, Node thisNode) {
-		if (iDepth<=0) {
-			return;
-		} else {
-			iDepth--;
-			thisNode.left  = new Node();
-			thisNode.right = new Node();
-			Populate (iDepth, thisNode.left);
-			Populate (iDepth, thisNode.right);
-		}
-	}
- 
+(comment "
+      (define (Populate iDepth thisNode)
+        (if (<= iDepth 0)
+            #f
+            (let ((iDepth (- iDepth 1)))
+              (node.left-set! thisNode (make-empty-node))
+              (node.right-set! thisNode (make-empty-node))
+              (Populate iDepth (node.left thisNode))
+              (Populate iDepth (node.right thisNode)))))
+
+ ")
+
 (defn make-tree-top-down
   "Create a btree of given depth. Build is top down."
   [iDepth thisNode]
-  (if (> iDepth 0)
-    (do (t
-      (make_node (make-tree (- iDepth 1))
-                 (make-tree (- iDepth 1)))))
+  (if (<= iDepth 0)
+    (let (iDepth (- iDepth 1))
+      (do 
+         (make_node (make-tree (- iDepth 1))
+                    (make-tree (- iDepth 1)))))
 
 ;; 
 (defn gc-thread-helper
