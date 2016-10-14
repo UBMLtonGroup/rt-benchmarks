@@ -2,26 +2,6 @@
     (:use [gcbench.memstats])
 )
 
-(comment "
-  notes on implementation:
-  
-make-gc-threads num-threads tree-depth warm-up
-   if num-threads > 0
-     if warm-up
-       make-tree tree-depth ;; long lived tree
-       make-array 1000      ;; long lived array
-     make the threads: gc-thread num-threads tree-depth
-     
-gc-thread id tree-depth
-   collect start time
-   make-tree tree-depth
-   collect stop time
-   output delta time with id
-   recurse: gc-thread id tree-depth
-
-to get time in millisecs: (quot (System/currentTimeMillis) 1)
-to get time in nanosecs: (quot (System/nanoTime) 1)
- " )
 
 ;; global state management 
 ;; really just stashing long-lived objects
@@ -80,18 +60,6 @@ to get time in nanosecs: (quot (System/nanoTime) 1)
                )))
 
 ;; top down
-
-(comment "
-      (define (Populate iDepth thisNode)
-        (if (<= iDepth 0)
-            #f
-            (let ((iDepth (- iDepth 1)))
-              (node.left-set! thisNode (make-empty-node))
-              (node.right-set! thisNode (make-empty-node))
-              (Populate iDepth (node.left thisNode))
-              (Populate iDepth (node.right thisNode)))))
-
- ")
 
 (defn make-tree-top-down
   "Create a btree of given depth. Build is top down."
