@@ -41,49 +41,74 @@ def run_cloj(cloj):
 
 # parse outputs
 def parseOutputs(outputs):
-	start = 'comp:start:'
-	start_len = len(start)
+	comp_start = 'comp:start:'
+	comp_start_len = len(comp_start)
 
-	stop = 'comp:stop:'
-	stop_len = len(stop)
+	comp_stop = 'comp:stop:'
+	comp_stop_len = len(comp_stop)
+
+	gc_start = 'gc:start:'
+	gc_start_len = len(gc_start)
+
+	gc_stop = 'gc:stop:'
+	gc_stop_len = len(gc_stop)
+
 
 	computes = []
+	gcs = []
 
 	for line in outputs:
-		if ( line.startswith(start) ):
-			computes.append( line[start_len:] ) # getting rid of \n
-		elif ( line.startswith(stop) ):
-			computes.append( line[stop_len:])
+		if ( line.startswith(comp_start) ):
+			computes.append( line[comp_start_len:] ) # getting rid of \n
+		elif ( line.startswith(comp_stop) ):
+			computes.append( line[comp_stop_len:])
+		elif ( line.startswith( gc_start ) ):
+			gcs.append( line[gc_start_len:] )
+		elif ( line.startswith(gc_stop) ):
+			gcs.append( line[gc_stop_len:])
 
 
 	computes = sorted(computes)
+	gcs = sorted(gcs)
 
-	return computes, len(computes)
+	return computes, len(computes), gcs, len(gcs)
 
 
-#write parsed outputs to csv files
-def writeCSV(outputs, lang):
-	computes, size = parseOutputs(outputs)
-	print computes
+#processing the parsed outputs
+def processOutputs(outputs, size):
 
 	write_all = []
 	start = 0
 	for i in range(0, size , 2):
-		split_computes = computes[i].split(':')
-		thread_id = split_computes[0]
-		time = float(split_computes[2])
+		split_outputs = outputs[i].split(':')
+		thread_id = split_outputs[0]
+		time = float(split_outputs[2])
 
 		run_length = time - start
 		start = time
 
-		stop_time = float(computes[i+1].split(':')[2])
+		stop_time = float(outputs[i+1].split(':')[2])
 		start_delta = stop_time - time
 		write_all.append([ thread_id, start_delta , thread_id ])
 
-	os.chdir('..') # write csv file in the home directory
-	with open( lang + ".csv", "wb") as f:
+	return write_all
+
+
+#write parsed outputs to csv files
+def writeCSV(outputs, lang):
+	computes, comp_size, gcs, gcs_size = parseOutputs(outputs)
+
+	comp_write_all = processOutputs( computes, comp_size)
+	gcs_write_all = processOutputs( gcs, gcs_size)
+
+	os.chdir('..') # write csv files in the home directory
+	with open( 'comp_' + lang + ".csv", "wb") as f:
 		writer = csv.writer(f)
-		writer.writerows(write_all)
+		writer.writerows(comp_write_all)
+
+	with open( 'gc_' + lang + ".csv", "wb") as f:
+		writer = csv.writer(f)
+		writer.writerows(gcs_write_all)
 
 
 
