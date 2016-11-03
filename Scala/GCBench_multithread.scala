@@ -1,7 +1,7 @@
 import java.io._
 import scala.collection.mutable.ListBuffer
 
-object GCBench {
+object GCBench_multithread {
 
 class Node(var left: Node, var right: Node) {
 
