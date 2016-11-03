@@ -1,4 +1,5 @@
 import java.io._
+import scala.collection.mutable.ListBuffer
 
 object GCBench {
 
@@ -92,7 +93,10 @@ class Node(var left: Node, var right: Node) {
 		for(i <- 1 until num_threads+1){
 			val t = new Thread(new Runnable {
 				def run() {
-					gc_func(tree_depth, i, iterations)
+					var listofTimeStamps = gc_func(tree_depth, i, iterations)
+                    for (timeStamp <- listofTimeStamps.toList){
+                        println(timeStamp)
+                    }
 				}
 			})
 			t.setDaemon(false)
@@ -100,10 +104,11 @@ class Node(var left: Node, var right: Node) {
 		}
 	}
 
-	def gc_func(tree_depth: Int, id: Int, iterations: Int){
+	def gc_func(tree_depth: Int, id: Int, iterations: Int): ListBuffer[String] = {
+        var listOfTimeStamps = new ListBuffer[String]()
 		for(i <- 1 until iterations+1){
 			val start = System.currentTimeMillis()
-			 println("gc:start:"+ id +":" + i+ ":" +start)
+            listOfTimeStamps += "gc:start:"+ id +":" + i+ ":" +start
 			val root: Node = null
 			var longLivedTree: Node = null
 			var tempTree: Node = null
@@ -146,15 +151,19 @@ class Node(var left: Node, var right: Node) {
 	        //PrintDiagnostics()
 	        //println("Completed in " + tElapsed + "ms.")
 			val stop = System.currentTimeMillis()
-			println("gc:stop:"+ id +":" + i + ":" +stop)
+			listOfTimeStamps += "gc:stop:"+ id +":" + i + ":" +stop
 		}
+        listOfTimeStamps
 	}
 
-	def start_comp_threads(num_threads : Int, depth: Int, iterations: Int, comp_sleep: Int) {
+	def start_comp_threads(num_threads : Int, depth: Int, iterations: Int, comp_sleep: Int){
 		for(i <- 1 until num_threads+1){
 			val t = new Thread(new Runnable {
 				def run() {
-					comp_func(depth, i, iterations, comp_sleep)
+                    var listofTimeStamps = comp_func(depth, i, iterations, comp_sleep)
+                    for (timeStamp <- listofTimeStamps.toList){
+                        println(timeStamp)
+                    }
 				}
 			})
 			t.setDaemon(false)
@@ -162,15 +171,17 @@ class Node(var left: Node, var right: Node) {
 		}
 	}
 
-	def comp_func(depth: Int, id: Int, iterations: Int, comp_sleep: Int){
+	def comp_func(depth: Int, id: Int, iterations: Int, comp_sleep: Int): ListBuffer[String] = {
+		var listOfTimeStamps = new ListBuffer[String]()
 		for(i <- 1 until iterations+1){
 			val tStart = System.currentTimeMillis()
-			 println("comp:start:"+ id +":" + i + ":" +tStart)
+			listOfTimeStamps += ("comp:start:"+ id +":" + i + ":" +tStart)
 			fibonacci(depth)
 			val tStop = System.currentTimeMillis()
-			 println("comp:stop:"+ id +":" + i + ":" +tStop)
+			listOfTimeStamps += ("comp:stop:"+ id +":" + i + ":" +tStart)
 			Thread.sleep(comp_sleep)
 		}
+		listOfTimeStamps
 	}
 
   def main(args: Array[String]) {
@@ -191,5 +202,6 @@ class Node(var left: Node, var right: Node) {
   		}
   		start_gc_thread(gcThreads,treeDepth,iterations)
   		start_comp_threads(computeThreads,computeDepth, iterations,computeSleep)
+
 	  }
 }
