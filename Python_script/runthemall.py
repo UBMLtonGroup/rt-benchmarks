@@ -1,4 +1,5 @@
 
+
 import sys, getopt
 import argparse
 import os, commands
@@ -17,27 +18,40 @@ def validArguments(args):
 			exit()
 
 
-def run_erlang(erl, erl_command):
-	os.chdir(erl) # 'Erlang'
-	os.system('erlc benchmark.erl')
-	#os.system(erl_command)
+
+#scala GCBench # # # # # #
+def run_scala(scala, scala_command):
+	os.chdir(erl) # 'Scala'
+	os.system('scalac GCBench.scala')
+	os.system('scala GCBench')
+
 	outputs = commands.getoutput(erl_command).split('\n')
 
 	writeCSV(outputs, erl)
 	#os.chdir('..')
 
-def run_hask(hask):
+def run_erlang(erl, erl_command):
+	os.chdir(erl) # 'Erlang'
+	os.system('erlc gcbench.erl')
+	os.system(erl_command)
+	outputs = commands.getoutput(erl_command).split('\n')
+
+	writeCSV(outputs, erl)
+	#os.chdir('..')
+
+def run_hask(hask, hask_command):
 	os.chdir(hask) # 'Haskell'
 	os.system('ghc gcbench.hs')
-	outputs = commands.getoutput('gcbench').split('\n') # can be modified
+	outputs = commands.getoutput(hask_command).split('\n') # can be modified
 	writeCSV(outputs, hask)
     #os.chdir('..')
 
-def run_cloj(cloj):
+def run_cloj(cloj, cloj_command):
 	os.chdir(cloj) #'Clojure'
-	outputs = commands.getoutput('lein run -- -h').split('\n')
+	os.system('cd gcbench')
+	outputs = commands.getoutput(cloj_command).split('\n')
+	os.chdir('..')
 	writeCSV(outputs, cloj)
-	#os.chdir('..')
 
 # parse outputs
 def parseOutputs(outputs):
@@ -75,7 +89,7 @@ def parseOutputs(outputs):
 
 
 #processing the parsed outputs
-def processOutputs(outputs, size):
+def processOutputs(outputs, size, lang):
 
 	write_all = []
 	start = 0
@@ -83,6 +97,11 @@ def processOutputs(outputs, size):
 		split_outputs = outputs[i].split(':')
 		thread_id = split_outputs[0]
 		time = float(split_outputs[2])
+
+		if lang == 'Clojure':
+			time_temp = str(time)
+			time = time_temp[:10] + '.' + time_temp[10:]
+			time = float(time)
 
 		run_length = time - start
 		start = time
@@ -98,8 +117,8 @@ def processOutputs(outputs, size):
 def writeCSV(outputs, lang):
 	computes, comp_size, gcs, gcs_size = parseOutputs(outputs)
 
-	comp_write_all = processOutputs( computes, comp_size)
-	gcs_write_all = processOutputs( gcs, gcs_size)
+	comp_write_all = processOutputs( computes, comp_size, lang)
+	gcs_write_all = processOutputs( gcs, gcs_size, lang)
 
 	os.chdir('..') # write csv files in the home directory
 	with open( 'comp_' + lang + ".csv", "wb") as f:
@@ -125,13 +144,12 @@ def main():
 	parser.add_argument('-D','--debug', action = 'store_true', help='Enable debugging output' , default = False)
 	args = parser.parse_args()
 
-	t = args.t; d = args.d; i = args.i; s = args.s; g = args.g; e = args.e; m = args.m
-	erl_command = 'erl -noshell -run benchmark main ' + t + ' ' + d + ' ' + i + ' ' + s + ' ' + g + ' ' + e + ' ' + m + ' -s init stop'
-
-	#run_erlang('Erlang', erl_command)
-	hask_command = 'gcbench ' + ' ... (arguments) '
+	t = str(args.t); d = str(args.d); i = str(args.i); s = str(args.s); g = str(args.g); e = str(args.e); m = str(args.m)
+	erl_command = 'erl -noshell -run gcbench main ' + t + ' ' + d + ' ' + i + ' ' + s + ' ' + g + ' ' + e + ' ' + m + ' -s'# init stop'
+	run_erlang('Erlang', erl_command)
+	#hask_command = 'gcbench ' + ' ... (arguments) '
 	#run_hask('Haskell', hask_command)
-	cloj_command = 'run - ' + ' ... (arguments) '
+	#cloj_command = 'lein run -- -t # -d # -i # -s # -g # -e # -m # -S -D -h'
 	#run_cloj('Clojure', cloj_command)
 
 
@@ -140,4 +158,4 @@ main()
 
 
 
-###
+#
