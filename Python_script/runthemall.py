@@ -152,6 +152,7 @@ def writeCSV(outputs, lang):
 # 3 thread, depth = 20
 #run_python = python runthemall.py -t 3 -d 37 -i 10 -s 1 -g 3 -e 20 -m 4 -S -D
 def main():
+
 	parser = argparse.ArgumentParser(description='Process arguments')
 	parser.add_argument('-t','--t', help='Compute Threads', default = 1)
 	parser.add_argument('-d','--d', help='Compute Depth' , default = 37)
@@ -165,6 +166,7 @@ def main():
 
 	args = parser.parse_args()
 
+	os.chdir('..')
 	t = str(args.t); d = str(args.d); i = str(args.i); s = str(args.s); g = str(args.g); e = str(args.e); m = str(args.m)
 
 	erl_command = 'erl -noshell -run gcbench main ' + t + ' ' + d + ' ' + i + ' ' + s + ' ' + g + ' ' + e + ' ' + m + ' -s'# init stop'
