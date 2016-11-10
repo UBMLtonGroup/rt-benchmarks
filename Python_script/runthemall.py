@@ -17,8 +17,6 @@ def validArguments(args):
 	 		print('Argument must be a number between 0 and 65536')
 			exit()
 
-
-
 #scala GCBench # # # # # #
 def run_scala(scala, scala_command):
 	os.chdir(erl) # 'Scala'
@@ -28,7 +26,7 @@ def run_scala(scala, scala_command):
 	outputs = commands.getoutput(erl_command).split('\n')
 
 	writeCSV(outputs, erl)
-	#os.chdir('..')
+	#os.chdir('..') # done in writeCSV function
 
 def run_erlang(erl, erl_command):
 	os.chdir(erl) # 'Erlang'
@@ -42,6 +40,7 @@ def run_erlang(erl, erl_command):
 def run_hask(hask, hask_command):
 	os.chdir(hask) # 'Haskell'
 	os.system('ghc gcbench.hs')
+
 	outputs = commands.getoutput(hask_command).split('\n') # can be modified
 	writeCSV(outputs, hask)
     #os.chdir('..')
@@ -53,12 +52,20 @@ def run_cloj(cloj, cloj_command):
 	os.chdir('..')
 	writeCSV(outputs, cloj)
 
+
+def add_decimal(lang, time):
+	if lang == 'Clojure' or lang == 'Haskell':
+		time = time[:10] + '.' + time[10:]
+	return float(time)
+
+
+
 # parse outputs
 def parseOutputs(outputs):
-	comp_start = 'comp:start:'
+	comp_start = 'compute:start:'
 	comp_start_len = len(comp_start)
 
-	comp_stop = 'comp:stop:'
+	comp_stop = 'compute:stop:'
 	comp_stop_len = len(comp_stop)
 
 	gc_start = 'gc:start:'
@@ -93,22 +100,32 @@ def processOutputs(outputs, size, lang):
 
 	write_all = []
 	start = 0
+	temp_thread_id = -1
 	for i in range(0, size , 2):
 		split_outputs = outputs[i].split(':')
 		thread_id = split_outputs[0]
-		time = float(split_outputs[2])
 
-		if lang == 'Clojure':
-			time_temp = str(time)
-			time = time_temp[:10] + '.' + time_temp[10:]
-			time = float(time)
+		#for initial time stamp when thread_id changes
+		if (thread_id > temp_thread_id):
+			start_delta = 0
+			start = split_outputs[2] #  current i
+			stop = outputs[i+1].split(':')[2]
+			start = add_decimal(lang, start)
+			stop = add_decimal(lang, stop)
 
-		run_length = time - start
-		start = time
+			run_length = stop - start
+			temp_thread_id = thread_id
+		else:
+			new_start = split_outputs[2]
+			stop = outputs[i+1].split(':')[2]
+			new_start = add_decimal(lang, new_start)
+			stop = add_decimal(lang, stop)
 
-		stop_time = float(outputs[i+1].split(':')[2])
-		start_delta = stop_time - time
-		write_all.append([ thread_id, start_delta , thread_id ])
+			start_delta = new_start - start
+			start = new_start
+			run_length = stop - start
+
+		write_all.append([ thread_id, start_delta, run_length ])
 
 	return write_all
 
@@ -130,8 +147,10 @@ def writeCSV(outputs, lang):
 		writer.writerows(gcs_write_all)
 
 
-
-#run_python = 'python runthemall.py -t 1 -d 37 -i 10 -s 1 -g 1 -e 10 -m 4 -D'
+# 1 thread
+#run_python = python runthemall.py -t 1 -d 37 -i 10 -s 1 -g 1 -e 10 -m 4 -S -D
+# 3 thread, depth = 20
+#run_python = python runthemall.py -t 3 -d 37 -i 10 -s 1 -g 3 -e 20 -m 4 -S -D
 def main():
 	parser = argparse.ArgumentParser(description='Process arguments')
 	parser.add_argument('-t','--t', help='Compute Threads', default = 1)
@@ -141,16 +160,25 @@ def main():
 	parser.add_argument('-g','--g', help='GC Threads' , default = 1)
 	parser.add_argument('-e','--e', help='Maximum tree depth to allocate' , default = 10)
 	parser.add_argument('-m','--m', help='Maximum heap to allocate (in MB)' , default = 4)
+	parser.add_argument('-S','--gc_stats', action = 'store_true', help='Enable printing stats' , default = False)
 	parser.add_argument('-D','--debug', action = 'store_true', help='Enable debugging output' , default = False)
+
 	args = parser.parse_args()
 
 	t = str(args.t); d = str(args.d); i = str(args.i); s = str(args.s); g = str(args.g); e = str(args.e); m = str(args.m)
+
 	erl_command = 'erl -noshell -run gcbench main ' + t + ' ' + d + ' ' + i + ' ' + s + ' ' + g + ' ' + e + ' ' + m + ' -s'# init stop'
-	run_erlang('Erlang', erl_command)
-	#hask_command = 'gcbench ' + ' ... (arguments) '
+	#run_erlang('Erlang', erl_command)
+
+	hask_command = './gcbench -t ' + t + ' -d ' + d + ' -i ' + i + ' -s ' + s + ' -g ' + g + ' -e ' + e
 	#run_hask('Haskell', hask_command)
-	#cloj_command = 'lein run -- -t # -d # -i # -s # -g # -e # -m # -S -D -h'
+
+	cloj_command = 'lein run -- -t ' + t + ' -d ' + d + ' -i ' + i + ' -s ' + s + ' -g ' + g + ' -e ' + e
 	#run_cloj('Clojure', cloj_command)
+
+
+
+
 
 
 main()
