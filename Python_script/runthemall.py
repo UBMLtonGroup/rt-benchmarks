@@ -20,6 +20,7 @@ def validArguments(args):
 def run_erlang(erl, erl_command):
 	os.chdir(erl) # 'Erlang'
 	os.system('erlc gcbench.erl')
+	os.system(erl_command)
 
 	outputs = commands.getoutput(erl_command).split('\n')
 
@@ -29,6 +30,7 @@ def run_erlang(erl, erl_command):
 def run_hask(hask, hask_command):
 	os.chdir(hask) # 'Haskell'
 	os.system('ghc gcbench.hs')
+	os.system(hask_command)
 
 	outputs = commands.getoutput(hask_command).split('\n') # can be modified
 	writeCSV(outputs, hask)
@@ -37,6 +39,7 @@ def run_hask(hask, hask_command):
 def run_cloj(cloj, cloj_command):
 	os.chdir(cloj) #'Clojure'
 	os.system('cd gcbench')
+	os.system(cloj_command)
 	outputs = commands.getoutput(cloj_command).split('\n')
 	os.chdir('..')
 	writeCSV(outputs, cloj)
@@ -44,13 +47,17 @@ def run_cloj(cloj, cloj_command):
 def run_scala(scala, scala_command):
 	os.chdir(scala) # 'Scala'
 	os.system('scalac GCBench_multithread.scala')
-
+	os.system(scala_command)
 	outputs = commands.getoutput(scala_command).split('\n')
 
 	writeCSV(outputs, scala)
 	#os.chdir('..') # done in writeCSV function
 
-
+def run_rkt(rkt, rkt_command):
+	os.chdir(rkt) # 'Racket'
+	os.system(rkt_command)
+	outputs = commands.getoutput(rkt_command).split('\n')
+	writeCSV(outputs, rkt)
 
 
 def add_decimal(lang, time):
@@ -158,18 +165,21 @@ def writeCSV(outputs, lang):
 		writer.writerows(gcs_write_all)
 
 
+# Python examples of command lines
 # 1 thread
-#run_python = python runthemall.py -t 1 -d 37 -i 10 -s 1 -g 1 -e 10 -m 4 -S -D
+#python runthemall.py -t 1 -d 37 -i 10 -s 1 -g 1 -e 10 -m 4 -S -D
 # 3 thread, depth = 20
-#run_python = python runthemall.py -t 3 -d 37 -i 10 -s 1 -g 3 -e 20 -m 4 -S -D
+#python runthemall.py -t 3 -d 37 -i 10 -s 1 -g 3 -e 20 -m 4 -S -D
 
 
 def make_commandLine(lang, start_line, t, d, i, s, g, e):
-	if lang == 'Haskell' or lang == 'Clojure':
+	if lang == 'Haskell' or lang == 'Clojure' or lang == 'Racket':
 		return start_line + t + ' -d ' + d + ' -i ' + i + ' -s ' + s + ' -g ' + g + ' -e ' + e
 	else:
 		if lang == 'Erlang':
 			return start_line + t + ' ' + d + ' ' + i + ' ' + s + ' ' + g + ' ' + e + ' -s'
+
+		#Scala
 		return start_line + t + ' ' + d + ' ' + i + ' ' + s + ' ' + g + ' ' + e
 
 
@@ -203,6 +213,9 @@ def main():
 
 	scala_command = make_commandLine('Scala', 'scala GCBench_multithread ', t, d, i, s, g, e)
 	#run_scala('Scala', scala_command)
+
+	rkt_command = make_commandLine('Racket', 'racket gcbench.rkt -t ', t, d, i, s, g, e)
+	#run_rkt('Racket', rkt_command)
 
 
 main()
