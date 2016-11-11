@@ -17,21 +17,10 @@ def validArguments(args):
 	 		print('Argument must be a number between 0 and 65536')
 			exit()
 
-#scala GCBench # # # # # #
-def run_scala(scala, scala_command):
-	os.chdir(erl) # 'Scala'
-	os.system('scalac GCBench.scala')
-	os.system('scala GCBench')
-
-	outputs = commands.getoutput(erl_command).split('\n')
-
-	writeCSV(outputs, erl)
-	#os.chdir('..') # done in writeCSV function
-
 def run_erlang(erl, erl_command):
 	os.chdir(erl) # 'Erlang'
 	os.system('erlc gcbench.erl')
-	os.system(erl_command)
+
 	outputs = commands.getoutput(erl_command).split('\n')
 
 	writeCSV(outputs, erl)
@@ -52,9 +41,20 @@ def run_cloj(cloj, cloj_command):
 	os.chdir('..')
 	writeCSV(outputs, cloj)
 
+def run_scala(scala, scala_command):
+	os.chdir(scala) # 'Scala'
+	os.system('scalac GCBench_multithread.scala')
+
+	outputs = commands.getoutput(scala_command).split('\n')
+
+	writeCSV(outputs, scala)
+	#os.chdir('..') # done in writeCSV function
+
+
+
 
 def add_decimal(lang, time):
-	if lang == 'Clojure' or lang == 'Haskell':
+	if lang == 'Clojure' or lang == 'Haskell' or lang == 'Scala':
 		time = time[:10] + '.' + time[10:]
 	return float(time)
 
@@ -62,11 +62,18 @@ def add_decimal(lang, time):
 
 # parse outputs
 def parseOutputs(outputs):
-	comp_start = 'compute:start:'
+
+	comp_start = 'comp:start:'
 	comp_start_len = len(comp_start)
 
-	comp_stop = 'compute:stop:'
+	comp_stop = 'comp:stop:'
 	comp_stop_len = len(comp_stop)
+
+	comp_start2 = 'compute:start:'
+	comp_start_len2 = len(comp_start2)
+
+	comp_stop2 = 'compute:stop:'
+	comp_stop_len2 = len(comp_stop2)
 
 	gc_start = 'gc:start:'
 	gc_start_len = len(gc_start)
@@ -83,6 +90,10 @@ def parseOutputs(outputs):
 			computes.append( line[comp_start_len:] ) # getting rid of \n
 		elif ( line.startswith(comp_stop) ):
 			computes.append( line[comp_stop_len:])
+		elif ( line.startswith(comp_start2) ):
+			computes.append( line[comp_start_len2:] ) # getting rid of \n
+		elif ( line.startswith(comp_stop2) ):
+			computes.append( line[comp_stop_len2:])
 		elif ( line.startswith( gc_start ) ):
 			gcs.append( line[gc_start_len:] )
 		elif ( line.startswith(gc_stop) ):
@@ -151,6 +162,18 @@ def writeCSV(outputs, lang):
 #run_python = python runthemall.py -t 1 -d 37 -i 10 -s 1 -g 1 -e 10 -m 4 -S -D
 # 3 thread, depth = 20
 #run_python = python runthemall.py -t 3 -d 37 -i 10 -s 1 -g 3 -e 20 -m 4 -S -D
+
+
+def make_commandLine(lang, start_line, t, d, i, s, g, e):
+	if lang == 'Haskell' or lang == 'Clojure':
+		return start_line + t + ' -d ' + d + ' -i ' + i + ' -s ' + s + ' -g ' + g + ' -e ' + e
+	else:
+		if lang == 'Erlang':
+			return start_line + t + ' ' + d + ' ' + i + ' ' + s + ' ' + g + ' ' + e + ' -s'
+		return start_line + t + ' ' + d + ' ' + i + ' ' + s + ' ' + g + ' ' + e
+
+
+
 def main():
 
 	parser = argparse.ArgumentParser(description='Process arguments')
@@ -169,23 +192,19 @@ def main():
 	os.chdir('..')
 	t = str(args.t); d = str(args.d); i = str(args.i); s = str(args.s); g = str(args.g); e = str(args.e); m = str(args.m)
 
-	erl_command = 'erl -noshell -run gcbench main ' + t + ' ' + d + ' ' + i + ' ' + s + ' ' + g + ' ' + e + ' ' + m + ' -s'# init stop'
+	erl_command = make_commandLine('Erlang', 'erl -noshell -run gcbench main ', t, d, i, s, g, e)
 	#run_erlang('Erlang', erl_command)
 
-	hask_command = './gcbench -t ' + t + ' -d ' + d + ' -i ' + i + ' -s ' + s + ' -g ' + g + ' -e ' + e
+	hask_command = make_commandLine('Haskell', './gcbench -t ', t, d, i, s, g, e)
 	#run_hask('Haskell', hask_command)
 
-	cloj_command = 'lein run -- -t ' + t + ' -d ' + d + ' -i ' + i + ' -s ' + s + ' -g ' + g + ' -e ' + e
+	cloj_command = make_commandLine('Clojure', 'lein run -- -t ', t, d, i, s, g, e)
 	#run_cloj('Clojure', cloj_command)
 
-
-
-
+	scala_command = make_commandLine('Scala', 'scala GCBench_multithread ', t, d, i, s, g, e)
+	#run_scala('Scala', scala_command)
 
 
 main()
-
-
-
 
 #
