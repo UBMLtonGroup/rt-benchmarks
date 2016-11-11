@@ -38,7 +38,7 @@ def run_hask(hask, hask_command):
 
 def run_cloj(cloj, cloj_command):
 	os.chdir(cloj) #'Clojure'
-	os.system('cd gcbench')
+	os.chdir('gcbench')
 	os.system(cloj_command)
 	outputs = commands.getoutput(cloj_command).split('\n')
 	os.chdir('..')
