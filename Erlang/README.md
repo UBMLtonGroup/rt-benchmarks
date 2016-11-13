@@ -4,7 +4,8 @@ Erlang version: V8.0.2
 <br />
 <br />
 ### Compiling   
-    erlc benchmark.erl
+    erlc gcbench.erl
 
-### Running    
-    erl -noshell -run benchmark main 1 37 10 1 1 10 -s init stop
+### Running
+    erl -noshell -run gcbench main -t -d -i -s -g -e -s
+    erl -noshell -run gcbench main 1 37 10 1 1 10 -s
