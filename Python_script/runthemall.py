@@ -155,7 +155,8 @@ def writeCSV(outputs, lang):
 	comp_write_all = processOutputs( computes, comp_size, lang)
 	gcs_write_all = processOutputs( gcs, gcs_size, lang)
 
-	os.chdir('..') # write csv files in the home directory
+	os.chdir('..')
+	os.chdir('Python_script')
 	with open( 'comp_' + lang + ".csv", "wb") as f:
 		writer = csv.writer(f)
 		writer.writerows(comp_write_all)
@@ -163,13 +164,16 @@ def writeCSV(outputs, lang):
 	with open( 'gc_' + lang + ".csv", "wb") as f:
 		writer = csv.writer(f)
 		writer.writerows(gcs_write_all)
+	os.chdir('..') # go back to the home directory
 
+'''
+## Python examples of command lines
+ 1 thread
+python runthemall.py -t 1 -d 37 -i 10 -s 1 -g 1 -e 10 -m 4 -S -D
+ 3 thread, depth = 20
+python runthemall.py -t 3 -d 37 -i 10 -s 1 -g 3 -e 20 -m 4 -S -D
 
-# Python examples of command lines
-# 1 thread
-#python runthemall.py -t 1 -d 37 -i 10 -s 1 -g 1 -e 10 -m 4 -S -D
-# 3 thread, depth = 20
-#python runthemall.py -t 3 -d 37 -i 10 -s 1 -g 3 -e 20 -m 4 -S -D
+'''
 
 
 def make_commandLine(lang, start_line, t, d, i, s, g, e):
