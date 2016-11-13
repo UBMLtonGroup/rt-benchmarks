@@ -1,8 +1,12 @@
 
--module(gcBench).
+-module(gcbench).
 
--export([make_node/2]).
--export([make_empty_tree/0]).
+-export([make_node/2, make_empty_tree/0, populate/2, makeTree/1]).
+-export([printDiagnostics/0]).
+-export([makeArr/0, loop_arr/3]).
+-export([fib/1]).
+-export([start_gc_thread/4, gc_func/4]).
+-export([start_comp_thread/5, comp_func/5]).
 
 -export([kStretchTreeDepth/0]).
 -export([kLongLivedTreeDepth/0]).
@@ -10,110 +14,61 @@
 -export([kMinTreeDepth/0]).
 -export([kMaxTreeDepth/0]).
 
--export([treeSize/1]).
--export([numIters/1]).
-
--export([populate/2]).
--export([makeTree/1]).
-
--export([populate_loop/2]).
--export([makeTree_loop/2]).
--export([timeConstruction/1]).
-
--export([printDiagnostics/0]).
-
--export([makeArr/0]).
--export([loop_arr/3]).
-
--export([loop_timeConstruction/2]).
-
--export([main/0]).
+-export([getTime/0]).
+-export([main/1]).
 
 
 %Tree setup
 make_node(Left,Right) -> {Left,Right,0,0}.
 make_empty_tree() -> {nil,nil,0,0}.
 
-
-%variables (need to be defined as functions in Erlang)
 kStretchTreeDepth() -> 18 .
-kLongLivedTreeDepth() -> 16 . 
-kArraySize() -> 500000 . 
+kLongLivedTreeDepth() -> 16 .
+kArraySize() -> 500000 .
 kMinTreeDepth() -> 4 .
 kMaxTreeDepth() -> 16 .
 
-% Nodes used by a tree of a given size
-treeSize(X) -> round(math:pow(2,X+1) - 1.0).
 
-% Number of iterations to use for a given tree depth
-numIters(X) -> trunc((2 * treeSize(kStretchTreeDepth())) / treeSize(X)).
+getTime () ->
+	{Time1, Time2, Decimals} = erlang:timestamp(),
+	Time = integer_to_list(Time1) ++ integer_to_list(Time2) ++ "." ++ integer_to_list(Decimals),
+	Time.
 
 
 % Build tree top down, assigning to older objects.
 populate(IDepth, ThisNode) when IDepth > 0 ->
-	IDepth_upd = IDepth - 1,
 	ThisNode_fill_left = setelement(1, ThisNode, make_empty_tree()),
 	ThisNode_fill_all =  setelement(2, ThisNode_fill_left, make_empty_tree()),
-	
-	populate(IDepth_upd, element(1,ThisNode_fill_all) ),
-	populate(IDepth_upd, element(2,ThisNode_fill_all) );
-	
+
+	populate(IDepth - 1, element(1,ThisNode_fill_all) ),
+	populate(IDepth - 1, element(2,ThisNode_fill_all) );
+
 populate(0, _) ->
 	ok.
 
-% Build tree bottom-up 
+
+% Build tree bottom-up
 makeTree(IDepth) when IDepth > 0 ->
     make_node(makeTree(IDepth - 1), makeTree(IDepth - 1));
 makeTree(0) ->
 	make_empty_tree().
 
 
-
 printDiagnostics() ->
-	%_getData = memsup:get_system_memory_data(),
-	% no support for memsup on Linux, will try with memsup later.
-	{_,Total} = lists:nth(1, erlang:memory()),
-	{_,Processes} = lists:nth(2, erlang:memory()),
-	io:fwrite(" Total memory available=" ++ integer_to_list(Total) ++ " bytes"), 
-	io:fwrite("  Free memory=" ++ integer_to_list(Processes) ++ " bytes\n").
 
+	application:start(sasl),  % have to run with these two lines (just once)
+	application:start(os_mon), % to execute OS_MON
+	GetData = memsup:get_system_memory_data(),
+	{ _, LtotalMemory} = lists:nth(1, GetData),
+	{ _, LfreeMemory} = lists:nth(2, GetData),
 
-populate_loop(N, Depth) when N > 0 ->
-	populate(Depth, make_empty_tree()),
-	populate_loop(N-1, Depth);
-populate_loop(0, _) ->
-	ok.
-
-makeTree_loop(N, Depth) when N > 0 ->
-	makeTree(Depth),
-	makeTree_loop(N-1, Depth);
-makeTree_loop(0, _) ->
-	ok.
-
-
-timeConstruction(Depth) ->
-	INumIters = numIters(Depth),
-	io:fwrite("Creating " ++ integer_to_list(INumIters) ++
-			  " trees of depth " ++ integer_to_list(Depth) ++ "\n"),
-
-	statistics(wall_clock),
-
-	populate_loop(INumIters, Depth),
-	{_, _tFinish} = statistics(wall_clock),
-	io:fwrite("\tTop down construction took " 
-			++ integer_to_list(_tFinish) ++ "msecs\n"),
-	
-	statistics(wall_clock),
-
-	makeTree_loop(INumIters, Depth),
-	{_, _tFinish2} = statistics(wall_clock),
-
-	io:fwrite("\tBottom up construction took " 
-			++ integer_to_list(_tFinish2) ++ "msecs\n").
+	io:fwrite(" Total memory available=" ++ integer_to_list(LtotalMemory) ++ " bytes"),
+	io:fwrite("  Free memory=" ++ integer_to_list(LfreeMemory) ++ " bytes\n").
 
 
 %making an empty array
 makeArr() -> array:new(kArraySize() , {default,0.0}).
+
 
 % a loop for generating an array
 loop_arr(N, A, K_size) when N=< K_size ->  % no support for Infinity in erlang (first index), filling one more in the end instead
@@ -122,57 +77,101 @@ loop_arr(N, A, K_size) when N=< K_size ->  % no support for Infinity in erlang (
 loop_arr(N, A, K_size) when N>K_size ->
 	A.
 
-% a loop for generating timeConstruction
-loop_timeConstruction(N, _kMaxTreeDepth) when N =< _kMaxTreeDepth ->
-	timeConstruction(N),
-	loop_timeConstruction(N+2, _kMaxTreeDepth);
-loop_timeConstruction(N, _kMaxTreeDepth) when N> _kMaxTreeDepth ->
+
+
+fib (N) when N < 3 ->
+	1;
+fib (N) when N >= 3 ->
+	fib (N - 1) + fib (N - 2).
+
+
+start_gc_thread(Num_threads, Tree_depth, Iterations, ID) when Num_threads > 0 ->
+
+	Array = makeArr(),
+	Array_upd = loop_arr(1.0, Array, kArraySize()/2 ),
+	array:get(1000, Array_upd), % not assigning to a variable; gives a warning if the variable is not used
+
+	makeTree(Tree_depth), % not assigning to a variable
+
+	io:format("~s~w~n", ["starting GC thread #", ID] ),
+
+	spawn(gcbench, gc_func, [Tree_depth, ID, Iterations , 0]),
+
+	start_gc_thread(Num_threads - 1, Tree_depth, Iterations, ID + 1);
+start_gc_thread(0, _, _, _) ->
+	ok.
+
+gc_func(Tree_depth, ID, Iterations, I) when Iterations > 0 ->
+	Start_time = getTime(),
+	io:format("~s~w~s~w~s~s~n", ["gc:start:", ID, ":", I, ":",Start_time]),
+	makeTree(Tree_depth),
+	populate(Tree_depth, make_empty_tree()),
+	Stop_time = getTime(),
+	io:format("~s~w~s~w~s~s~n", ["gc:stop:",ID,":",I,":",Stop_time]),
+	gc_func(Tree_depth, ID, Iterations - 1 , I + 1 );
+gc_func(_,_,0,_) ->
+	ok.
+
+				%    1			37       10        1      1
+start_comp_thread(Num_threads, Depth, Iterations, ID, Comp_sleep) when Num_threads > 0 ->
+	io:format("~s~w~n", ["starting computing thread #", ID] ),
+
+	spawn(gcbench, comp_func, [Depth, ID, Iterations , 0, Comp_sleep]),
+	start_comp_thread(Num_threads - 1, Depth, Iterations, ID + 1, Comp_sleep);
+start_comp_thread(0, _, _, _, _) ->
 	ok.
 
 
-main() ->
-	io:fwrite("Garbage Collector Test\n"),
-	io:fwrite(" Stretching memory with a binary tree of depth " 
-			  ++ integer_to_list(kStretchTreeDepth()) ++"\n" ),
-	printDiagnostics(),
+comp_func(Depth, ID, Iterations, I, Comp_sleep) when Iterations > 0 ->
+	Start_time = getTime(),
+	io:format("~s~w~s~w~s~s~n", ["comp:start:",ID,":",I,":",Start_time]),
+	fib(Depth),
 
-	_tStart = erlang:now(),
+	Stop_time = getTime(),
+	io:format("~s~w~s~w~s~s~n", ["comp:stop:",ID,":",I,":",Stop_time]),
+	timer:sleep(Comp_sleep),
+	comp_func(Depth, ID, Iterations - 1 , I + 1, Comp_sleep);
+comp_func(_,_,0,_,_)->
+	init:stop().
 
-	% Stretch the memory space quickly
-	_tempTree = makeTree(kStretchTreeDepth()),
 
-	% Create a long lived object
-	io:fwrite(" Creating a long-lived binary tree of depth " 
-			  ++  integer_to_list(kLongLivedTreeDepth()) ++"\n" ),
 
-	_longLivedTree = make_empty_tree(),
-	populate(kLongLivedTreeDepth(), _longLivedTree),
+main(Args) ->
+	_t = lists:nth(1, Args ),
+	_d = lists:nth(2, Args ),
+	_i = lists:nth(3, Args ),
+	_s = lists:nth(4, Args ),
+	_g = lists:nth(5, Args ),
+	_e = lists:nth(6, Args ),
 
-	% Create long-lived array, filling half of it
-	io:fwrite(" Creating a long-lived array of " 
-			  ++  integer_to_list(kArraySize()) ++" floats\n" ),
-	_array = makeArr(),
-	io:fwrite( float_to_list(array:get(0, _array)) ++ "\n"),	
-	_array_upd = loop_arr(1.0, _array, kArraySize()/2 ),
+	{T, _} = string:to_integer( _t ),
+	{D, _} = string:to_integer( _d ),
+	{I, _} = string:to_integer( _i ),
+	{S, _} = string:to_integer( _s ),
+	{G, _} = string:to_integer( _g ),
+	{E, _} = string:to_integer( _e ),
 
-	printDiagnostics(),
 
-	loop_timeConstruction(kMinTreeDepth(), kMaxTreeDepth()),
-	_array_if = array:get(1000, _array_upd),
 
 	if
-		(_longLivedTree == nil) or ( _array_if /= 1.0/1000  ) ->
-			io:fwrite("Failed\n");
+		(T > 0 ) ->
+			start_comp_thread(G,D,I,1,S);
 		true -> ok
 	end,
 
-	_tFinish = erlang:now(),
-	_tElapsed = timer:now_diff(_tFinish, _tStart),
-	printDiagnostics(),
 
-	io:fwrite("Completed in " 
-			++ integer_to_list( trunc(_tElapsed/1000) ) ++ "ms.\n").
-
-
+	if
+		(G > 0 ) ->
+			start_gc_thread(T,E,I,1);
+		true -> ok
+	end.
 
 
+	%% compile
+	%erlc gcbench.erl
+
+	%% run
+	%erl -noshell -run gcbench main 1 37 10 1 1 10 -s
+
+
+%
