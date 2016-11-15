@@ -1,5 +1,5 @@
 
--module(gcbench).
+-module(gcBench).
 
 -export([make_node/2, make_empty_tree/0, populate/2, makeTree/1]).
 -export([printDiagnostics/0]).
@@ -95,7 +95,7 @@ start_gc_thread(Num_threads, Tree_depth, Iterations, ID) when Num_threads > 0 ->
 
 	io:format("~s~w~n", ["starting GC thread #", ID] ),
 
-	spawn(gcbench, gc_func, [self(), Tree_depth, ID, Iterations , 0]),
+	spawn(gcBench, gc_func, [self(), Tree_depth, ID, Iterations , 0]),
 	receive done ->
 		start_gc_thread(Num_threads - 1, Tree_depth, Iterations, ID + 1)
 	end;
@@ -117,7 +117,7 @@ gc_func(PID,_,_,0,_) ->
 start_comp_thread(Num_threads, Depth, Iterations, ID, Comp_sleep) when Num_threads > 0 ->
 	io:format("~s~w~n", ["starting computing thread #", ID] ),
 
-	spawn(gcbench, comp_func, [self(), Depth, ID, Iterations , 0, Comp_sleep] ),
+	spawn(gcBench, comp_func, [self(), Depth, ID, Iterations , 0, Comp_sleep] ),
 
 	receive done ->
 		start_comp_thread(Num_threads - 1, Depth, Iterations, ID + 1, Comp_sleep)
@@ -173,10 +173,10 @@ main(Args) ->
 
 
 	%% compile
-	%erlc gcbench.erl
+	%erlc gcBench.erl
 
 	%% run
-	%erl -noshell -run gcbench main 1 37 10 1 1 10 -s
+	%erl -noshell -run gcBench main 1 37 10 1 1 10 -s
 
 
 %
