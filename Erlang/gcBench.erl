@@ -5,8 +5,8 @@
 -export([printDiagnostics/0]).
 -export([makeArr/0, loop_arr/3]).
 -export([fib/1]).
--export([start_gc_thread/4, gc_func/4]).
--export([start_comp_thread/5, comp_func/5]).
+-export([start_gc_thread/4, gc_func/5]).
+-export([start_comp_thread/5, comp_func/6]).
 
 -export([kStretchTreeDepth/0]).
 -export([kLongLivedTreeDepth/0]).
@@ -95,45 +95,48 @@ start_gc_thread(Num_threads, Tree_depth, Iterations, ID) when Num_threads > 0 ->
 
 	io:format("~s~w~n", ["starting GC thread #", ID] ),
 
-	spawn(gcbench, gc_func, [Tree_depth, ID, Iterations , 0]),
-
-	start_gc_thread(Num_threads - 1, Tree_depth, Iterations, ID + 1);
+	spawn(gcbench, gc_func, [self(), Tree_depth, ID, Iterations , 0]),
+	receive done ->
+		start_gc_thread(Num_threads - 1, Tree_depth, Iterations, ID + 1)
+	end;
 start_gc_thread(0, _, _, _) ->
 	ok.
 
-gc_func(Tree_depth, ID, Iterations, I) when Iterations > 0 ->
+gc_func(PID, Tree_depth, ID, Iterations, I) when Iterations > 0 ->
 	Start_time = getTime(),
 	io:format("~s~w~s~w~s~s~n", ["gc:start:", ID, ":", I, ":",Start_time]),
 	makeTree(Tree_depth),
 	populate(Tree_depth, make_empty_tree()),
 	Stop_time = getTime(),
 	io:format("~s~w~s~w~s~s~n", ["gc:stop:",ID,":",I,":",Stop_time]),
-	gc_func(Tree_depth, ID, Iterations - 1 , I + 1 );
-gc_func(_,_,0,_) ->
-	ok.
+	gc_func(PID, Tree_depth, ID, Iterations - 1 , I + 1 );
+gc_func(PID,_,_,0,_) ->
+	PID ! done.
 
 				%    1			37       10        1      1
 start_comp_thread(Num_threads, Depth, Iterations, ID, Comp_sleep) when Num_threads > 0 ->
 	io:format("~s~w~n", ["starting computing thread #", ID] ),
 
-	spawn(gcbench, comp_func, [Depth, ID, Iterations , 0, Comp_sleep]),
-	start_comp_thread(Num_threads - 1, Depth, Iterations, ID + 1, Comp_sleep);
+	spawn(gcbench, comp_func, [self(), Depth, ID, Iterations , 0, Comp_sleep] ),
+
+	receive done ->
+		start_comp_thread(Num_threads - 1, Depth, Iterations, ID + 1, Comp_sleep)
+	end;
 start_comp_thread(0, _, _, _, _) ->
 	ok.
 
 
-comp_func(Depth, ID, Iterations, I, Comp_sleep) when Iterations > 0 ->
+comp_func(PID, Depth, ID, Iterations, I, Comp_sleep) when Iterations > 0 ->
 	Start_time = getTime(),
 	io:format("~s~w~s~w~s~s~n", ["comp:start:",ID,":",I,":",Start_time]),
 	fib(Depth),
 
 	Stop_time = getTime(),
 	io:format("~s~w~s~w~s~s~n", ["comp:stop:",ID,":",I,":",Stop_time]),
-	timer:sleep(Comp_sleep),
-	comp_func(Depth, ID, Iterations - 1 , I + 1, Comp_sleep);
-comp_func(_,_,0,_,_)->
-	init:stop().
-
+	%timer:sleep(Comp_sleep * 1000),
+	comp_func(PID, Depth, ID, Iterations - 1 , I + 1, Comp_sleep);
+comp_func(PID,_,_,0,_,_)->
+	PID ! done.
 
 
 main(Args) ->
@@ -151,20 +154,22 @@ main(Args) ->
 	{G, _} = string:to_integer( _g ),
 	{E, _} = string:to_integer( _e ),
 
-
-
 	if
-		(T > 0 ) ->
-			start_comp_thread(G,D,I,1,S);
+		(G > 0 ) ->
+			start_gc_thread(G,E,I,1);
 		true -> ok
 	end,
 
-
 	if
-		(G > 0 ) ->
-			start_gc_thread(T,E,I,1);
+		(T > 0 ) ->
+			start_comp_thread(T,D,I,1,S);
 		true -> ok
-	end.
+	end,
+
+	timer:sleep(3000),
+	init:stop().
+
+
 
 
 	%% compile
