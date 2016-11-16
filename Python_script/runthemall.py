@@ -177,7 +177,6 @@ def writeCSV(outputs, lang):
 python runthemall.py -t 1 -d 37 -i 10 -s 1 -g 1 -e 10 -m 4 -S -D
  3 thread, depth = 20
 python runthemall.py -t 3 -d 37 -i 10 -s 1 -g 3 -e 20 -m 4 -S -D
-
 '''
 
 
@@ -218,7 +217,7 @@ def main():
 	#run_hask('Haskell', hask_command)
 
 	cloj_command = make_commandLine('Clojure', 'lein run -- -t ', t, d, i, s, g, e)
-	run_cloj('Clojure', cloj_command)
+	#run_cloj('Clojure', cloj_command)
 
 	scala_command = make_commandLine('Scala', 'scala GCBench_multithread ', t, d, i, s, g, e)
 	#run_scala('Scala', scala_command)
