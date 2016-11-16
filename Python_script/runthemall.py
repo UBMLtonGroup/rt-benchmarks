@@ -19,7 +19,8 @@ def validArguments(args):
 
 def run_erlang(erl, erl_command):
 	os.chdir(erl) # 'Erlang'
-	os.system('erlc gcbench.erl')
+	print(erl + ' conversion starts: \n')
+	os.system('erlc gcBench.erl')
 	os.system(erl_command)
 
 	outputs = commands.getoutput(erl_command).split('\n')
@@ -29,6 +30,7 @@ def run_erlang(erl, erl_command):
 
 def run_hask(hask, hask_command):
 	os.chdir(hask) # 'Haskell'
+	print(hask + ' conversion starts: \n')
 	os.system('ghc gcbench.hs')
 	os.system(hask_command)
 
@@ -39,6 +41,7 @@ def run_hask(hask, hask_command):
 def run_cloj(cloj, cloj_command):
 	os.chdir(cloj) #'Clojure'
 	os.chdir('gcbench')
+	print(cloj + ' conversion starts: \n')
 	os.system(cloj_command)
 	outputs = commands.getoutput(cloj_command).split('\n')
 	os.chdir('..')
@@ -46,6 +49,7 @@ def run_cloj(cloj, cloj_command):
 
 def run_scala(scala, scala_command):
 	os.chdir(scala) # 'Scala'
+	print(scala + ' conversion starts: \n')
 	os.system('scalac GCBench_multithread.scala')
 	os.system(scala_command)
 	outputs = commands.getoutput(scala_command).split('\n')
@@ -55,6 +59,7 @@ def run_scala(scala, scala_command):
 
 def run_rkt(rkt, rkt_command):
 	os.chdir(rkt) # 'Racket'
+	print(rkt + ' conversion starts: \n')
 	os.system(rkt_command)
 	outputs = commands.getoutput(rkt_command).split('\n')
 	writeCSV(outputs, rkt)
@@ -157,11 +162,11 @@ def writeCSV(outputs, lang):
 
 	os.chdir('..')
 	os.chdir('Python_script')
-	with open( 'comp_' + lang + ".csv", "wb") as f:
+	with open( lang + '_comp.csv', "wb") as f:
 		writer = csv.writer(f)
 		writer.writerows(comp_write_all)
 
-	with open( 'gc_' + lang + ".csv", "wb") as f:
+	with open( lang + '_gc.csv', "wb") as f:
 		writer = csv.writer(f)
 		writer.writerows(gcs_write_all)
 	os.chdir('..') # go back to the home directory
@@ -206,14 +211,14 @@ def main():
 	os.chdir('..')
 	t = str(args.t); d = str(args.d); i = str(args.i); s = str(args.s); g = str(args.g); e = str(args.e); m = str(args.m)
 
-	erl_command = make_commandLine('Erlang', 'erl -noshell -run gcbench main ', t, d, i, s, g, e)
+	erl_command = make_commandLine('Erlang', 'erl -noshell -run gcBench main ', t, d, i, s, g, e)
 	#run_erlang('Erlang', erl_command)
 
 	hask_command = make_commandLine('Haskell', './gcbench -t ', t, d, i, s, g, e)
 	#run_hask('Haskell', hask_command)
 
 	cloj_command = make_commandLine('Clojure', 'lein run -- -t ', t, d, i, s, g, e)
-	#run_cloj('Clojure', cloj_command)
+	run_cloj('Clojure', cloj_command)
 
 	scala_command = make_commandLine('Scala', 'scala GCBench_multithread ', t, d, i, s, g, e)
 	#run_scala('Scala', scala_command)
