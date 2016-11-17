@@ -178,7 +178,7 @@ class Node(var left: Node, var right: Node) {
 			listOfTimeStamps += ("comp:start:"+ id +":" + i + ":" +tStart)
 			fibonacci(depth)
 			val tStop = System.currentTimeMillis()
-			listOfTimeStamps += ("comp:stop:"+ id +":" + i + ":" +tStart)
+			listOfTimeStamps += ("comp:stop:"+ id +":" + i + ":" +tStop)
 			Thread.sleep(comp_sleep)
 		}
 		listOfTimeStamps
