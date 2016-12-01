@@ -51,26 +51,31 @@ fib 1 = 1
 fib n = fib (n-1) + fib (n-2)
 
 gcFunc :: (Show a) => Int -> Integer -> (String -> IO ()) -> a -> IO ()
-gcFunc len iters printFun _ = do
+gcFunc len iters printFun threadIdNum = do
     let gcLoop i = do
         threadId <- myThreadId
         tStart <- getPOSIXTime
-        printFun $ "gc:start:" ++ show (threadIdNum threadId) ++  ":" ++ show i ++ ":" ++ show (posixTimeToMillis tStart)
+        --printFun $ "gc:start:" ++ show (threadIdNum threadId) ++  ":" ++ show i ++ ":" ++ show (posixTimeToMillis tStart)
+        printFun $ "gc:start:" ++ show (threadIdNum) ++  ":" ++ show i ++ ":" ++ show (posixTimeToMillis tStart)
         _ <- (evaluate . force) $ let l = [1..len] in sumPerms (snd (p len (l, [l]) ))
         tStop <- getPOSIXTime
-        printFun $ "gc:stop:" ++ show (threadIdNum threadId) ++  ":" ++ show i ++ ":" ++ show (posixTimeToMillis tStop)
+        --printFun $ "gc:stop:" ++ show (threadIdNum threadId) ++  ":" ++ show i ++ ":" ++ show (posixTimeToMillis tStop)
+        printFun $ "gc:stop:" ++ show (threadIdNum) ++  ":" ++ show i ++ ":" ++ show (posixTimeToMillis tStop)
+
 
     mapM_ gcLoop [1..iters]
 
 compute :: (Show a) => Integer -> Integer -> Double -> (String -> IO ()) -> a -> IO ()
-compute depth iters sleepTime printFun _ = do
+compute depth iters sleepTime printFun threadIdNum = do
     let compLoop i = do
         threadId <- myThreadId
         tStart <- getPOSIXTime
-        printFun $ "compute:start:" ++ show (threadIdNum threadId) ++  ":" ++ show i ++ ":" ++ show (posixTimeToMillis tStart)
+        --printFun $ "compute:start:" ++ show (threadIdNum threadId) ++  ":" ++ show i ++ ":" ++ show (posixTimeToMillis tStart)
+        printFun $ "compute:start:" ++ show (threadIdNum) ++  ":" ++ show i ++ ":" ++ show (posixTimeToMillis tStart)
         _ <- (evaluate . force) $ fib depth
         tStop <- getPOSIXTime
-        printFun $ "compute:stop:" ++ show (threadIdNum threadId) ++  ":" ++ show i ++ ":" ++ show (posixTimeToMillis tStop)
+        --printFun $ "compute:stop:" ++ show (threadIdNum threadId) ++  ":" ++ show i ++ ":" ++ show (posixTimeToMillis tStop)
+        printFun $ "compute:stop:" ++ show (threadIdNum) ++  ":" ++ show i ++ ":" ++ show (posixTimeToMillis tStop)
         threadDelay . fromIntegral . round $ sleepTime * 1000000
 
     mapM_ compLoop [1..iters]
@@ -87,8 +92,10 @@ runBenchmark (Arguments computeThreads computeDepth iters sleepTime gcThreads pe
     printLock <- newMVar ()
     let concurrentPrint s = withMVar printLock (\_ -> putStrLn s)
 
-    gcHandles <- mapM (forkThread . gcFunc permLength iters concurrentPrint) [2..(gcThreads + 1)]
-    computeHandles <- mapM (forkThread . compute computeDepth iters sleepTime concurrentPrint) [(gcThreads + 2) .. (gcThreads + computeThreads + 1)]
+    --gcHandles <- mapM (forkThread . gcFunc permLength iters concurrentPrint) [2..(gcThreads + 1)]
+    gcHandles <- mapM (forkThread . gcFunc permLength iters concurrentPrint) [1..gcThreads]
+    --computeHandles <- mapM (forkThread . compute computeDepth iters sleepTime concurrentPrint) [(gcThreads + 2) .. (gcThreads + computeThreads + 1)]
+    computeHandles <- mapM (forkThread . compute computeDepth iters sleepTime concurrentPrint) [1..computeThreads]
 
     mapM_ takeMVar $ gcHandles ++ computeHandles
 
