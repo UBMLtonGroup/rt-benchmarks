@@ -1,11 +1,12 @@
 
-
 import sys, getopt
 import argparse
 import os, commands
 import subprocess
 import csv
 import time
+import numpy as np
+import matplotlib.pyplot as plt
 
 
 def validArguments(args):
@@ -243,8 +244,80 @@ def main():
 	rkt_command = make_commandLine('Racket', 'racket gcbench.rkt -t ', t, d, i, s, g, e)
 	run_rkt('Racket', rkt_command)
 
+#main()
 
-main()
+
+
+
+#############################################
+######## generating graphs ########
+#############################################
+
+langs = ["Erlang", "Haskell", "Scala", "Racket"]
+
+def csv_files(langs, type1):
+	files = []
+	if type1 == "compute":
+		for lang in langs:
+			files.append(lang + "_comp.csv")
+		return files
+	elif type1 == "gc":
+		for lang in langs:
+			files.append(lang + "_gc.csv")
+		return files
+
+
+def parse_csv(file1):
+	data = open( file1 , "r")
+	big_lst = []
+	sub_lst = []
+	counter = 1
+	for line in data.readlines():
+		split = line.split(',')
+		thread_id = int(split[0])
+		time_stamp = float(split[2][:-2])
+
+		if thread_id > counter :
+			counter += 1
+			big_lst.append(sub_lst)
+			sub_lst = []
+		sub_lst.append(time_stamp)
+	big_lst.append(sub_lst)
+
+	return big_lst
+
+
+def make_plot( langs ):
+
+	types = ["_comp.csv", "_gc.csv"]
+	for each_type in types:
+		for lang in langs:
+			csv_file = lang + each_type
+			big_lst = parse_csv(csv_file)
+			data = []
+			for sub_lst in big_lst:
+				data.extend(sub_lst)
+
+			x_index = np.arange(0,3,0.1)
+			plt.xticks( x_index)
+			plt.plot( x_index, data , '-', label = lang)
+			plt.legend(bbox_to_anchor=(1.14, 1.05))
+		title = ""
+		if "comp" in each_type:
+			title = "Compute graph"
+		elif "gc" in each_type:
+			title = "GC graph"
+
+		plt.title(title)
+		plt.xlabel("iterations with threads")
+		plt.ylabel("timestamp in milliseconds")
+		plt.show()
+
+make_plot( langs )
+
+
+
+
 
 
 ##
