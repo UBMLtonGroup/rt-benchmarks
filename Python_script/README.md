@@ -7,6 +7,11 @@ Will keep updated depending on the integration with other benchmarks' command li
 <br />
 
 Python version: 2.7.12
+
+Python Libraries
+* numpy: 1.11.1
+* matplotlib: 1.5.2
+
 <br />
 <br />
 ### Run   
