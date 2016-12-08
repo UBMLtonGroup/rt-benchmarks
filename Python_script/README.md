@@ -13,6 +13,5 @@ Python Libraries
 * matplotlib: 1.5.2
 
 <br />
-<br />
 ### Run   
     python runthemall.py -t 1 -d 37 -i 10 -s 1 -g 1 -e 10 -m 4 -D -S
