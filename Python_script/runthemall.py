@@ -230,19 +230,19 @@ def main():
 	t = str(args.t); d = str(args.d); i = str(args.i); s = str(args.s); g = str(args.g); e = str(args.e); m = str(args.m)
 
 	erl_command = make_commandLine('Erlang', 'erl -noshell -run gcBench main ', t, d, i, s, g, e)
-	run_erlang('Erlang', erl_command)
+	#run_erlang('Erlang', erl_command)
 
 	hask_command = make_commandLine('Haskell', './gcbench -t ', t, d, i, s, g, e)
-	run_hask('Haskell', hask_command)
+	#run_hask('Haskell', hask_command)
 
 	cloj_command = make_commandLine('Clojure', 'lein run -- -t ', t, d, i, s, g, e)
 	#run_cloj('Clojure', cloj_command)
 
 	scala_command = make_commandLine('Scala', 'scala GCBench_multithread ', t, d, i, s, g, e)
-	run_scala('Scala', scala_command)
+	#run_scala('Scala', scala_command)
 
 	rkt_command = make_commandLine('Racket', 'racket gcbench.rkt -t ', t, d, i, s, g, e)
-	run_rkt('Racket', rkt_command)
+	#run_rkt('Racket', rkt_command)
 
 #main()
 
@@ -294,13 +294,22 @@ def make_plot( langs ):
 		for lang in langs:
 			csv_file = lang + each_type
 			big_lst = parse_csv(csv_file)
+			num_sublst = len(big_lst)
+			iterations = len(big_lst[0])
 			data = []
 			for sub_lst in big_lst:
 				data.extend(sub_lst)
+			x_index = []
+			for i in range(1, num_sublst + 1):
+				x = str(i)
+				for j in range(1, iterations + 1):
+					x += ")" + str(j)
+					x_index.append(x)
+					x = str(i)
 
-			x_index = np.arange(0,3,0.1)
-			plt.xticks( x_index)
-			plt.plot( x_index, data , '-', label = lang)
+			num_x = range(len(x_index))
+			plt.xticks(num_x, x_index)
+			plt.plot( range(len(x_index)), data , '-', label = lang)
 			plt.legend(bbox_to_anchor=(1.14, 1.05))
 		title = ""
 		if "comp" in each_type:
