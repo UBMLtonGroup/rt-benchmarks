@@ -229,10 +229,6 @@ def main():
 	parser.add_argument('-D','--debug', action = 'store_true', help='Enable debugging output' , default = False)
 
 	args = parser.parse_args()
-	if args.h == True:
-		exit()
-	
-
 
 	os.chdir('..')
 	t = str(args.t); d = str(args.d); i = str(args.i); s = str(args.s); g = str(args.g); e = str(args.e); m = str(args.m)
