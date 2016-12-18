@@ -9,6 +9,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
+
+
+
+
 def validArguments(args):
 	args_hash = vars(args)
 	arg_values = args_hash.values()
@@ -225,6 +229,10 @@ def main():
 	parser.add_argument('-D','--debug', action = 'store_true', help='Enable debugging output' , default = False)
 
 	args = parser.parse_args()
+	if args.h == True:
+		exit()
+	
+
 
 	os.chdir('..')
 	t = str(args.t); d = str(args.d); i = str(args.i); s = str(args.s); g = str(args.g); e = str(args.e); m = str(args.m)
@@ -244,7 +252,7 @@ def main():
 	rkt_command = make_commandLine('Racket', 'racket gcbench.rkt -t ', t, d, i, s, g, e)
 	#run_rkt('Racket', rkt_command)
 
-#main()
+main()
 
 
 
@@ -322,7 +330,7 @@ def make_plot( langs ):
 		plt.ylabel("timestamp in milliseconds")
 		plt.show()
 
-make_plot( langs )
+#make_plot( langs )
 
 
 
