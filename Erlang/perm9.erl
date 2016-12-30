@@ -5,9 +5,8 @@
 -export([permutations/1]).
 -export([factorial/1]).
 -export([perm9_benchmark/2, permutation_loop/2]).
+-export([fib/1]).
 -export([main/0]).
-
-%-compile([debug_info, export_all]).
 
 
 % N - number ( integer ) , L - list ( [] )
@@ -22,6 +21,7 @@ sum_element(X) ->
                 0, X).
 sum_append(X) ->
   lists:append(X).
+
 %N = length of list X
 sum_lists(_, N) when N == 0 ->
   0;
@@ -34,9 +34,9 @@ permutations(L)  -> [[H|T] || H <- L, T <- permutations(L--[H])].
 
 
 factorial(N) when N > 1 ->
-  N * factorial(N-1);
+	N * factorial(N-1);
 factorial(1) ->
-  1.
+	1.
 
 
 permutation_loop(Perms, M) when M > 0 ->
@@ -47,10 +47,15 @@ permutation_loop(Perms, _) ->
 
 
 perm9_benchmark(M, N) ->
-    %factorial(N), later
+    factorial(N),
     Temp_perms = permutations( one2n(N, []) ),
     permutation_loop( Temp_perms, M ),
     N * (N + 1) * factorial(N).
+
+fib (N) when N < 3 ->
+	1;
+fib (N) when N >= 3 ->
+	fib (N - 1) + fib (N - 2).
 
 main () ->
 	perm9_benchmark (5, 9),

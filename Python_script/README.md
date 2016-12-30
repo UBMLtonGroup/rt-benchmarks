@@ -7,7 +7,11 @@ Will keep updated depending on the integration with other benchmarks' command li
 <br />
 
 Python version: 2.7.12
-<br />
+
+Python Libraries
+* numpy: 1.11.1
+* matplotlib: 1.5.2
+
 <br />
 ### Run   
     python runthemall.py -t 1 -d 37 -i 10 -s 1 -g 1 -e 10 -m 4 -D -S
