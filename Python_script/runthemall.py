@@ -9,10 +9,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-
-
-
-
 def validArguments(args):
 	args_hash = vars(args)
 	arg_values = args_hash.values()

@@ -7,3 +7,7 @@
 sml/gc-pressure
 gcbench/gcbench
 perm9/perm9
+.idea
+Clojure/gcbench/target
+Haskell/gcbench
+Haskell/gcbench.hi
