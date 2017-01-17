@@ -1,12 +1,11 @@
 
 import sys, getopt
 import argparse
-import os, commands
-import subprocess
+import os
+import commands
 import csv
 import time
 import numpy as np
-import matplotlib.pyplot as plt
 
 
 def validArguments(args):
@@ -15,7 +14,7 @@ def validArguments(args):
 	for value in arg_values:
 		value = int(value)
 		if value < 0 or value > 65536:
-	 		print('Argument must be a number between 0 and 65536')
+			print('Argument must be a number between 0 and 65536')
 			exit()
 
 def run_erlang(erl, erl_command):
@@ -178,11 +177,11 @@ def write_csv(outputs, lang):
 	gcs_write_all = process_outputs( gcs, gcs_size)
 	os.chdir('..')
 	os.chdir('Python_script')
-	with open( lang + '_comp.csv', "wb") as f:
+	with open('{}_comp.csv'.format(lang), "wb") as f:
 		writer = csv.writer(f)
 		writer.writerows(comp_write_all)
 
-	with open( lang + '_gc.csv', "wb") as f:
+	with open('{}_gc.csv'.format(lang), "wb") as f:
 		writer = csv.writer(f)
 		writer.writerows(gcs_write_all)
 	os.chdir('..') # go back to the home directory
@@ -230,7 +229,7 @@ def main():
 	t = str(args.t); d = str(args.d); i = str(args.i); s = str(args.s); g = str(args.g); e = str(args.e); m = str(args.m)
 
 	erl_command = make_commandLine('Erlang', 'erl -noshell -run gcBench main ', t, d, i, s, g, e)
-	#run_erlang('Erlang', erl_command)
+	run_erlang('Erlang', erl_command)
 
 	hask_command = make_commandLine('Haskell', './gcbench -t ', t, d, i, s, g, e)
 	#run_hask('Haskell', hask_command)
@@ -289,38 +288,43 @@ def parse_csv(file1):
 
 def make_plot( langs ):
 
-	types = ["_comp.csv", "_gc.csv"]
-	for each_type in types:
-		for lang in langs:
-			csv_file = lang + each_type
-			big_lst = parse_csv(csv_file)
-			num_sublst = len(big_lst)
-			iterations = len(big_lst[0])
-			data = []
-			for sub_lst in big_lst:
-				data.extend(sub_lst)
-			x_index = []
-			for i in range(1, num_sublst + 1):
-				x = str(i)
-				for j in range(1, iterations + 1):
-					x += ")" + str(j)
-					x_index.append(x)
-					x = str(i)
+    try:
+        import matplotlib.pyplot as plt
 
-			num_x = range(len(x_index))
-			plt.xticks(num_x, x_index)
-			plt.plot( range(len(x_index)), data , '-', label = lang)
-			plt.legend(bbox_to_anchor=(1.14, 1.05))
-		title = ""
-		if "comp" in each_type:
-			title = "Compute graph"
-		elif "gc" in each_type:
-			title = "GC graph"
+        types = ["_comp.csv", "_gc.csv"]
+        for each_type in types:
+            for lang in langs:
+                csv_file = lang + each_type
+                big_lst = parse_csv(csv_file)
+                num_sublst = len(big_lst)
+                iterations = len(big_lst[0])
+                data = []
+                for sub_lst in big_lst:
+                    data.extend(sub_lst)
+                x_index = []
+                for i in range(1, num_sublst + 1):
+                    x = str(i)
+                    for j in range(1, iterations + 1):
+                        x += ")" + str(j)
+                        x_index.append(x)
+                        x = str(i)
 
-		plt.title(title)
-		plt.xlabel("iterations with threads")
-		plt.ylabel("timestamp in milliseconds")
-		plt.show()
+                num_x = range(len(x_index))
+                plt.xticks(num_x, x_index)
+                plt.plot( range(len(x_index)), data , '-', label = lang)
+                plt.legend(bbox_to_anchor=(1.14, 1.05))
+            title = ""
+            if "comp" in each_type:
+                title = "Compute graph"
+            elif "gc" in each_type:
+                title = "GC graph"
+
+            plt.title(title)
+            plt.xlabel("iterations with threads")
+            plt.ylabel("timestamp in milliseconds")
+            plt.show()
+    except Exception as e:
+        print ("Failed to generate plots: {}".format(e))
 
 #make_plot( langs )
 
