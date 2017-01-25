@@ -74,14 +74,15 @@
 
 ;; 
 (defn gc-thread-helper
-  [tree-depth id niter debug]
+  [tree-depth id niter gc-sleep debug]
   (if (> niter 0)
     (do
       (println (format "gc:start:%d:%d:%d" id niter (System/currentTimeMillis)))
       (make-tree-bottom-up tree-depth)
       (make-tree-top-down tree-depth make-empty-node)
-      (println (format "gc:stop:%d:%d:%d" id niter (System/currentTimeMillis))) 
-      (gc-thread-helper tree-depth id (- niter 1) debug))
+      (println (format "gc:stop:%d:%d:%d" id niter (System/currentTimeMillis)))
+      (Thread/sleep gc-sleep)
+      (gc-thread-helper tree-depth id (- niter 1) gc-sleep debug))
     )
   )
 
@@ -93,12 +94,12 @@
        c. repeat for N iters
    4. collect stop time
    5. output delta time with id"
-  [tree-depth id niter debug]
+  [tree-depth id niter gc-sleep debug]
   do 
-     (gc-thread-helper tree-depth id niter debug)
+     (gc-thread-helper tree-depth id niter gc-sleep debug)
 )
 
-(defn make-gc-threads [num-threads tree-depth niter warm-up debug]
+(defn make-gc-threads [num-threads tree-depth niter warm-up gc-sleep debug]
   (if (> num-threads 0) 
     (do 
       (if (true? warm-up)
@@ -108,7 +109,7 @@
                (update-state 'long-lived-array' (make-array Double/TYPE 500000))
          )
        )
-       (dotimes [i num-threads] (.start (Thread. (fn [] (gc-thread tree-depth i niter debug)))))
+       (dotimes [i num-threads] (.start (Thread. (fn [] (gc-thread tree-depth i niter gc-sleep debug)))))
     )
   )
 )

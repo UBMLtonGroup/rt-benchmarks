@@ -14,7 +14,7 @@
     (do
       (println (format "compute:start:%d:%d:%d" id niter (System/currentTimeMillis)))
       (fib compute-depth)
-      (println (format "compute:stop:%d:%d:%d" id niter (System/currentTimeMillis))) 
+      (println (format "compute:stop:%d:%d:%d" id niter (System/currentTimeMillis)))
       (Thread/sleep compute-sleep)
       (compute-thread-helper compute-depth id (- niter 1) compute-sleep debug)
      )

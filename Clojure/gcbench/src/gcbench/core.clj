@@ -24,12 +24,16 @@
     :default 100
     :parse-fn #(Integer/parseInt %)
     :validate [#(< 0 % 0x10000) "Must be a number between 1 and 65536"]]
-   ["-s" "--compute-sleep NUM" "Compute Sleep"
-    :default 1
+   ["-s" "--compute-sleep NUM" "Compute Sleep (in ms)"
+    :default 1000
     :parse-fn #(Integer/parseInt %)
     :validate [#(<= 0 % 0x10000) "Must be a number between 0 and 65536"]]
    ["-g" "--gc-threads NUM" "GC Threads"
     :default 1
+    :parse-fn #(Integer/parseInt %)
+    :validate [#(<= 0 % 0x10000) "Must be a number between 0 and 65536"]]
+   ["-G" "--gc-sleep NUM" "GC Sleep (in ms)"
+    :default 1000
     :parse-fn #(Integer/parseInt %)
     :validate [#(<= 0 % 0x10000) "Must be a number between 0 and 65536"]]
    ["-e" "--tree-depth NUM" "Maximum tree depth to allocate"
@@ -77,7 +81,8 @@
   (make-gc-threads (:gc-threads options)
                    (:tree-depth options)
                    (:iterations options)
-                   true 
+                   true
+                   (:gc-sleep options)
                    (:debug options))
   (make-compute-threads (:compute-threads options)
                      (:compute-depth options)
