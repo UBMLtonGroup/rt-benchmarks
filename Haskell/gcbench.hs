@@ -18,6 +18,7 @@ data Arguments = Arguments {
     iters :: Integer,
     sleepTime :: Double,
     gcThreads :: Integer,
+    gcDelay :: Integer,
     treeDepth:: Integer,
     showGCStats :: Bool
 }
@@ -96,7 +97,7 @@ forkThread f = do
     return isDone
 
 runBenchmark :: Arguments -> IO ()
-runBenchmark (Arguments computeThreads computeDepth iters sleepTime gcThreads treeDepth showGCStats) = do
+runBenchmark (Arguments computeThreads computeDepth iters sleepTime gcThreads gcDelay treeDepth showGCStats) = do
 
     printLock <- newMVar ()
     let concurrentPrint s = withMVar printLock (\_ -> putStrLn s)
@@ -154,6 +155,14 @@ benchmarkCLI = Arguments
         <> metavar "NUM"
         <> value 1
         <> help "GC Threads" )
+
+    -- -J, --gc-delay NUM          30   GC startup delay (secs)
+    <*> option auto
+        ( long "gc-delay"
+        <> short 'J'
+        <> metavar "NUM"
+        <> value 30
+        <> help "GC Startup delay" )
 
     -- -e, --tree-depth NUM          10  Maximum tree depth to allocate
     <*> option auto
