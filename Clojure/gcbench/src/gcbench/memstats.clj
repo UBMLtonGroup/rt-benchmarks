@@ -13,6 +13,12 @@
   ([coll] 
     (reduce + 4 (map sizeof (seq coll))))) 
 
+(defn heap-used
+  "Report a (inconsistent) snapshot of the heap memory used."
+  []
+  (let [runtime (Runtime/getRuntime)]
+    (- (.totalMemory runtime) (.freeMemory runtime))))
+
 
 (comment "
 ;; duck types no long available:

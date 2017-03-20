@@ -77,10 +77,10 @@
   [tree-depth id niter gc-sleep debug]
   (if (> niter 0)
     (do
-      (println (format "gc:start:%d:%d:%d" id niter (System/currentTimeMillis)))
+      (println (format "gc:start:%d:%d:%d:%d" id niter (System/currentTimeMillis) (heap-used)))
       (make-tree-bottom-up tree-depth)
       (make-tree-top-down tree-depth make-empty-node)
-      (println (format "gc:stop:%d:%d:%d" id niter (System/currentTimeMillis)))
+      (println (format "gc:stop:%d:%d:%d:%d" id niter (System/currentTimeMillis) (heap-used)))
       (Thread/sleep gc-sleep)
       (gc-thread-helper tree-depth id (- niter 1) gc-sleep debug))
     )
@@ -99,9 +99,10 @@
      (gc-thread-helper tree-depth id niter gc-sleep debug)
 )
 
-(defn make-gc-threads [num-threads tree-depth niter warm-up gc-sleep debug]
+(defn make-gc-threads [num-threads tree-depth niter warm-up gc-sleep gc-delay debug]
   (if (> num-threads 0) 
-    (do 
+    (do
+      (Thread/sleep (* 1000 gc-delay))
       (if (true? warm-up)
          (do 
                (if (true? debug) (println "warm up"))

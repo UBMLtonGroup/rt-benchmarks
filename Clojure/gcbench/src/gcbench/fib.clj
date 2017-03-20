@@ -1,4 +1,5 @@
-(ns gcbench.fib)
+(ns gcbench.fib
+    (:use [gcbench.memstats]))
 
 (defn fib [max]
   (loop [res [0 1]]
@@ -12,9 +13,9 @@
   [compute-depth id niter compute-sleep debug]
   (if (> niter 0)
     (do
-      (println (format "compute:start:%d:%d:%d" id niter (System/currentTimeMillis)))
+      (println (format "compute:start:%d:%d:%d:%d" id niter (System/currentTimeMillis) (heap-used)))
       (fib compute-depth)
-      (println (format "compute:stop:%d:%d:%d" id niter (System/currentTimeMillis)))
+      (println (format "compute:stop:%d:%d:%d:%d" id niter (System/currentTimeMillis) (heap-used)))
       (Thread/sleep compute-sleep)
       (compute-thread-helper compute-depth id (- niter 1) compute-sleep debug)
      )

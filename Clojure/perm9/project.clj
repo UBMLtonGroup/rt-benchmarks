@@ -3,4 +3,5 @@
   :dependencies [[org.clojure/clojure "1.4.0"]
   		 [org.clojure/tools.cli "0.3.5"]]
   :main perm9.core
+  :jvm-opts ["-Xmx512m" "-server"] 
 )

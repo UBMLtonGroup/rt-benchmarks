@@ -87,13 +87,14 @@
 		
 ;; 
 (defn gc-thread-helper
-  [digits id niter debug]
+  [digits id niter gc-sleep debug]
   (if (> niter 0)
     (do
-      (println (format "gc:start:%d:%d:%d" id niter (System/currentTimeMillis)))
-      (perm9_benchmark 5 9)
-      (println (format "gc:stop:%d:%d:%d" id niter (System/currentTimeMillis))) 
-      (gc-thread-helper digits id (- niter 1) debug))
+      (println (format "gc:start:%d:%d:%d:%d" id niter (System/currentTimeMillis) (heap-used)))
+      (perm9_benchmark 5 digits)
+      (println (format "gc:stop:%d:%d:%d:%d" id niter (System/currentTimeMillis) (heap-used)))
+      (Thread/sleep gc-sleep)
+      (gc-thread-helper digits id (- niter 1) gc-sleep debug))
     )
   )
 
@@ -103,15 +104,18 @@
       a. call perm9 with specified digits param
    3. collect stop time
    4. output delta time with id"
-  [digits id niter debug]
+  [digits id niter gc-sleep debug]
   do 
-     (gc-thread-helper digits id niter debug)
+     (gc-thread-helper digits id niter gc-sleep debug)
 )
 
-(defn make-gc-threads [num-threads digits niter debug]
-  (if (> num-threads 0) 
-       (dotimes [i num-threads] (.start (Thread. (fn [] (gc-thread digits i niter debug)))))
+(defn make-gc-threads [num-threads digits niter gc-sleep gc-delay debug]
+  (if (> num-threads 0)
+      (do
+        (
+        (Thread/sleep (* 1000 gc-delay))
+        (dotimes [i num-threads] (.start (Thread. (fn [] (gc-thread digits i niter gc-sleep debug)))))
+        )
+    )
   )
 )
-
-

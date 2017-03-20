@@ -2,13 +2,10 @@
 (ns gcbench.core
   (:require [clojure.string :as string] 
             ;; https://github.com/clojure/tools.cli
-            [clojure.tools.cli :refer [parse-opts]])
+            [clojure.tools.cli :refer [parse-opts]]
+   )
   (:use [gcbench.tree] [gcbench.memstats] [gcbench.fib])
   (:gen-class))
-
-
-
-
 
 (def cli-options
   ;; An option with a required argument
@@ -17,7 +14,7 @@
     :parse-fn #(Integer/parseInt %)
     :validate [#(<= 0 % 0x10000) "Must be a number between 0 and 65536"]]
    ["-d" "--compute-depth NUM" "Compute Depth"
-    :default 100
+    :default 1500
     :parse-fn #(Integer/parseInt %)
     :validate [#(< 0 % 0x10000) "Must be a number between 1 and 65536"]]
    ["-i" "--iterations NUM" "Iterations"
@@ -30,6 +27,10 @@
     :validate [#(<= 0 % 0x10000) "Must be a number between 0 and 65536"]]
    ["-g" "--gc-threads NUM" "GC Threads"
     :default 1
+    :parse-fn #(Integer/parseInt %)
+    :validate [#(<= 0 % 0x10000) "Must be a number between 0 and 65536"]]
+   ["-J" "--gc-delay NUM" "GC thread startup delay (in sec)"
+    :default 30
     :parse-fn #(Integer/parseInt %)
     :validate [#(<= 0 % 0x10000) "Must be a number between 0 and 65536"]]
    ["-G" "--gc-sleep NUM" "GC Sleep (in ms)"
@@ -78,17 +79,20 @@
       (:help options) (exit 0 (usage summary))
       errors (exit 1 (error-msg errors)))
   (make-tree-bottom-up (+ 2 (:tree-depth options))) ;; stretch memory
-  (make-gc-threads (:gc-threads options)
-                   (:tree-depth options)
-                   (:iterations options)
-                   true
-                   (:gc-sleep options)
-                   (:debug options))
+
   (make-compute-threads (:compute-threads options)
                      (:compute-depth options)
                      (:iterations options)
                      (:compute-sleep options)
                      (:debug options))
+
+  (make-gc-threads (:gc-threads options)
+                   (:tree-depth options)
+                   (:iterations options)
+                   true
+                   (:gc-sleep options)
+                   (:gc-delay options)
+                   (:debug options))
   )
 )
   
