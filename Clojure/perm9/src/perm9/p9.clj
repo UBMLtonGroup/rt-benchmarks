@@ -112,10 +112,8 @@
 (defn make-gc-threads [num-threads digits niter gc-sleep gc-delay debug]
   (if (> num-threads 0)
       (do
-        (
         (Thread/sleep (* 1000 gc-delay))
         (dotimes [i num-threads] (.start (Thread. (fn [] (gc-thread digits i niter gc-sleep debug)))))
-        )
     )
   )
 )
