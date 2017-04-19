@@ -22,5 +22,11 @@ A direct translation of the original GCBench benchmark into Haskell, supporting 
     ghc perm9.hs
 
 ### Running the Benchmark ###
-    gcbench
-    perm9
+    The RTS T flag is required to fetch the GC heap stats
+
+    gcbench +RTS -T
+    perm9 +RTS -T
+
+    to limit memory
+
+    gcbench +RTS -M1000m

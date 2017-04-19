@@ -61,13 +61,15 @@ gcFunc depth iters printFun threadIdNum = do
     longLivedTree <- evaluate . force $ makeTree depth
 
     let gcLoop i = do
+        stats1 <- getGCStats
         threadId <- myThreadId
         tStart <- getPOSIXTime
         --printFun $ "gc:start:" ++ show (threadIdNum threadId) ++  ":" ++ show i ++ ":" ++ show (posixTimeToMillis tStart)
-        printFun $ "gc:start:" ++ show (threadIdNum) ++  ":" ++ show i ++ ":" ++ show (posixTimeToMillis tStart)
+        printFun $ "gc:start:" ++ show (threadIdNum) ++  ":" ++ show i ++ ":" ++ show (posixTimeToMillis tStart) ++ ":" ++ show (currentBytesUsed stats1)
         _ <- (evaluate . force) $ makeTree depth
         tStop <- getPOSIXTime
-        printFun $ "gc:stop:" ++ show (threadIdNum) ++  ":" ++ show i ++ ":" ++ show (posixTimeToMillis tStop)
+        stats2 <- getGCStats
+        printFun $ "gc:stop:" ++ show (threadIdNum) ++  ":" ++ show i ++ ":" ++ show (posixTimeToMillis tStop) ++ ":" ++ show (currentBytesUsed stats2)
 
     mapM_ gcLoop [1..iters]
 
@@ -78,14 +80,16 @@ gcFunc depth iters printFun threadIdNum = do
 compute :: (Show a) => Integer -> Integer -> Double -> (String -> IO ()) -> a -> IO ()
 compute depth iters sleepTime printFun threadIdNum = do
     let compLoop i = do
+        stats1 <- getGCStats
         threadId <- myThreadId
         tStart <- getPOSIXTime
         --printFun $ "compute:start:" ++ show (threadIdNum threadId) ++  ":" ++ show i ++ ":" ++ show (posixTimeToMillis tStart)
-        printFun $ "compute:start:" ++ show (threadIdNum) ++  ":" ++ show i ++ ":" ++ show (posixTimeToMillis tStart)
+        printFun $ "compute:start:" ++ show (threadIdNum) ++  ":" ++ show i ++ ":" ++ show (posixTimeToMillis tStart) ++ ":" ++ show (currentBytesUsed stats1)
         _ <- (evaluate . force) $ fib depth
         tStop <- getPOSIXTime
+        stats2 <- getGCStats
         --printFun $ "compute:stop:" ++ show (threadIdNum threadId) ++  ":" ++ show i ++ ":" ++ show (posixTimeToMillis tStop)
-        printFun $ "compute:stop:" ++ show (threadIdNum) ++  ":" ++ show i ++ ":" ++ show (posixTimeToMillis tStop)
+        printFun $ "compute:stop:" ++ show (threadIdNum) ++  ":" ++ show i ++ ":" ++ show (posixTimeToMillis tStop) ++ ":" ++ show (currentBytesUsed stats2)
         threadDelay . fromIntegral . round $ sleepTime * 1000000
 
     mapM_ compLoop [1..iters]

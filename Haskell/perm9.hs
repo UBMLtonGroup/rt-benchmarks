@@ -52,15 +52,18 @@ fib n = fib (n-1) + fib (n-2)
 
 gcFunc :: (Show a) => Int -> Integer -> (String -> IO ()) -> a -> IO ()
 gcFunc len iters printFun threadIdNum = do
+    threadDelay . fromIntegral . round $ 30 * 1000000
     let gcLoop i = do
+        stats1 <- getGCStats
         threadId <- myThreadId
         tStart <- getPOSIXTime
         --printFun $ "gc:start:" ++ show (threadIdNum threadId) ++  ":" ++ show i ++ ":" ++ show (posixTimeToMillis tStart)
-        printFun $ "gc:start:" ++ show (threadIdNum) ++  ":" ++ show i ++ ":" ++ show (posixTimeToMillis tStart)
+        printFun $ "gc:start:" ++ show (threadIdNum) ++  ":" ++ show i ++ ":" ++ show (posixTimeToMillis tStart) ++ ":" ++ show (currentBytesUsed stats1)
         _ <- (evaluate . force) $ let l = [1..len] in sumPerms (snd (p len (l, [l]) ))
         tStop <- getPOSIXTime
+        stats2 <- getGCStats
         --printFun $ "gc:stop:" ++ show (threadIdNum threadId) ++  ":" ++ show i ++ ":" ++ show (posixTimeToMillis tStop)
-        printFun $ "gc:stop:" ++ show (threadIdNum) ++  ":" ++ show i ++ ":" ++ show (posixTimeToMillis tStop)
+        printFun $ "gc:stop:" ++ show (threadIdNum) ++  ":" ++ show i ++ ":" ++ show (posixTimeToMillis tStop) ++ ":" ++ show (currentBytesUsed stats2)
 
 
     mapM_ gcLoop [1..iters]
@@ -68,14 +71,16 @@ gcFunc len iters printFun threadIdNum = do
 compute :: (Show a) => Integer -> Integer -> Double -> (String -> IO ()) -> a -> IO ()
 compute depth iters sleepTime printFun threadIdNum = do
     let compLoop i = do
+        stats1 <- getGCStats
         threadId <- myThreadId
         tStart <- getPOSIXTime
         --printFun $ "compute:start:" ++ show (threadIdNum threadId) ++  ":" ++ show i ++ ":" ++ show (posixTimeToMillis tStart)
-        printFun $ "compute:start:" ++ show (threadIdNum) ++  ":" ++ show i ++ ":" ++ show (posixTimeToMillis tStart)
+        printFun $ "compute:start:" ++ show (threadIdNum) ++  ":" ++ show i ++ ":" ++ show (posixTimeToMillis tStart) ++ ":" ++ show (currentBytesUsed stats1)
         _ <- (evaluate . force) $ fib depth
+        stats2 <- getGCStats
         tStop <- getPOSIXTime
         --printFun $ "compute:stop:" ++ show (threadIdNum threadId) ++  ":" ++ show i ++ ":" ++ show (posixTimeToMillis tStop)
-        printFun $ "compute:stop:" ++ show (threadIdNum) ++  ":" ++ show i ++ ":" ++ show (posixTimeToMillis tStop)
+        printFun $ "compute:stop:" ++ show (threadIdNum) ++  ":" ++ show i ++ ":" ++ show (posixTimeToMillis tStop) ++ ":" ++ show (currentBytesUsed stats2)
         threadDelay . fromIntegral . round $ sleepTime * 1000000
 
     mapM_ compLoop [1..iters]
