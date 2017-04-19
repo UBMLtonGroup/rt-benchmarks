@@ -1,6 +1,7 @@
 Python_script/v2/stats.db
 Clojure/perm9/target/**
 **/.lein-repl-history
+Python_script/v2/.*
 **/*~
 **/*.beam
 **/erl_crash.dump
