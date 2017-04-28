@@ -18,8 +18,8 @@ A direct translation of the original GCBench benchmark into Haskell, supporting 
 * optparse-applicative
 
 ### Building with GHC ##
-    ghc gcbench.hs
-    ghc perm9.hs
+    ghc gcbench.hs -rtsopts
+    ghc perm9.hs -rtsopts
 
 ### Running the Benchmark ###
     The RTS T flag is required to fetch the GC heap stats
