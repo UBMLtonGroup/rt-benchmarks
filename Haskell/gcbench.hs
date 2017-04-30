@@ -85,12 +85,12 @@ gcFunc depth iters printFun threadIdNum = do
     let gcLoop i = do
         stats1 <- getGCStats
         threadId <- myThreadId
-        tStart <- timeInSeconds'
-        printFun $ "gc:start:" ++ show (threadIdNum) ++  ":" ++ show i ++ ":" ++ formatFloatN tStart 4 ++ ":" ++ show (currentBytesUsed stats1)
+        tStart <- timeInMicros
+        printFun $ "gc:start:" ++ show (threadIdNum) ++  ":" ++ show i ++ ":" ++ show tStart ++ ":" ++ show (currentBytesUsed stats1)
         _ <- (evaluate . force) $ makeTree depth
-        tStop <- timeInSeconds'
+        tStop <- timeInMicros
         stats2 <- getGCStats
-        printFun $ "gc:stop:" ++ show (threadIdNum) ++  ":" ++ show i ++ ":" ++ formatFloatN tStop 4 ++ ":" ++ show (currentBytesUsed stats2)
+        printFun $ "gc:stop:" ++ show (threadIdNum) ++  ":" ++ show i ++ ":" ++ show tStop ++ ":" ++ show (currentBytesUsed stats2)
 
     mapM_ gcLoop [1..iters]
 
@@ -103,15 +103,16 @@ compute depth iters sleepTime printFun threadIdNum = do
     let compLoop i = do
         stats1 <- getGCStats
         threadId <- myThreadId
-        tStart <- timeInSeconds'
+        tStart <- timeInMicros
 
-        printFun $ "compute:start:" ++ show (threadIdNum) ++  ":" ++ show i ++ ":" ++ formatFloatN tStart 4 ++ ":" ++ show (currentBytesUsed stats1)
+        --printf "%d\n" tStart
+        printFun $ "compute:start:" ++ show (threadIdNum) ++  ":" ++ show i ++ ":" ++ show tStart ++ ":" ++ show (currentBytesUsed stats1)
         _ <- (evaluate . force) $ fib depth
 
-        tStop <- timeInSeconds'
+        tStop <- timeInMicros
         stats2 <- getGCStats
 
-        printFun $ "compute:stop:" ++ show (threadIdNum) ++  ":" ++ show i ++ ":" ++ formatFloatN tStop 4 ++ ":" ++ show (currentBytesUsed stats2)
+        printFun $ "compute:stop:" ++ show (threadIdNum) ++  ":" ++ show i ++ ":" ++ show tStop ++ ":" ++ show (currentBytesUsed stats2)
         threadDelay . fromIntegral . round $ sleepTime * 1000000
 
     mapM_ compLoop [1..iters]
