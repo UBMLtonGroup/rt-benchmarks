@@ -3,12 +3,12 @@ import scala.collection.mutable.ListBuffer
 
 object GCBench_multithread {
 
-class Node(var left: Node, var right: Node) {
+    class Node(var left: Node, var right: Node) {
+      def this() {
+        this(null, null)
+      }
+    }
 
-  def this() {
-    this(null, null)
-  }
-}
 	val kStretchTreeDepth: Int = 18
     val kLongLivedTreeDepth: Int  = 16
     val kArraySize: Int  = 500000

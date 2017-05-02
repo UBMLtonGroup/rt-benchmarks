@@ -6,11 +6,14 @@ import Data.Time.Clock.POSIX
 import Control.DeepSeq
 import Control.Monad
 import Control.Exception (evaluate)
+import Text.Printf
+import Numeric
 
 import GHC.Stats
 
 import Options.Applicative
 import Data.Monoid ((<>))
+import Data.Ratio
 
 import Control.Concurrent
 
@@ -40,6 +43,20 @@ sumPerms perms = sum $ map sum perms
 posixTimeToMillis :: POSIXTime -> Integer
 posixTimeToMillis =  round . (1000 *)
 
+timeInMicros :: IO Integer
+timeInMicros = numerator . toRational . (* 1000000) <$> getPOSIXTime
+
+timeInMillis :: IO Integer
+timeInMillis = (`div` 1000) <$> timeInMicros
+
+timeInSeconds :: IO Integer
+timeInSeconds = (`div` 1000) <$> timeInMillis
+
+timeInSeconds' :: IO Double
+timeInSeconds' = (/ 1000000) . fromIntegral <$> timeInMicros
+
+formatFloatN floatNum numOfDecimals = showFFloat (Just numOfDecimals) floatNum ""
+
 -- Terrible workaround completely dependent on the implementation of show for ThreadId
 -- If this breaks just use the ignored parameter to compute and gcFunc
 threadIdNum :: ThreadId -> Integer
@@ -56,14 +73,14 @@ gcFunc len iters printFun threadIdNum = do
     let gcLoop i = do
         stats1 <- getGCStats
         threadId <- myThreadId
-        tStart <- getPOSIXTime
-        --printFun $ "gc:start:" ++ show (threadIdNum threadId) ++  ":" ++ show i ++ ":" ++ show (posixTimeToMillis tStart)
-        printFun $ "gc:start:" ++ show (threadIdNum) ++  ":" ++ show i ++ ":" ++ show (posixTimeToMillis tStart) ++ ":" ++ show (currentBytesUsed stats1)
+        tStart <- timeInMicros
+
+        printFun $ "gc:start:" ++ show (threadIdNum) ++  ":" ++ show i ++ ":" ++ show tStart ++ ":" ++ show (currentBytesUsed stats1)
         _ <- (evaluate . force) $ let l = [1..len] in sumPerms (snd (p len (l, [l]) ))
-        tStop <- getPOSIXTime
+        tStop <- timeInMicros
         stats2 <- getGCStats
-        --printFun $ "gc:stop:" ++ show (threadIdNum threadId) ++  ":" ++ show i ++ ":" ++ show (posixTimeToMillis tStop)
-        printFun $ "gc:stop:" ++ show (threadIdNum) ++  ":" ++ show i ++ ":" ++ show (posixTimeToMillis tStop) ++ ":" ++ show (currentBytesUsed stats2)
+
+        printFun $ "gc:stop:" ++ show (threadIdNum) ++  ":" ++ show i ++ ":" ++ show tStop ++ ":" ++ show (currentBytesUsed stats2)
 
 
     mapM_ gcLoop [1..iters]
@@ -73,14 +90,14 @@ compute depth iters sleepTime printFun threadIdNum = do
     let compLoop i = do
         stats1 <- getGCStats
         threadId <- myThreadId
-        tStart <- getPOSIXTime
-        --printFun $ "compute:start:" ++ show (threadIdNum threadId) ++  ":" ++ show i ++ ":" ++ show (posixTimeToMillis tStart)
-        printFun $ "compute:start:" ++ show (threadIdNum) ++  ":" ++ show i ++ ":" ++ show (posixTimeToMillis tStart) ++ ":" ++ show (currentBytesUsed stats1)
+        tStart <- timeInMicros
+
+        printFun $ "compute:start:" ++ show (threadIdNum) ++  ":" ++ show i ++ ":" ++ show tStart ++ ":" ++ show (currentBytesUsed stats1)
         _ <- (evaluate . force) $ fib depth
         stats2 <- getGCStats
-        tStop <- getPOSIXTime
-        --printFun $ "compute:stop:" ++ show (threadIdNum threadId) ++  ":" ++ show i ++ ":" ++ show (posixTimeToMillis tStop)
-        printFun $ "compute:stop:" ++ show (threadIdNum) ++  ":" ++ show i ++ ":" ++ show (posixTimeToMillis tStop) ++ ":" ++ show (currentBytesUsed stats2)
+        tStop <- timeInMicros
+
+        printFun $ "compute:stop:" ++ show (threadIdNum) ++  ":" ++ show i ++ ":" ++ show tStop ++ ":" ++ show (currentBytesUsed stats2)
         threadDelay . fromIntegral . round $ sleepTime * 1000000
 
     mapM_ compLoop [1..iters]

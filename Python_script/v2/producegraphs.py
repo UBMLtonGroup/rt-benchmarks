@@ -12,8 +12,8 @@ S = """select s1.ts,s1.type,s1.tid,s1.iter,(s2.ts-s1.ts),s1.heap,s2.heap
 
 def main(args):
     db = sqlite3.connect(args.db)
-    a = select_by(db, '20170321-gcbench-run6', 'compute')
-    b = select_by(db, '20170321-gcbench-run6', 'gc')
+    a = select_by(db, 'haskell-gc7', 'compute')
+    b = select_by(db, 'haskell-gc7', 'gc')
     c = a + b
     c.sort(key=lambda a: a[0])
     csv(c)
