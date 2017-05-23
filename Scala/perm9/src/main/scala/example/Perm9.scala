@@ -108,7 +108,6 @@ object Perm9 {
     }
     f
   }
-}
 
 
   def main(args: Array[String]) {
@@ -137,7 +136,7 @@ object Perm9 {
 
     sum = Perm9.sumperms(m)
     if(sum != (n * (n + 1) * Perm9.factorial (n)) / 2) println("*** wrong result ***")
-}
+  }
 
 /******************************************************************************
 *
@@ -165,3 +164,4 @@ def printperms(perms: Perm) {
   println("")
 }
 
+}
