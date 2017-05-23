@@ -1,5 +1,7 @@
-scala/project/target/**
-scala/target/**
+Scala/GCBench/project/target/**
+Scala/GCBencg/target/**
+Scala/perm9/project/target/**
+Scala/perm9/target/**
 Python_script/v2/stats.db
 Clojure/perm9/target/**
 **/.lein-repl-history
