@@ -42,3 +42,6 @@ Java version 1.8.0_66
 -e = Tree Depth for GC Threads
 
 -Xms_m = Initial memory allocation pool (Actual size to be inputted in place of _)
+
+ scala -J-Xmx2g ...
+ 
