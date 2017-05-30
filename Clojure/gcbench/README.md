@@ -12,6 +12,11 @@ In our version we allow for multiple heap mutation threads and multiple computat
 
 ```lein run -- -h```
 
+or to compile into a jar
+
+```lein uberjar
+java -jar target/gcbench-1.0.0-SNAPSHOT-standalone.jar -h```
+
 ## License
 
 Public Domain

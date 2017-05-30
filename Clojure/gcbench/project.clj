@@ -4,5 +4,6 @@
   		 [org.clojure/tools.cli "0.3.5"]
                  [metrics-clojure-jvm "2.8.0"]]
   :main gcbench.core
+  :aot [gcbench.core]
   :jvm-opts ["-Xmx512m" "-server"] 
 )

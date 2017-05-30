@@ -20,4 +20,11 @@ cd gcbench
 lein run
 ```
 
+compiling to a jar:
+
+```
+cd gcbench
+lein uberjar
+java -jar target/gcbench-1.0.0-SNAPSHOT-standalone.jar -h
+```
 

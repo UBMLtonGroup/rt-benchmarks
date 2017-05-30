@@ -1,7 +1,7 @@
 import java.io._
 import scala.collection.mutable.ListBuffer
 
-object GCBench_multithread {
+object GCBench {
 
     class Node(var left: Node, var right: Node) {
       def this() {
@@ -90,6 +90,8 @@ object GCBench_multithread {
 		}
 	}
 	def start_gc_thread(num_threads : Int, tree_depth: Int, iterations: Int) {
+                Thread.sleep(30*1000)
+
 		for(i <- 1 until num_threads+1){
 			val t = new Thread(new Runnable {
 				def run() {
@@ -108,7 +110,8 @@ object GCBench_multithread {
         var listOfTimeStamps = new ListBuffer[String]()
 		for(i <- 1 until iterations+1){
 			val start = System.currentTimeMillis()
-            listOfTimeStamps += "gc:start:"+ id +":" + i+ ":" +start
+                        val runtime1 = Runtime.getRuntime
+                        listOfTimeStamps += "gc:start:"+ id +":" + i+ ":" +start + ":" + (runtime1.totalMemory - runtime1.freeMemory)
 			val root: Node = null
 			var longLivedTree: Node = null
 			var tempTree: Node = null
@@ -146,12 +149,13 @@ object GCBench_multithread {
 	        
 	        if (longLivedTree == null || array(1000) != 1.0 / 1000) println("Failed")
 	        
+                        val runtime2 = Runtime.getRuntime
 	        tFinish = System.currentTimeMillis()
 	        tElapsed = tFinish-tStart
 	        //PrintDiagnostics()
 	        //println("Completed in " + tElapsed + "ms.")
 			val stop = System.currentTimeMillis()
-			listOfTimeStamps += "gc:stop:"+ id +":" + i + ":" +stop
+			listOfTimeStamps += "gc:stop:"+ id +":" + i + ":" + stop + ":" + (runtime2.totalMemory - runtime2.freeMemory)
 		}
         listOfTimeStamps
 	}
@@ -175,33 +179,37 @@ object GCBench_multithread {
 		var listOfTimeStamps = new ListBuffer[String]()
 		for(i <- 1 until iterations+1){
 			val tStart = System.currentTimeMillis()
-			listOfTimeStamps += ("comp:start:"+ id +":" + i + ":" +tStart)
+                        val runtime3 = Runtime.getRuntime
+			listOfTimeStamps += ("compute:start:"+ id +":" + i + ":" +tStart  + ":" + (runtime3.totalMemory - runtime3.freeMemory))
 			fibonacci(depth)
 			val tStop = System.currentTimeMillis()
-			listOfTimeStamps += ("comp:stop:"+ id +":" + i + ":" +tStop)
+                        val runtime4 = Runtime.getRuntime
+			listOfTimeStamps += ("compute:stop:"+ id +":" + i + ":" +tStop  + ":" + (runtime4.totalMemory - runtime4.freeMemory))
 			Thread.sleep(comp_sleep)
 		}
 		listOfTimeStamps
 	}
 
-  def main(args: Array[String]) {
-  		var computeThreads: Int = 1
-  		var computeDepth: Int = 37
-  		var iterations: Int = 10
-  		var computeSleep: Int = 1000
-  		var gcThreads: Int = 1
-  		var treeDepth: Int = 10
+    def main(args: Array[String]) {
 
-  		if(args.size >= 1){
-  			computeThreads = args(0).toInt
-  		    computeDepth = args(1).toInt
-  		    iterations = args(2).toInt
-  		    computeSleep = args(3).toInt
-  		    gcThreads = args(4).toInt
-  			treeDepth = args(5).toInt
-  		}
-  		start_gc_thread(gcThreads,treeDepth,iterations)
-  		start_comp_threads(computeThreads,computeDepth, iterations,computeSleep)
+        var computeThreads: Int = 1
+        var computeDepth: Int = 37
+        var iterations: Int = 1100
+        var computeSleep: Int = 1000
+        var gcThreads: Int = 1
+        var treeDepth: Int = 15
 
-	  }
+        if(args.size >= 1){
+            computeThreads = args(0).toInt
+            computeDepth = args(1).toInt
+            iterations = args(2).toInt
+            computeSleep = args(3).toInt
+            gcThreads = args(4).toInt
+            treeDepth = args(5).toInt
+        }
+        start_comp_threads(computeThreads, computeDepth, iterations, computeSleep)
+        Thread.sleep(3000)
+        start_gc_thread(gcThreads, treeDepth, iterations)
+
+      }
 }
