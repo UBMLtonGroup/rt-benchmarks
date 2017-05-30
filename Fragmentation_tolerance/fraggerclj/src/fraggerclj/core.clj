@@ -17,11 +17,13 @@
   [kArraySize]
   (def sz (* kArraySize 3))
   ( ova (range sz (+ sz kArraySize) ))
+
 )
 (defn traverseArray
   [arr]
   (<< (map! arr (fn [n] (+ n 1))))
 )
+
 ;;(defn allocateArray 
 ;;  [kArraySize]
 ;;  (def arr (ova (range kArraySize)))
@@ -29,13 +31,13 @@
 ;;  (println arr)
 ;;  )
 
-(defn foo
+(defn -main
   "I don't do a whole lot."
   [& args]
   (def kArraySize 100000)
-  (traverseArray (allocateArray kArraySize))
+  (def xxx (allocateArray kArraySize))
   (println "allocated large array")
-  (println (traverseArray (allocateArray2 (/ kArraySize 2))))
+  (def yyy (allocateArray2 (/ kArraySize 2)))
   (println "Allocated second array")
   ;;(time (allocateArray (/ kArraySize 2)))
  ;; (println  "Hello, World!")

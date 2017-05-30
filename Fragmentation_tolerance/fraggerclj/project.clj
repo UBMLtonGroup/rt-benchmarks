@@ -3,6 +3,7 @@
   :url "http://example.com/FIXME"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
-  :main fraggerclj.core/foo
-  :jvm-opts ["-Xmx55297k"]
+  :main fraggerclj.core
+  :aot [fraggerclj.core]
+  :jvm-opts ["-Xmx55297k" "-server"]
   :dependencies [[org.clojure/clojure "1.8.0"][im.chit/ova "1.0.1"]])
