@@ -20,3 +20,4 @@ perm9/perm9
 Clojure/gcbench/target
 Haskell/gcbench
 Haskell/gcbench.hi
+*.swo
