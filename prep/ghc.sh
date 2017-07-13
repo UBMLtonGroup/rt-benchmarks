@@ -1,5 +1,8 @@
 #!/bin/sh 
 
+# curl -O https://downloads.haskell.org/~ghc/7.8.4/ghc-7.8.4-src.tar.xz
+# curl -O https://downloads.haskell.org/~ghc/8.0.2/ghc-8.0.2-src.tar.xz
+
 # rebuilt for RH5.8 and /local/cse-mlton
 
 echo "Installing GHC..."
