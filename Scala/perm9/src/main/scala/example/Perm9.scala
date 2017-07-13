@@ -21,7 +21,7 @@ object Pair {
   }
 }
 
-class Perm(val n: Pair, val y: Perm){
+class Perm(val n: Pair, val y: Perm) {
   var hd: Pair = n
   var tl: Perm = y
 }
@@ -30,9 +30,9 @@ object Perm {
 
   def cons(p: Pair, y: Perm): Perm = new Perm(p, y)
 
-    def car(x: Perm): Pair = x.hd
+  def car(x: Perm): Pair = x.hd
 
-    def cdr(x: Perm): Perm = x.tl
+  def cdr(x: Perm): Perm = x.tl
 }
 
 object Perm9 {
@@ -63,7 +63,7 @@ object Perm9 {
   def F(n: Int) {
     lazy val x: Pair = revloop(x, n, tail(x, n))
     perms = Perm.cons(x, perms)
-    }
+  }
 
   def P(n: Int) {
     if (n > 1) {
@@ -74,7 +74,7 @@ object Perm9 {
         j -= 1
       }
       P(n - 1)
-    } 
+    }
   }
 
   def permutations(the_x: Pair): Perm = {
@@ -90,11 +90,11 @@ object Perm9 {
     var sum = 0
     while (tempX != null) {
       y = Perm.car(tempX)
-    while (y != null) {
-      sum = sum + Pair.car(y)
-      y = Pair.cdr(y)
-    }
-    tempX = Perm.cdr(tempX)
+      while (y != null) {
+        sum = sum + Pair.car(y)
+        y = Pair.cdr(y)
+      }
+      tempX = Perm.cdr(tempX)
     }
     sum
   }
@@ -111,7 +111,7 @@ object Perm9 {
 
 
   def main(args: Array[String]) {
-    var n: Int = 9
+    var n: Int = 6
     var m: Perm = null
     var m2: Perm = null
     var sum: Long = 0l
@@ -119,49 +119,57 @@ object Perm9 {
 
     var one_to_n: Pair = null
     var nn: Int = n
-    while(nn > 0){
+
+    println(nn)
+
+    while (nn > 0) {
+      println(nn)
+
       nn = nn - 1
       one_to_n = Pair.cons(nn, one_to_n)
     }
 
+    println("p9.perms")
+    println(one_to_n)
     m = Perm9.permutations(one_to_n)
-    // printperms(m)
+    printperms(m)
 
     k = 5
-    while(k > 0){
+    while (k > 0) {
+      println(k)
       val m2 = Perm9.permutations(one_to_n)
       m = m2
       k = k - 1
     }
-
+    println("sumperms")
     sum = Perm9.sumperms(m)
-    if(sum != (n * (n + 1) * Perm9.factorial (n)) / 2) println("*** wrong result ***")
+    if (sum != (n * (n + 1) * Perm9.factorial(n)) / 2) println("*** wrong result ***")
   }
 
-/******************************************************************************
-*
-*   Miscellaneous.
-*
-******************************************************************************/
+  /** ****************************************************************************
+    *
+    * Miscellaneous.
+    *
+    * *****************************************************************************/
 
-def printints(l: Pair) {
-  var tempL = l
-  println("(")
-  while(tempL != null) {
-    println(Pair.car(l))
-    tempL = Pair.cdr(l)
-    if(tempL != null) println(" ")
+  def printints(l: Pair) {
+    var tempL = l
+    println("(")
+    while (tempL != null) {
+      println(Pair.car(l))
+      tempL = Pair.cdr(l)
+      if (tempL != null) println(" ")
+    }
+    println(")")
   }
-  println(")")
-}
 
-def printperms(perms: Perm) {
-  var temPerms = perms
-  while(temPerms != null){
-    printints(Perm.car(temPerms))
-    temPerms = Perm.cdr(temPerms)
+  def printperms(perms: Perm) {
+    var temPerms = perms
+    while (temPerms != null) {
+      printints(Perm.car(temPerms))
+      temPerms = Perm.cdr(temPerms)
+    }
+    println("")
   }
-  println("")
-}
 
 }

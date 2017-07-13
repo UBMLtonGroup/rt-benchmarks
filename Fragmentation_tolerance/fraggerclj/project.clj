@@ -5,5 +5,5 @@
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :main fraggerclj.core
   :aot [fraggerclj.core]
-  :jvm-opts ["-Xmx55297k" "-server"]
-  :dependencies [[org.clojure/clojure "1.8.0"][im.chit/ova "1.0.1"]])
+  :dependencies [[org.clojure/clojure "1.8.0"][im.chit/ova "1.0.1"]]
+  :profiles {:minheap {:jvm-opts ["-Xloggc:gcclj" "-XX:+PrintGCDetails" "-XX:+UseSerialGC" "-XX:-UseGCOverheadLimit"]}})

@@ -191,7 +191,7 @@ object GCBench {
     def main(args: Array[String]) {
 
         var computeThreads: Int = 1
-        var computeDepth: Int = 37
+        var computeDepth: Int = 40
         var iterations: Int = 1100
         var computeSleep: Int = 1000
         var gcThreads: Int = 1
