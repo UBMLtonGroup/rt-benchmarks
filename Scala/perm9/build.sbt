@@ -8,7 +8,7 @@ lazy val root = (project in file(".")).
       version      := "0.1.0-SNAPSHOT"
     )),
     name := "Perm9",
-    mainClass in assembly := Some("example.GCBench"),
+    mainClass in assembly := Some("Perm9"),
     test in assembly := {},
     libraryDependencies += scalaTest % Test
   )
