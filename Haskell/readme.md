@@ -17,6 +17,9 @@ A direct translation of the original GCBench benchmark into Haskell, supporting 
 * GHC (uses GHC specific getGCStats; tested with 8.0.1)
 * optparse-applicative
 
+    cabal install Clock optparse-applicative
+
+
 ### Building with GHC ##
     ghc gcbench.hs -rtsopts
     ghc perm9.hs -rtsopts
