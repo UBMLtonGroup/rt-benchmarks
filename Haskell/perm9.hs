@@ -67,9 +67,9 @@ fib 0 = 0
 fib 1 = 1
 fib n = fib (n-1) + fib (n-2)
 
-gcFunc :: (Show a) => Int -> Integer -> (String -> IO ()) -> a -> IO ()
-gcFunc len iters printFun threadIdNum = do
-    threadDelay . fromIntegral . round $ 30 * 1000000
+gcFunc :: (Show a) => Int -> Integer -> (String -> IO ()) -> Integer -> a -> IO ()
+gcFunc len iters printFun gcDelay threadIdNum = do
+    threadDelay . fromIntegral $ gcDelay * 1000000
     let gcLoop i = do
         stats1 <- getGCStats
         threadId <- myThreadId
@@ -114,7 +114,7 @@ runBenchmark (Arguments computeThreads computeDepth iters sleepTime gcDelay gcTh
     printLock <- newMVar ()
     let concurrentPrint s = withMVar printLock (\_ -> putStrLn s)
 
-    gcHandles <- mapM (forkThread . gcFunc permLength iters concurrentPrint) [1..gcThreads]
+    gcHandles <- mapM (forkThread . gcFunc permLength iters concurrentPrint gcDelay) [1..gcThreads]
     computeHandles <- mapM (forkThread . compute computeDepth iters sleepTime concurrentPrint) [1..computeThreads]
 
     mapM_ takeMVar $ gcHandles ++ computeHandles
