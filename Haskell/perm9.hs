@@ -73,11 +73,11 @@ gcFunc len iters printFun threadIdNum = do
     let gcLoop i = do
         stats1 <- getGCStats
         threadId <- myThreadId
-        tStart <- timeInMicros
+        tStart <- getPOSIXTime --timeInMicros
 
         printFun $ "gc:start:" ++ show (threadIdNum) ++  ":" ++ show i ++ ":" ++ show tStart ++ ":" ++ show (currentBytesUsed stats1)
         _ <- (evaluate . force) $ let l = [1..len] in sumPerms (snd (p len (l, [l]) ))
-        tStop <- timeInMicros
+        tStop <- getPOSIXTime --timeInMicros
         stats2 <- getGCStats
 
         printFun $ "gc:stop:" ++ show (threadIdNum) ++  ":" ++ show i ++ ":" ++ show tStop ++ ":" ++ show (currentBytesUsed stats2)
@@ -90,12 +90,12 @@ compute depth iters sleepTime printFun threadIdNum = do
     let compLoop i = do
         stats1 <- getGCStats
         threadId <- myThreadId
-        tStart <- timeInMicros
+        tStart <- getPOSIXTime --timeInMicros
 
         printFun $ "compute:start:" ++ show (threadIdNum) ++  ":" ++ show i ++ ":" ++ show tStart ++ ":" ++ show (currentBytesUsed stats1)
         _ <- (evaluate . force) $ fib depth
         stats2 <- getGCStats
-        tStop <- timeInMicros
+        tStop <- getPOSIXTime --timeInMicros
 
         printFun $ "compute:stop:" ++ show (threadIdNum) ++  ":" ++ show i ++ ":" ++ show tStop ++ ":" ++ show (currentBytesUsed stats2)
         threadDelay . fromIntegral . round $ sleepTime * 1000000
@@ -109,14 +109,12 @@ forkThread f = do
     return isDone
 
 runBenchmark :: Arguments -> IO ()
-runBenchmark (Arguments computeThreads computeDepth iters sleepTime gcThreads permLength showGCStats) = do
+runBenchmark (Arguments computeThreads computeDepth iters sleepTime gcDelay gcThreads permLength showGCStats) = do
 
     printLock <- newMVar ()
     let concurrentPrint s = withMVar printLock (\_ -> putStrLn s)
 
-    --gcHandles <- mapM (forkThread . gcFunc permLength iters concurrentPrint) [2..(gcThreads + 1)]
     gcHandles <- mapM (forkThread . gcFunc permLength iters concurrentPrint) [1..gcThreads]
-    --computeHandles <- mapM (forkThread . compute computeDepth iters sleepTime concurrentPrint) [(gcThreads + 2) .. (gcThreads + computeThreads + 1)]
     computeHandles <- mapM (forkThread . compute computeDepth iters sleepTime concurrentPrint) [1..computeThreads]
 
     mapM_ takeMVar $ gcHandles ++ computeHandles
@@ -158,6 +156,14 @@ benchmarkCLI = Arguments
         <> metavar "NUM"
         <> value 1.0
         <> help "Compute Sleep" )
+
+    -- -J, --gc-delay NUM          60   GC startup delay (secs)
+    <*> option auto
+        ( long "gc-delay"
+        <> short 'J'
+        <> metavar "NUM"
+        <> value 60
+        <> help "GC Startup delay" )
 
     -- -g, --gc-threads NUM          1   GC Threads
     <*> option auto

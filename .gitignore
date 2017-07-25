@@ -1,3 +1,4 @@
+Haskell/*.hi
 **/target/**
 Scala/GCBench/project/target/**
 Scala/GCBencg/target/**
