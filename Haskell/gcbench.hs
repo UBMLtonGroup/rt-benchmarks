@@ -23,6 +23,7 @@ data Arguments = Arguments {
     computeDepth :: Integer,
     iters :: Integer,
     sleepTime :: Double,
+    gcDelay :: Integer,
     gcThreads :: Integer,
     gcDelay :: Integer,
     treeDepth:: Integer,
