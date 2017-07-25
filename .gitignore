@@ -1,4 +1,6 @@
 Haskell/*.hi
+._.DS_Store
+**/._.DS_Store
 **/target/**
 Scala/GCBench/project/target/**
 Scala/GCBencg/target/**
