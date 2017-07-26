@@ -11,6 +11,6 @@ lazy val root = (project in file(".")).
     mainClass in assembly := Some("GCBench"),
     test in assembly := {},
 
-
-    libraryDependencies += scalaTest % Test
+    libraryDependencies += scalaTest % Test,
+    libraryDependencies += "org.rogach" %% "scallop" % "3.0.3"
   )

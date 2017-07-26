@@ -1,5 +1,6 @@
 import java.io._
 import scala.collection.mutable.ListBuffer
+import org.rogach.scallop._
 
 object GCBench {
 
@@ -89,11 +90,11 @@ object GCBench {
             return fibonacci(num-2) + fibonacci(num-1)
         }
     }
-    def start_gc_thread(num_threads : Int, tree_depth: Int, iterations: Int) {
+    def start_gc_thread(num_threads : Int, tree_depth: Int, iterations: Int, gcsleep: Int) {
         for(i <- 1 until num_threads+1){
             val t = new Thread(new Runnable {
                 def run() {
-                    var listofTimeStamps = gc_func(tree_depth, i, iterations)
+                    var listofTimeStamps = gc_func(tree_depth, i, iterations, gcsleep)
                     for (timeStamp <- listofTimeStamps.toList){
                         println(timeStamp)
                     }
@@ -104,7 +105,7 @@ object GCBench {
         }
     }
 
-    def gc_func(tree_depth: Int, id: Int, iterations: Int): ListBuffer[String] = {
+    def gc_func(tree_depth: Int, id: Int, iterations: Int, gcsleep: Int): ListBuffer[String] = {
         var listOfTimeStamps = new ListBuffer[String]()
         for(i <- 1 until iterations+1){
             val start = System.currentTimeMillis()
@@ -154,6 +155,8 @@ object GCBench {
             //println("Completed in " + tElapsed + "ms.")
             val stop = System.currentTimeMillis()
             listOfTimeStamps += "gc:stop:"+ id +":" + i + ":" + stop + ":" + (runtime2.totalMemory - runtime2.freeMemory)
+
+            Thread.sleep(gcsleep)
         }
         listOfTimeStamps
     }
@@ -188,25 +191,35 @@ object GCBench {
         listOfTimeStamps
     }
 
+    class Conf(arguments: Seq[String]) extends ScallopConf(arguments) {
+        val computeThreads = opt[Int](default = Some(1), short = 't')
+        val computeDepth = opt[Int](default = Some(40), short = 'd')
+        val iterations = opt[Int](default = Some(1100), short = 'i')
+        val computeSleep = opt[Int](default = Some(1), short = 's')
+        val gcThreads = opt[Int](default = Some(1), short = 'g')
+        val gcSleep = opt[Int](default = Some(1), short = 'S')
+        val gcDelay = opt[Int](default = Some(1), short = 'J')
+        val treeDepth = opt[Int](default = Some(15), short = 'G')
+        val help = opt[Boolean]()
+
+        version("Scala GCBench 0.1.0")
+        banner("""Usage: GCBench [OPTION]
+                |Options:
+                |""".stripMargin)
+        footer("\nhttps://ubmltongroup.github.io/")
+
+        verify()
+    }
+
     def main(args: Array[String]) {
-
-        var computeThreads: Int = 1
-        var computeDepth: Int = 40
-        var iterations: Int = 1100
-        var computeSleep: Int = 1000
-        var gcThreads: Int = 1
-        var treeDepth: Int = 15
-
-        if(args.size >= 1){
-            computeThreads = args(0).toInt
-            computeDepth = args(1).toInt
-            iterations = args(2).toInt
-            computeSleep = args(3).toInt
-            gcThreads = args(4).toInt
-            treeDepth = args(5).toInt
+        val conf = new Conf(args)
+        if (conf.help()) {
+            conf.printHelp();
         }
-        start_comp_threads(computeThreads, computeDepth, iterations, computeSleep)
-        Thread.sleep(30000)
-        start_gc_thread(gcThreads, treeDepth, iterations)
+        else {
+            start_comp_threads(conf.computeThreads(), conf.computeDepth(), conf.iterations(), conf.computeSleep() * 1000)
+            Thread.sleep(conf.gcSleep() * 1000)
+            start_gc_thread(conf.gcThreads(), conf.treeDepth(), conf.iterations(), conf.gcSleep() * 1000)
+        }
     }
 }

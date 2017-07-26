@@ -10,5 +10,6 @@ lazy val root = (project in file(".")).
     name := "Perm9",
     mainClass in assembly := Some("Perm9"),
     test in assembly := {},
-    libraryDependencies += scalaTest % Test
+    libraryDependencies += scalaTest % Test,
+    libraryDependencies += "org.rogach" %% "scallop" % "3.0.3"
   )

@@ -1,3 +1,7 @@
+import org.rogach.scallop._
+import java.io._
+import scala.collection.mutable.ListBuffer
+
 class Pair(val n: Int, val y: Pair) {
   var hd: Int = n
   var tl: Pair = y
@@ -109,6 +113,18 @@ object Perm9 {
     f
   }
 
+  class Conf(arguments: Seq[String]) extends ScallopConf(arguments) {
+    val computeThreads = opt[Int](default = Some(1), short = 't')
+    val computeDepth = opt[Int](default = Some(40), short = 'd')
+    val iterations = opt[Int](default = Some(1100), short = 'i')
+    val computeSleep = opt[Int](default = Some(1), short = 's')
+    val gcThreads = opt[Int](default = Some(1), short = 'g')
+    val gcSleep = opt[Int](default = Some(1), short = 'S')
+    val gcDelay = opt[Int](default = Some(1), short = 'J')
+    val treeDepth = opt[Int](default = Some(15), short = 'G')
+    val help = opt[Boolean]()
+    verify()
+  }
 
   def main(args: Array[String]) {
     var n: Int = 6
