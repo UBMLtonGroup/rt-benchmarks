@@ -1,7 +1,7 @@
 import os
 import commands
 import subprocess
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 import csv
 
 def main():

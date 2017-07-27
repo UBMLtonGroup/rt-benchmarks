@@ -1,14 +1,14 @@
 import os
 import commands
 import subprocess
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 import re
 import csv
 
 def main():
     start = 30 * 1024 * 1024 #524288000
-    increment = 2 *1024 *1024
-    values = [x for x in range(start,(start + (increment * 10)),increment)]
+    increment = 1 *1024 *1024
+    values = [x for x in range(start,(start + (increment * 50)),increment)]
     res =[]
     print("Starting script\n")
     for i in values:
