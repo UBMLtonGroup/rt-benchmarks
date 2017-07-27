@@ -1,5 +1,6 @@
 {-# LANGUAGE BangPatterns #-}
 import Data.Array
+import Data.Array.IO as MA
 import Control.Monad
 import Control.DeepSeq
 import Data.IORef
@@ -16,33 +17,41 @@ increment i = i + 1
 
 
 fillHeap n= do
-    let ls = empty
-    lsref <- newIORef ls
-    forM_ [0..n] (\a -> do
+    --let ls = empty
+    --lsref <- newIORef ls
+    arr <- MA.newArray (1,n) Nothing :: IO (IOArray Int (Maybe(Array i e )))
+    forM_ [1..n] (\a -> do
             --print a
-            modifyIORef' lsref $! (((<|) (allocateArray a)) ) )
-    return lsref
+            --modifyIORef' lsref $! (((<|) (allocateArray a)) ) 
+            MA.writeArray arr a $!(allocateArray a) )
+    --return lsref
+    return arr
  
 fragmentHeap lref n = do 
-    forM_ [0..n] (\a -> do
+    forM_ [1..n] (\a -> do
                 if (even a) 
                     then do
-                        modifyIORef' lref $! ((update a Nothing) ) 
+                        --print a
+                        --modifyIORef' lref $! ((update a Nothing) ) 
+                        writeArray lref a Nothing
                     else return () )
                
                 
 
 main = do
-    let size =200000 -- 407262
-    lstref <- fillHeap size
-    lst <- readIORef lstref
-    print (Prelude.length lst)
+    let size = 478510--407262
+    --lstref <- fillHeap size
+    arr <- fillHeap size
+    --lst <- readIORef lstref
+    --print (Prelude.length lst)
    -- stats <- getGCStats
+   -- print $ "Bytes allocated " ++ show(maxBytesUsed stats)
     --let seq = fromList lst
     --seqref <- newIORef seq
-    fragmentHeap lstref size
+    fragmentHeap arr size
     --readIORef lstref >>= print
-    --print $ "Bytes allocated " ++ show(maxBytesUsed stats)
+    stats <- getGCStats
+    print $ "Bytes allocated " ++ show(maxBytesUsed stats)
     print ("done")
 
 {- main = do
