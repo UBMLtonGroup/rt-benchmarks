@@ -15,6 +15,7 @@ def allocateArray(i :Long) : Array[X] =
 
 def allocateArray2(kArraySize :Int): Array[X] =
 {
+    var free = Runtime.getRuntime().freeMemory()
     var startTime =System.nanoTime /**System.currentTimeMillis()**/
     var arr = new Array[X](kArraySize)
     
@@ -22,7 +23,7 @@ def allocateArray2(kArraySize :Int): Array[X] =
     
     var endTime   = System.nanoTime /**System.currentTimeMillis()**/
     var totalTime = endTime - startTime
-    println(totalTime)
+    println(totalTime+","+ free)
     return arr
 }
 
@@ -89,11 +90,10 @@ def main(args: Array[String])
         
     }
     
-
     //println("out of loop")
     fragmentArray(arrlist)
 //    Thread.sleep(1000)
-    allocateArray2((524288*3.78).toInt)
+    var arr2 = allocateArray2((524288*3.78).toInt)
     
 }
 

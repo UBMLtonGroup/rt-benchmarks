@@ -7,7 +7,7 @@ import csv
 def main():
     start = 35 *1024 *1024
     increment = 600 *1024 
-    values = [x for x in range(start,(start + (increment * 10)),increment)]
+    values = [x for x in range(start,(start + (increment * 50)),increment)]
     #values = [x for x in range(1033895940,(1033895940 + (500000 *100)),500000)]
     #start =28*1024*1024
     #iterations=10
@@ -26,14 +26,17 @@ def main():
         res.append(result)
         #os.system("rm *.class")
     print("Plotting graph\n")
-    res=[int(x)/1000000 for x in res]
+    print(res)
+    a = [x.split(',') for x in res]
+    res = [int(x)/1000000 for x,y in a]
+    free = [int(y)/1000000 for x,y in a]
     values = [x/1000000 for x in values]
-    c = zip(values,res)
+    d = zip(values,res,free)
     with open("scalafrag.txt",'wb') as myFile:
         wr = csv.writer(myFile, delimiter=',')
-        for a,b in c:
-            d =[a,b]
-            wr.writerow(d)
+        for a,b,c in d:
+            e =[a,b,c]
+            wr.writerow(e)
 
 
     #plt.plot(values,res)
