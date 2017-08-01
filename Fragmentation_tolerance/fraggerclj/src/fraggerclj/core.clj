@@ -62,6 +62,7 @@
    )
   ;;(println "Done")
   ;;(pprint (into [] arrlist))
+  (println (-> (java.lang.Runtime/getRuntime) (.freeMemory) ))
   (fragmentArray arrlist elem)
  ;; (pprint (into [] arrlist))
   (def start (+ elem 5))

@@ -19,16 +19,17 @@ def main():
         print(result)
         res.append(result)
     print("Plotting graph\n")
-    res = [re.findall("\d+\.\d+",x) for x in res]
+    a = [x.split('\n') for x in res]
+    free = [float(x)/1000000 for x,y,z in a]
+    res = [re.findall("\d+\.\d+",x) for y,x,z in a]
     res = [float(x) for [x] in res]
-    print(res)
     values = [x/1000000 for x in values]
-    c = zip(values,res)
+    d = zip(values,res,free)
     with open("cljfrag.txt",'wb') as myFile:
         wr = csv.writer(myFile, delimiter=',')
-        for a,b in c:
-            d =[a,b]
-            wr.writerow(d)
+        for a,b,c in d:
+            e =[a,b,c]
+            wr.writerow(e)
     #plt.plot(values,res)
     #plt.xlabel('Heap size (MB)')
     #plt.ylabel('Time (ms)')
