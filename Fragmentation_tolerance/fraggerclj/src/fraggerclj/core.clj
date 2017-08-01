@@ -2,21 +2,25 @@
   (:gen-class))
 
 (use 'ova.core)
-;(use 'clojure.pprint)
+(use 'clojure.pprint)
 
 (defn map-every-nth [f coll n]
   (map-indexed #(if (zero? (mod (inc %1) n)) (f %2) %2) coll))
 
 (defn fragmentArray
-  [arr]
-  (<< (!! arr even? nil))
-  ;;(map-every-nth (fn [n] (aset arr n nil)) arr 2)
+  [arr elem]
+  ;;(<< (!! arr even? nil))
+  ;;(map-every-nth (fn [n] (.set arr n 444)) arr 2)
+  (doseq [n (range elem)
+          :when (even? n)]
+  (.set arr n nil))
+
 )
 
 (defn allocateArray 
   [kArraySize]
-  ( ova (range kArraySize))
-  ;;( object-array (range kArraySize))
+  ;;( ova (range kArraySize))
+  (ova [kArraySize])
 )
 
 (defn allocateArray2 
@@ -32,26 +36,37 @@
   ;;(map-every-nth inc arr 1)
 )
 
-;;(defn allocateArray 
-;;  [kArraySize]
-;;  (def arr (ova (range kArraySize)))
-;;  (fragmentArray arr)
-;;  (println arr)
-;;  )
+;17208402
 
 (defn -main
   "I don't do a whole lot."
   [& args]
-  (def kArraySize 1000000)
-  (def xxx (allocateArray kArraySize))
-  ;;(print "allocated large array\n")
-  (traverseArray xxx) ;;Traverse to avoid optimizations of any sort
-  ;;(pprint xxx)
-  (fragmentArray xxx)
-  ;;(pprint xxx)
-  (def yyy (time (allocateArray2 410000)))
-  ;;(println "Allocated second array")
-  ;;(time (allocateArray (/ kArraySize 2)))
- ;; (println  "Hello, World!")
-  )
+  (def arrlist (java.util.ArrayList.))
+ 
+ (comment (def counter (atom 0))
+  (while true
+      (do 
+       (def xxx (object-array [@counter]))
+       (.add arrlist xxx)
+        (swap! counter inc)
+        (println @counter)
+      )
+   ))
+ ;512358 
+ ;9230095 
+  (def elem 511800)
+  (doseq [n (range elem)]
+    (def xxx (object-array [n]))
+    (.add arrlist xxx)
+   ; (println n)
+   )
+  ;;(println "Done")
+  ;;(pprint (into [] arrlist))
+  (println (-> (java.lang.Runtime/getRuntime) (.freeMemory) ))
+  (fragmentArray arrlist elem)
+ ;; (pprint (into [] arrlist))
+  (def start (+ elem 5))
+  (def stop (+ start (int (/ elem 1.167))))
+  (time (def yyy (object-array (range start stop))))
+)
 

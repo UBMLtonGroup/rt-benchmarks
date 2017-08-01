@@ -1,4 +1,4 @@
-Haskell/*.hi
+*.hi
 ._.DS_Store
 **/._.DS_Store
 **/target/**
@@ -24,3 +24,4 @@ Clojure/gcbench/target
 Haskell/gcbench
 Haskell/gcbench.hi
 *.swo
+*.swp

@@ -1,0 +1,15 @@
+OpenJDK 64-Bit Server VM (25.131-b11) for linux-amd64 JRE (1.8.0_131-8u131-b11-0ubuntu1.16.04.2-b11), built on May  6 2017 02:45:27 by "buildd" with gcc 5.4.0 20160609
+Memory: 4k page, physical 16308588k(10922532k free), swap 9765884k(9765884k free)
+CommandLine flags: -XX:InitialHeapSize=1468006400 -XX:MaxHeapSize=1468006400 -XX:+PrintCommandLineFlags -XX:+PrintGC -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+UseCompressedClassPointers -XX:+UseCompressedOops -XX:-UseGCOverheadLimit 
+0.682: [GC (Allocation Failure) 0.682: [DefNew: 382336K->47743K(430080K), 0.3304584 secs] 382336K->263568K(1385856K), 0.3305176 secs] [Times: user=0.31 sys=0.02, real=0.33 secs] 
+1.086: [GC (Allocation Failure) 1.086: [DefNew: 430079K->47743K(430080K), 0.3417593 secs] 645904K->533935K(1385856K), 0.3418004 secs] [Times: user=0.32 sys=0.03, real=0.34 secs] 
+1.505: [GC (Allocation Failure) 1.505: [DefNew: 430079K->47743K(430080K), 0.4453809 secs] 916271K->820686K(1385856K), 0.4454177 secs] [Times: user=0.44 sys=0.01, real=0.45 secs] 
+Heap
+ def new generation   total 430080K, used 344162K [0x00000000a8800000, 0x00000000c5aa0000, 0x00000000c5aa0000)
+  eden space 382336K,  77% used [0x00000000a8800000, 0x00000000ba9789e8, 0x00000000bfd60000)
+  from space 47744K,  99% used [0x00000000c2c00000, 0x00000000c5a9fff8, 0x00000000c5aa0000)
+  to   space 47744K,   0% used [0x00000000bfd60000, 0x00000000bfd60000, 0x00000000c2c00000)
+ tenured generation   total 955776K, used 772942K [0x00000000c5aa0000, 0x0000000100000000, 0x0000000100000000)
+   the space 955776K,  80% used [0x00000000c5aa0000, 0x00000000f4d73b70, 0x00000000f4d73c00, 0x0000000100000000)
+ Metaspace       used 9608K, capacity 9644K, committed 9984K, reserved 1058816K
+  class space    used 1417K, capacity 1420K, committed 1536K, reserved 1048576K
