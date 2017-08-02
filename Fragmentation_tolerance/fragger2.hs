@@ -1,4 +1,8 @@
 {-# LANGUAGE BangPatterns #-}
+
+-- ghc fragger2.hs -rtsopts -XFlexibleContexts
+-- ./fragger2 478510 +RTS -T -M39231489 -s -RTS
+
 import Data.Array as AR
 import Data.Array.IO as MA
 import Control.Monad
@@ -8,7 +12,12 @@ import GHC.Stats
 import Data.Sequence
 import Data.Maybe
 import System.Mem
+import System.Environment
 import Control.Concurrent
+import System.IO
+import Data.Time.Clock.POSIX
+
+
 --allocateArray :: Int -> Array Int Int
 allocateArray num = do
     Just (AR.array (1, 1) [(1, num)])
@@ -16,8 +25,8 @@ allocateArray num = do
 increment :: (Integral a) => a -> a
 increment i = i + 1
 
-
-fillHeap n= do
+fillHeap :: Int -> IO (IOArray Int (Maybe (Array Integer Int)))
+fillHeap n = do
     --let ls = empty
     --lsref <- newIORef ls
     arr <- MA.newArray (1,n) Nothing :: IO (IOArray Int (Maybe(Array i e )))
@@ -50,19 +59,24 @@ treadArray arr n size
             treadArray arr (n+1) size
     | otherwise = return ()
 
+fragmentHeap :: IOArray Int (Maybe (Array Integer Int)) -> Int -> Int -> IO (IOArray Int (Maybe (Array Integer Int)))
 fragmentHeap lref n size
     | n <= size = do 
                           writeArray lref n Nothing
-                          print n
+                          putProgress n
                           fragmentHeap lref (n+2) size
     | otherwise = return lref
 
+putProgress :: Int -> IO ()
+putProgress s = hPutStr stdout $ "\r\ESC[K" ++ show s
+
 main = do
-    let size = 478510--407262
+    args <- getArgs
+    let size = read $ args!!0 :: Int -- 478510 --407262
     --lstref <- fillHeap size
-    print "ok0"
+    putStrLn "fillHeap"
     arr <- fillHeap size
-    print "ok1"
+    putStrLn "fragmentHeap"
     --lst <- readIORef lstref
     --print (Prelude.length lst)
     --stats <- getGCStats
@@ -72,17 +86,21 @@ main = do
     --performGC
     --threadDelay 100000
     arr <- fragmentHeap arr 2 size
-    print "ok2"
+    putStrLn "\nmake small array"
     --b <- readArray arr 2
     --print b
     --readIORef lstref >>= print
-    --arr2 <- fillHeap (200)
+    tStart <- getPOSIXTime
+    arr2 <- fillHeap (20000)
+    traverseArray arr2 1 20000
+    tStop <- getPOSIXTime
+    putStrLn $ "took " ++ show (tStop - tStart)
     --let arr2 = AR.array (1, 650000) [(i,i) | i <- [1..650000]]
     -- arr2 <-  fillHeap(200)
     --treadArray arr2 1 650000
     stats <- getGCStats
-    print $ "Bytes allocated " ++ show(maxBytesUsed stats)
-    print ("done")
+    putStrLn $ "Bytes allocated " ++ show(maxBytesUsed stats)
+    putStrLn ("done")
 
 {- main = do
     let arr = []

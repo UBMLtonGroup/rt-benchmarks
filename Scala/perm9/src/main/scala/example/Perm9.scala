@@ -5,21 +5,18 @@ import scala.collection.mutable.ListBuffer
 class Pair(val n: Int, val y: Pair) {
   var hd: Int = n
   var tl: Pair = y
-}
 
-object Pair {
+  def car() : Int = hd
+  def cdr() : Pair = tl
 
-  def cons(n: Int, y: Pair): Pair = new Pair(n, y)
+  def length(): Int = {
+    var n = 1 // account for self
 
-  def car(x: Pair): Int = x.hd
-
-  def cdr(x: Pair): Pair = x.tl
-
-  def length(x: Pair): Int = {
-    var n = 0
-    while (x != null) {
+    var x2 : Pair = tl
+    while (x2 != null) {
       n = n + 1
-      lazy val x: Pair = Pair.cdr(x)
+      val y : Pair = x2.cdr()
+      x2 = y
     }
     n
   }
@@ -28,48 +25,56 @@ object Pair {
 class Perm(val n: Pair, val y: Perm) {
   var hd: Pair = n
   var tl: Perm = y
-}
 
-object Perm {
-
-  def cons(p: Pair, y: Perm): Perm = new Perm(p, y)
-
-  def car(x: Perm): Pair = x.hd
-
-  def cdr(x: Perm): Perm = x.tl
+  def car() : Pair = hd
+  def cdr() : Perm = tl
 }
 
 object Perm9 {
-
+  // not mt safe
   private var perms: Perm = _
 
   private var x: Pair = _
 
-  def revloop(x: Pair, n: Int, y: Pair): Pair = {
-    var tempN: Int = n - 1
-    while (tempN != 0) {
-      lazy val y: Pair = Pair.cons(Pair.car(x), y)
-      lazy val x: Pair = Pair.cdr(x)
-      tempN -= 1
+  def tail(l: Pair, n: Int) : Pair = {
+    var x = l
+    var l2 = l
+    while (x != null) {
+      l2 = x
+      x = l2.cdr()
     }
-    return y
+    return l2
   }
 
-  def tail(l: Pair, n: Int): Pair = {
-    var tempN = n - 1
-    while (tempN > 0) {
-      lazy val l: Pair = Pair.cdr(l)
-      tempN -= 1
+  def revloop(xx: Pair,  nn: Int,  yy: Pair): Pair = {
+    var n  = nn
+    var x2 = xx
+    var y2 = yy
+
+    while (n > -1) {
+      println(s"     revloop: nn= ${nn} n= ${n}")
+      //println(s"     revloop: x2 ${x2.hd} y2 ${y2.hd}")
+      y2 = new Pair(x2.car(), y2)
+      var jj = x2.cdr()
+      x2 = jj
+      n -= 1
     }
-    return l
+
+    return y2
   }
 
   def F(n: Int) {
-    lazy val x: Pair = revloop(x, n, tail(x, n))
-    perms = Perm.cons(x, perms)
+    println(s" F(${n})")
+    //println(s"  tail is ${x2.hd}")
+    //println(s"   x before revloop ${x.hd}")
+    x = revloop(x, n, tail(x, n))
+    printints(x)
+    //println(s"  x after ${x.hd}")
+    perms = new Perm(x, perms)
   }
 
   def P(n: Int) {
+    println(s"P(${n})")
     if (n > 1) {
       var j = n - 1
       while (j != 0) {
@@ -82,9 +87,10 @@ object Perm9 {
   }
 
   def permutations(the_x: Pair): Perm = {
-    var x = the_x
-    val perms = Perm.cons(the_x, null)
-    P(Pair.length(the_x))
+    x = the_x
+    perms = new Perm(the_x, null)
+    P(the_x.length())
+    println("Perm done")
     return perms
   }
 
@@ -93,12 +99,12 @@ object Perm9 {
     var y: Pair = null
     var sum = 0
     while (tempX != null) {
-      y = Perm.car(tempX)
+      y = tempX.car()
       while (y != null) {
-        sum = sum + Pair.car(y)
-        y = Pair.cdr(y)
+        sum = sum + y.car()
+        y = y.cdr()
       }
-      tempX = Perm.cdr(tempX)
+      tempX = tempX.cdr()
     }
     sum
   }
@@ -115,7 +121,7 @@ object Perm9 {
 
   class Conf(arguments: Seq[String]) extends ScallopConf(arguments) {
     val computeThreads = opt[Int](default = Some(1), short = 't')
-    val computeDepth = opt[Int](default = Some(40), short = 'd')
+    val computeDepth = opt[Int](default = Some(6), short = 'd')
     val iterations = opt[Int](default = Some(1100), short = 'i')
     val computeSleep = opt[Int](default = Some(1), short = 's')
     val gcThreads = opt[Int](default = Some(1), short = 'g')
@@ -123,11 +129,18 @@ object Perm9 {
     val gcDelay = opt[Int](default = Some(1), short = 'J')
     val treeDepth = opt[Int](default = Some(15), short = 'G')
     val help = opt[Boolean]()
+
+    version("Scala Perm9 0.1.0")
+    banner("""Usage: Perm9 [OPTION]
+             |Options:
+             |""".stripMargin)
+    footer("\nhttps://ubmltongroup.github.io/")
+
     verify()
   }
 
   def main(args: Array[String]) {
-    var n: Int = 6
+    var n: Int = 4
     var m: Perm = null
     var m2: Perm = null
     var sum: Long = 0l
@@ -136,21 +149,23 @@ object Perm9 {
     var one_to_n: Pair = null
     var nn: Int = n
 
-    println(nn)
-
+    println("Create list of [1,2,...,n]: ")
     while (nn > 0) {
-      println(nn)
-
+      one_to_n = new Pair(nn, one_to_n)
       nn = nn - 1
-      one_to_n = Pair.cons(nn, one_to_n)
     }
 
-    println("p9.perms")
-    println(one_to_n)
-    m = Perm9.permutations(one_to_n)
-    printperms(m)
+    printints(one_to_n)
 
-    k = 5
+    println("Generate permutations of that list:")
+
+
+    m = Perm9.permutations(one_to_n)
+    println("Permutations >>>")
+    printperms(m)
+    println("<<< Permutations")
+
+    k = 3
     while (k > 0) {
       println(k)
       val m2 = Perm9.permutations(one_to_n)
@@ -170,11 +185,11 @@ object Perm9 {
 
   def printints(l: Pair) {
     var tempL = l
-    println("(")
+    print("(")
     while (tempL != null) {
-      println(Pair.car(l))
-      tempL = Pair.cdr(l)
-      if (tempL != null) println(" ")
+      print(tempL.car())
+      tempL = tempL.cdr()
+      if (tempL != null) print(" ")
     }
     println(")")
   }
@@ -182,8 +197,8 @@ object Perm9 {
   def printperms(perms: Perm) {
     var temPerms = perms
     while (temPerms != null) {
-      printints(Perm.car(temPerms))
-      temPerms = Perm.cdr(temPerms)
+      printints(temPerms.car())
+      temPerms = temPerms.cdr()
     }
     println("")
   }

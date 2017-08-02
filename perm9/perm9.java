@@ -51,11 +51,11 @@ class perm9 {
   private static Perm perms;    /* local to these functions */
   private static Pair x;        /* local to these functions */
 
-  static Pair revloop( Pair x, int n, Pair y )
+  static Pair revloop( Pair x_, int n, Pair y )
   {
     while (n-- != 0) {
-      y = Pair.cons ( Pair.car(x), y );
-      x = Pair.cdr(x);
+      y = Pair.cons ( Pair.car(x_), y );
+      x_ = Pair.cdr(x_);
     }
     return y;
   }
@@ -71,6 +71,7 @@ class perm9 {
   static void F( int n )
   {
     x = revloop( x, n, tail( x, n ) );
+    printints(x);
     perms = Perm.cons ( x, perms );
   }
 
@@ -127,7 +128,7 @@ class perm9 {
 
   public static void main( String args[] )
   {
-    int n = 9;
+    int n = 4;
     Perm m, m2;
     long sum;
     int k;
@@ -139,9 +140,10 @@ class perm9 {
     while (nn > 0) {
       one_to_n = Pair.cons( nn--, one_to_n );
     }
-
+    System.out.println("Generate permutations");
+    printints(one_to_n);
     m = permutations( one_to_n );
-    //printperms( m );
+    printperms( m );
 
     for ( k = 5; k > 0; --k ) {
       m2 = permutations( one_to_n );
