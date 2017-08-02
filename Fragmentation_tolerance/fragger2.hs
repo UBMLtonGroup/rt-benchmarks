@@ -92,8 +92,8 @@ main = do
     --readIORef lstref >>= print
     tStart <- getPOSIXTime
     arr2 <- fillHeap (20000)
-    traverseArray arr2 1 20000
     tStop <- getPOSIXTime
+    traverseArray arr2 1 20000
     putStrLn $ "took " ++ show (tStop - tStart)
     --let arr2 = AR.array (1, 650000) [(i,i) | i <- [1..650000]]
     -- arr2 <-  fillHeap(200)
