@@ -111,28 +111,10 @@ object Perm9 {
     f
   }
 
-  class Conf(arguments: Seq[String]) extends ScallopConf(arguments) {
-    val computeThreads = opt[Int](default = Some(1), short = 't')
-    val computeDepth = opt[Int](default = Some(6), short = 'd')
-    val iterations = opt[Int](default = Some(1100), short = 'i')
-    val computeSleep = opt[Int](default = Some(1), short = 's')
-    val gcThreads = opt[Int](default = Some(1), short = 'g')
-    val gcSleep = opt[Int](default = Some(1), short = 'S')
-    val gcDelay = opt[Int](default = Some(1), short = 'J')
-    val treeDepth = opt[Int](default = Some(15), short = 'G')
-    val help = opt[Boolean]()
+  def do_perm9(depth: Int, iterations: Int) {
+    var listOfTimeStamps = new ListBuffer[String]()
 
-    version("Scala Perm9 0.1.0")
-    banner("""Usage: Perm9 [OPTION]
-             |Options:
-             |""".stripMargin)
-    footer("\nhttps://ubmltongroup.github.io/")
-
-    verify()
-  }
-
-  def main(args: Array[String]) {
-    var n: Int = 9
+    var n: Int = depth
     var m: Perm = null
     var m2: Perm = null
     var sum: Long = 0l
@@ -148,7 +130,7 @@ object Perm9 {
 
     m = Perm9.permutations(one_to_n)
 
-    k = 10
+    k = iterations
     while (k > 0) {
       val m2 = Perm9.permutations(one_to_n)
       m = m2
@@ -158,6 +140,114 @@ object Perm9 {
     if (sum != (n * (n + 1) * Perm9.factorial(n)) / 2)
       println("*** wrong result ***")
   }
+
+
+  def start_gc_threads(num_threads : Int, p9iters: Int, iterations: Int, gcsleep: Int) {
+    for(i <- 1 until num_threads+1){
+      val t = new Thread(new Runnable {
+        def run() {
+          var listofTimeStamps = gc_func(p9iters, i, iterations, gcsleep)
+          for (timeStamp <- listofTimeStamps.toList){
+            println(timeStamp)
+          }
+        }
+      })
+      t.setDaemon(false)
+      t.start()
+    }
+  }
+
+  def gc_func(p9iters: Int, id: Int, iterations: Int, comp_sleep: Int): ListBuffer[String] = {
+    var listOfTimeStamps = new ListBuffer[String]()
+    for(i <- 1 until iterations+1){
+      val tStart = System.currentTimeMillis()
+      val runtime3 = Runtime.getRuntime
+      listOfTimeStamps += ("gc:start:"+ id +":" + i + ":" +tStart  + ":" + (runtime3.totalMemory - runtime3.freeMemory))
+      do_perm9(9, p9iters)
+      val tStop = System.currentTimeMillis()
+      val runtime4 = Runtime.getRuntime
+      listOfTimeStamps += ("gc:stop:"+ id +":" + i + ":" +tStop  + ":" + (runtime4.totalMemory - runtime4.freeMemory))
+      Thread.sleep(comp_sleep * 1000)
+    }
+    listOfTimeStamps
+  }
+
+
+
+  def start_comp_threads(num_threads : Int, depth: Int, iterations: Int, comp_sleep: Int) {
+    for(i <- 1 until num_threads+1){
+      val t = new Thread(new Runnable {
+        def run() {
+          var listofTimeStamps = comp_func(depth, i, iterations, comp_sleep)
+          for (timeStamp <- listofTimeStamps.toList){
+            println(timeStamp)
+          }
+        }
+      })
+      t.setDaemon(false)
+      t.start()
+    }
+  }
+
+  def fibonacci(num: Int): Int = {
+    if(num < 2){
+      return 1
+    } else {
+      return fibonacci(num-2) + fibonacci(num-1)
+    }
+  }
+
+  def comp_func(depth: Int, id: Int, iterations: Int, comp_sleep: Int): ListBuffer[String] = {
+    var listOfTimeStamps = new ListBuffer[String]()
+    for(i <- 1 until iterations+1){
+      val tStart = System.currentTimeMillis()
+      val runtime3 = Runtime.getRuntime
+      listOfTimeStamps += ("compute:start:"+ id +":" + i + ":" +tStart  + ":" + (runtime3.totalMemory - runtime3.freeMemory))
+      fibonacci(depth)
+      val tStop = System.currentTimeMillis()
+      val runtime4 = Runtime.getRuntime
+      listOfTimeStamps += ("compute:stop:"+ id +":" + i + ":" +tStop  + ":" + (runtime4.totalMemory - runtime4.freeMemory))
+      Thread.sleep(comp_sleep * 1000)
+    }
+    listOfTimeStamps
+  }
+
+
+
+  class Conf(arguments: Seq[String]) extends ScallopConf(arguments) {
+    val computeThreads = opt[Int](default = Some(1), short = 't')
+    val computeDepth = opt[Int](default = Some(40), short = 'd')
+    val iterations = opt[Int](default = Some(1100), short = 'i')
+    val computeSleep = opt[Int](default = Some(1), short = 's')
+
+    val gcThreads = opt[Int](default = Some(1), short = 'g')
+    val gcSleep = opt[Int](default = Some(1), short = 'S')
+    val gcDelay = opt[Int](default = Some(60), short = 'J')
+    val p9iters = opt[Int](default = Some(15), short = 'G')
+    val help = opt[Boolean]()
+
+    version("Scala Perm9 0.1.0")
+    banner("""Usage: Perm9 [OPTION]
+             |Options:
+             |""".stripMargin)
+    footer("\nhttps://ubmltongroup.github.io/")
+
+    verify()
+  }
+
+
+  def main(args: Array[String]) {
+    val conf = new Conf(args)
+    if (conf.help()) {
+      conf.printHelp();
+    }
+    else {
+      start_comp_threads(conf.computeThreads(), conf.computeDepth(), conf.iterations(), conf.computeSleep() * 1000)
+      Thread.sleep(conf.gcDelay() * 1000)
+      start_gc_threads(conf.gcThreads(), conf.p9iters(), conf.iterations(), conf.gcSleep() * 1000)
+    }
+  }
+
 
   /** ****************************************************************************
     *
