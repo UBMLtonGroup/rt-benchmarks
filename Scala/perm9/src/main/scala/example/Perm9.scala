@@ -112,8 +112,6 @@ object Perm9 {
   }
 
   def do_perm9(depth: Int, iterations: Int) {
-    var listOfTimeStamps = new ListBuffer[String]()
-
     var n: Int = depth
     var m: Perm = null
     var m2: Perm = null
@@ -142,11 +140,11 @@ object Perm9 {
   }
 
 
-  def start_gc_threads(num_threads : Int, p9iters: Int, iterations: Int, gcsleep: Int) {
+  def start_gc_threads(num_threads : Int, p9iters: Int, p9depth: Int, iterations: Int, gcsleep: Int) {
     for(i <- 1 until num_threads+1){
       val t = new Thread(new Runnable {
         def run() {
-          var listofTimeStamps = gc_func(p9iters, i, iterations, gcsleep)
+          var listofTimeStamps = gc_func(p9iters, p9depth, i, iterations, gcsleep)
           for (timeStamp <- listofTimeStamps.toList){
             println(timeStamp)
           }
@@ -157,13 +155,13 @@ object Perm9 {
     }
   }
 
-  def gc_func(p9iters: Int, id: Int, iterations: Int, comp_sleep: Int): ListBuffer[String] = {
+  def gc_func(p9iters: Int, p9depth: Int, id: Int, iterations: Int, comp_sleep: Int): ListBuffer[String] = {
     var listOfTimeStamps = new ListBuffer[String]()
     for(i <- 1 until iterations+1){
       val tStart = System.currentTimeMillis()
       val runtime3 = Runtime.getRuntime
       listOfTimeStamps += ("gc:start:"+ id +":" + i + ":" +tStart  + ":" + (runtime3.totalMemory - runtime3.freeMemory))
-      do_perm9(9, p9iters)
+      do_perm9(p9depth, p9iters)
       val tStop = System.currentTimeMillis()
       val runtime4 = Runtime.getRuntime
       listOfTimeStamps += ("gc:stop:"+ id +":" + i + ":" +tStop  + ":" + (runtime4.totalMemory - runtime4.freeMemory))
@@ -224,6 +222,9 @@ object Perm9 {
     val gcSleep = opt[Int](default = Some(1), short = 'S')
     val gcDelay = opt[Int](default = Some(60), short = 'J')
     val p9iters = opt[Int](default = Some(15), short = 'G')
+    var p9depth = opt[Int](default = Some(9), short='p')
+
+    var debug = opt[Boolean](default = false, short='D')
     val help = opt[Boolean]()
 
     version("Scala Perm9 0.1.0")
@@ -244,7 +245,7 @@ object Perm9 {
     else {
       start_comp_threads(conf.computeThreads(), conf.computeDepth(), conf.iterations(), conf.computeSleep() * 1000)
       Thread.sleep(conf.gcDelay() * 1000)
-      start_gc_threads(conf.gcThreads(), conf.p9iters(), conf.iterations(), conf.gcSleep() * 1000)
+      start_gc_threads(conf.gcThreads(), conf.p9iters(), conf.p9depth(), conf.iterations(), conf.gcSleep() * 1000)
     }
   }
 
