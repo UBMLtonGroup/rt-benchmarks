@@ -214,7 +214,7 @@ object Perm9 {
 
   class Conf(arguments: Seq[String]) extends ScallopConf(arguments) {
     val computeThreads = opt[Int](default = Some(1), short = 't')
-    val computeDepth = opt[Int](default = Some(40), short = 'd')
+    val computeDepth = opt[Int](default = Some(37), short = 'd')
     val iterations = opt[Int](default = Some(1100), short = 'i')
     val computeSleep = opt[Int](default = Some(1), short = 's')
 
@@ -224,7 +224,7 @@ object Perm9 {
     val p9iters = opt[Int](default = Some(15), short = 'G')
     var p9depth = opt[Int](default = Some(9), short='p')
 
-    var debug = opt[Boolean](default = false, short='D')
+    var debug = opt[Boolean](default = Some(false), short='D')
     val help = opt[Boolean]()
 
     version("Scala Perm9 0.1.0")
