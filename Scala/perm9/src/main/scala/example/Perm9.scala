@@ -243,9 +243,11 @@ object Perm9 {
       conf.printHelp();
     }
     else {
-      start_comp_threads(conf.computeThreads(), conf.computeDepth(), conf.iterations(), conf.computeSleep() * 1000)
+      if (conf.debug()) println("Start compute threads")
+      start_comp_threads(conf.computeThreads(), conf.computeDepth(), conf.iterations(), conf.computeSleep())
       Thread.sleep(conf.gcDelay() * 1000)
-      start_gc_threads(conf.gcThreads(), conf.p9iters(), conf.p9depth(), conf.iterations(), conf.gcSleep() * 1000)
+      if (conf.debug()) println("Start GC threads")
+      start_gc_threads(conf.gcThreads(), conf.p9iters(), conf.p9depth(), conf.iterations(), conf.gcSleep())
     }
   }
 
