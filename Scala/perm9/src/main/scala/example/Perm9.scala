@@ -140,13 +140,13 @@ object Perm9 {
   }
 
 
-  def start_gc_threads(num_threads : Int, p9iters: Int, p9depth: Int, iterations: Int, gcsleep: Int, debug) {
+  def start_gc_threads(num_threads : Int, p9iters: Int, p9depth: Int, iterations: Int, gcsleep: Int, debug: Boolean) {
     for(i <- 1 until num_threads+1) {
       if (debug) println(s"starting gc thread ${i}")
 
       val t = new Thread(new Runnable {
         def run() {
-          var listofTimeStamps = gc_func(p9iters, p9depth, i, iterations, gcsleep)
+          var listofTimeStamps = gc_func(p9iters, p9depth, i, iterations, gcsleep, debug)
           for (timeStamp <- listofTimeStamps.toList){
             println(timeStamp)
           }
@@ -157,7 +157,7 @@ object Perm9 {
     }
   }
 
-  def gc_func(p9iters: Int, p9depth: Int, id: Int, iterations: Int, comp_sleep: Int, debug): ListBuffer[String] = {
+  def gc_func(p9iters: Int, p9depth: Int, id: Int, iterations: Int, comp_sleep: Int, debug: Boolean): ListBuffer[String] = {
     var listOfTimeStamps = new ListBuffer[String]()
     for(i <- 1 until iterations+1) {
       if (debug) println(s"gc iter ${i}")
@@ -175,7 +175,7 @@ object Perm9 {
 
 
 
-  def start_comp_threads(num_threads : Int, depth: Int, iterations: Int, comp_sleep: Int, debug) {
+  def start_comp_threads(num_threads : Int, depth: Int, iterations: Int, comp_sleep: Int, debug: Boolean) {
     for(i <- 1 until num_threads+1) {
       if (debug) println(s"starting comp thread ${i}")
       val t = new Thread(new Runnable {
@@ -199,7 +199,7 @@ object Perm9 {
     }
   }
 
-  def comp_func(depth: Int, id: Int, iterations: Int, comp_sleep: Int, debug): ListBuffer[String] = {
+  def comp_func(depth: Int, id: Int, iterations: Int, comp_sleep: Int, debug: Boolean): ListBuffer[String] = {
     var listOfTimeStamps = new ListBuffer[String]()
     for(i <- 1 until iterations+1) {
       if (debug) println(s"comp iter ${i}")
@@ -249,10 +249,10 @@ object Perm9 {
     }
     else {
       if (conf.debug()) println("Start compute threads")
-      start_comp_threads(conf.computeThreads(), conf.computeDepth(), conf.iterations(), conf.computeSleep(), conf.debug()))
+      start_comp_threads(conf.computeThreads(), conf.computeDepth(), conf.iterations(), conf.computeSleep(), conf.debug())
       Thread.sleep(conf.gcDelay() * 1000)
       if (conf.debug()) println("Start GC threads")
-      start_gc_threads(conf.gcThreads(), conf.p9iters(), conf.p9depth(), conf.iterations(), conf.gcSleep(), conf.debug()))
+      start_gc_threads(conf.gcThreads(), conf.p9iters(), conf.p9depth(), conf.iterations(), conf.gcSleep(), conf.debug())
     }
   }
 
