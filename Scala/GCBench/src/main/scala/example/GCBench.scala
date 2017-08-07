@@ -156,7 +156,7 @@ object GCBench {
             val stop = System.currentTimeMillis()
             listOfTimeStamps += "gc:stop:"+ id +":" + i + ":" + stop + ":" + (runtime2.totalMemory - runtime2.freeMemory)
 
-            Thread.sleep(gcsleep)
+            Thread.sleep(gcsleep * 1000)
         }
         listOfTimeStamps
     }
@@ -186,7 +186,7 @@ object GCBench {
             val tStop = System.currentTimeMillis()
             val runtime4 = Runtime.getRuntime
             listOfTimeStamps += ("compute:stop:"+ id +":" + i + ":" +tStop  + ":" + (runtime4.totalMemory - runtime4.freeMemory))
-            Thread.sleep(comp_sleep)
+            Thread.sleep(comp_sleep * 1000)
         }
         listOfTimeStamps
     }
@@ -198,7 +198,7 @@ object GCBench {
         val computeSleep = opt[Int](default = Some(1), short = 's')
         val gcThreads = opt[Int](default = Some(1), short = 'g')
         val gcSleep = opt[Int](default = Some(1), short = 'S')
-        val gcDelay = opt[Int](default = Some(1), short = 'J')
+        val gcDelay = opt[Int](default = Some(60), short = 'J')
         val treeDepth = opt[Int](default = Some(15), short = 'G')
         val help = opt[Boolean]()
 
@@ -218,7 +218,7 @@ object GCBench {
         }
         else {
             start_comp_threads(conf.computeThreads(), conf.computeDepth(), conf.iterations(), conf.computeSleep() * 1000)
-            Thread.sleep(conf.gcSleep() * 1000)
+            Thread.sleep(conf.gcDelay() * 1000)
             start_gc_thread(conf.gcThreads(), conf.treeDepth(), conf.iterations(), conf.gcSleep() * 1000)
         }
     }
