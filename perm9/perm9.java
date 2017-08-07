@@ -63,16 +63,15 @@ class perm9 {
   static Pair tail( Pair l, int n )
   {
     while (n-- > 0) {
-      l = Pair.cdr(l);
+        l = Pair.cdr(l);
     }
     return l;
   }
     
   static void F( int n )
   {
-    x = revloop( x, n, tail( x, n ) );
-    printints(x);
-    perms = Perm.cons ( x, perms );
+      x = revloop( x, n, tail( x, n ) );
+      perms = Perm.cons ( x, perms );
   }
 
   static void P( int n )
@@ -128,7 +127,7 @@ class perm9 {
 
   public static void main( String args[] )
   {
-    int n = 4;
+    int n = 9;
     Perm m, m2;
     long sum;
     int k;
@@ -140,10 +139,8 @@ class perm9 {
     while (nn > 0) {
       one_to_n = Pair.cons( nn--, one_to_n );
     }
-    System.out.println("Generate permutations");
-    printints(one_to_n);
+
     m = permutations( one_to_n );
-    printperms( m );
 
     for ( k = 5; k > 0; --k ) {
       m2 = permutations( one_to_n );

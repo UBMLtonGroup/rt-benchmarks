@@ -36,13 +36,15 @@ object Perm9 {
 
   private var x: Pair = _
 
-  def tail(l: Pair, n: Int) : Pair = {
-    var x = l
+  def tail(l: Pair, n_ : Int) : Pair = {
     var l2 = l
-    while (x != null) {
-      l2 = x
-      x = l2.cdr()
+    var n = n_
+
+    while(n > 0) {
+      n = n - 1
+      l2 = l2.cdr()
     }
+
     return l2
   }
 
@@ -51,12 +53,9 @@ object Perm9 {
     var x2 = xx
     var y2 = yy
 
-    while (n > -1) {
-      println(s"     revloop: nn= ${nn} n= ${n}")
-      //println(s"     revloop: x2 ${x2.hd} y2 ${y2.hd}")
+    while (n > 0) {
       y2 = new Pair(x2.car(), y2)
-      var jj = x2.cdr()
-      x2 = jj
+      x2 = x2.cdr()
       n -= 1
     }
 
@@ -64,17 +63,11 @@ object Perm9 {
   }
 
   def F(n: Int) {
-    println(s" F(${n})")
-    //println(s"  tail is ${x2.hd}")
-    //println(s"   x before revloop ${x.hd}")
     x = revloop(x, n, tail(x, n))
-    printints(x)
-    //println(s"  x after ${x.hd}")
     perms = new Perm(x, perms)
   }
 
   def P(n: Int) {
-    println(s"P(${n})")
     if (n > 1) {
       var j = n - 1
       while (j != 0) {
@@ -90,7 +83,6 @@ object Perm9 {
     x = the_x
     perms = new Perm(the_x, null)
     P(the_x.length())
-    println("Perm done")
     return perms
   }
 
@@ -112,7 +104,7 @@ object Perm9 {
   def factorial(n: Int): Long = {
     var tempN = n
     var f = 1
-    while (n > 0) {
+    while (tempN > 0) {
       f = tempN * f
       tempN = tempN - 1
     }
@@ -140,7 +132,7 @@ object Perm9 {
   }
 
   def main(args: Array[String]) {
-    var n: Int = 4
+    var n: Int = 9
     var m: Perm = null
     var m2: Perm = null
     var sum: Long = 0l
@@ -149,32 +141,22 @@ object Perm9 {
     var one_to_n: Pair = null
     var nn: Int = n
 
-    println("Create list of [1,2,...,n]: ")
     while (nn > 0) {
       one_to_n = new Pair(nn, one_to_n)
       nn = nn - 1
     }
 
-    printints(one_to_n)
-
-    println("Generate permutations of that list:")
-
-
     m = Perm9.permutations(one_to_n)
-    println("Permutations >>>")
-    printperms(m)
-    println("<<< Permutations")
 
-    k = 3
+    k = 10
     while (k > 0) {
-      println(k)
       val m2 = Perm9.permutations(one_to_n)
       m = m2
       k = k - 1
     }
-    println("sumperms")
     sum = Perm9.sumperms(m)
-    if (sum != (n * (n + 1) * Perm9.factorial(n)) / 2) println("*** wrong result ***")
+    if (sum != (n * (n + 1) * Perm9.factorial(n)) / 2)
+      println("*** wrong result ***")
   }
 
   /** ****************************************************************************
