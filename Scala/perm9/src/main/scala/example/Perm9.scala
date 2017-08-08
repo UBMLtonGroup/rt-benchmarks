@@ -36,13 +36,15 @@ object Perm9 {
 
   private var x: Pair = _
 
-  def tail(l: Pair, n: Int) : Pair = {
-    var x = l
+  def tail(l: Pair, n_ : Int) : Pair = {
     var l2 = l
-    while (x != null) {
-      l2 = x
-      x = l2.cdr()
+    var n = n_
+
+    while(n > 0) {
+      n = n - 1
+      l2 = l2.cdr()
     }
+
     return l2
   }
 
@@ -51,12 +53,9 @@ object Perm9 {
     var x2 = xx
     var y2 = yy
 
-    while (n > -1) {
-      println(s"     revloop: nn= ${nn} n= ${n}")
-      //println(s"     revloop: x2 ${x2.hd} y2 ${y2.hd}")
+    while (n > 0) {
       y2 = new Pair(x2.car(), y2)
-      var jj = x2.cdr()
-      x2 = jj
+      x2 = x2.cdr()
       n -= 1
     }
 
@@ -64,17 +63,11 @@ object Perm9 {
   }
 
   def F(n: Int) {
-    println(s" F(${n})")
-    //println(s"  tail is ${x2.hd}")
-    //println(s"   x before revloop ${x.hd}")
     x = revloop(x, n, tail(x, n))
-    printints(x)
-    //println(s"  x after ${x.hd}")
     perms = new Perm(x, perms)
   }
 
   def P(n: Int) {
-    println(s"P(${n})")
     if (n > 1) {
       var j = n - 1
       while (j != 0) {
@@ -90,7 +83,6 @@ object Perm9 {
     x = the_x
     perms = new Perm(the_x, null)
     P(the_x.length())
-    println("Perm done")
     return perms
   }
 
@@ -112,22 +104,132 @@ object Perm9 {
   def factorial(n: Int): Long = {
     var tempN = n
     var f = 1
-    while (n > 0) {
+    while (tempN > 0) {
       f = tempN * f
       tempN = tempN - 1
     }
     f
   }
 
+  def do_perm9(depth: Int, iterations: Int) {
+    var n: Int = depth
+    var m: Perm = null
+    var m2: Perm = null
+    var sum: Long = 0l
+    var k: Int = 0
+
+    var one_to_n: Pair = null
+    var nn: Int = n
+
+    while (nn > 0) {
+      one_to_n = new Pair(nn, one_to_n)
+      nn = nn - 1
+    }
+
+    m = Perm9.permutations(one_to_n)
+
+    k = iterations
+    while (k > 0) {
+      val m2 = Perm9.permutations(one_to_n)
+      m = m2
+      k = k - 1
+    }
+    sum = Perm9.sumperms(m)
+    if (sum != (n * (n + 1) * Perm9.factorial(n)) / 2)
+      println("*** wrong result ***")
+  }
+
+
+  def start_gc_threads(num_threads : Int, p9iters: Int, p9depth: Int, iterations: Int, gcsleep: Int, debug: Boolean) {
+    for (i <- 1 until num_threads+1) {
+      if (debug) println(s"starting gc thread ${i}")
+
+      val t = new Thread(new Runnable {
+        def run() {
+          var listofTimeStamps = gc_func(p9iters, p9depth, i, iterations, gcsleep, debug)
+          for (timeStamp <- listofTimeStamps.toList){
+            println(timeStamp)
+          }
+        }
+      })
+      t.setDaemon(false)
+      t.start()
+    }
+  }
+
+  def gc_func(p9iters: Int, p9depth: Int, id: Int, iterations: Int, comp_sleep: Int, debug: Boolean): ListBuffer[String] = {
+    var listOfTimeStamps = new ListBuffer[String]()
+    for (i <- 1 until iterations+1) {
+      if (debug) println(s"gc iter ${i}")
+      val tStart = System.currentTimeMillis()
+      val runtime3 = Runtime.getRuntime
+      listOfTimeStamps += ("gc:start:"+ id +":" + i + ":" +tStart  + ":" + (runtime3.totalMemory - runtime3.freeMemory))
+      do_perm9(p9depth, p9iters)
+      val tStop = System.currentTimeMillis()
+      val runtime4 = Runtime.getRuntime
+      listOfTimeStamps += ("gc:stop:"+ id +":" + i + ":" +tStop  + ":" + (runtime4.totalMemory - runtime4.freeMemory))
+      Thread.sleep(comp_sleep * 1000)
+    }
+    listOfTimeStamps
+  }
+
+
+
+  def start_comp_threads(num_threads : Int, depth: Int, iterations: Int, comp_sleep: Int, debug: Boolean) {
+    for (i <- 1 until num_threads+1) {
+      if (debug) println(s"starting comp thread ${i}")
+      val t = new Thread(new Runnable {
+        def run() {
+          var listofTimeStamps = comp_func(depth, i, iterations, comp_sleep, debug)
+          for (timeStamp <- listofTimeStamps.toList){
+            println(timeStamp)
+          }
+        }
+      })
+      t.setDaemon(false)
+      t.start()
+    }
+  }
+
+  def fibonacci(num: Int): Int = {
+    if(num < 2){
+      return 1
+    } else {
+      return fibonacci(num-2) + fibonacci(num-1)
+    }
+  }
+
+  def comp_func(depth: Int, id: Int, iterations: Int, comp_sleep: Int, debug: Boolean): ListBuffer[String] = {
+    var listOfTimeStamps = new ListBuffer[String]()
+    for (i <- 1 until iterations+1) {
+      if (debug) println(s"comp iter ${i}")
+      val tStart = System.currentTimeMillis()
+      val runtime3 = Runtime.getRuntime
+      listOfTimeStamps += ("compute:start:"+ id +":" + i + ":" +tStart  + ":" + (runtime3.totalMemory - runtime3.freeMemory))
+      fibonacci(depth)
+      val tStop = System.currentTimeMillis()
+      val runtime4 = Runtime.getRuntime
+      listOfTimeStamps += ("compute:stop:"+ id +":" + i + ":" +tStop  + ":" + (runtime4.totalMemory - runtime4.freeMemory))
+      Thread.sleep(comp_sleep * 1000)
+    }
+    listOfTimeStamps
+  }
+
+
+
   class Conf(arguments: Seq[String]) extends ScallopConf(arguments) {
     val computeThreads = opt[Int](default = Some(1), short = 't')
-    val computeDepth = opt[Int](default = Some(6), short = 'd')
+    val computeDepth = opt[Int](default = Some(37), short = 'd')
     val iterations = opt[Int](default = Some(1100), short = 'i')
     val computeSleep = opt[Int](default = Some(1), short = 's')
+
     val gcThreads = opt[Int](default = Some(1), short = 'g')
     val gcSleep = opt[Int](default = Some(1), short = 'S')
-    val gcDelay = opt[Int](default = Some(1), short = 'J')
-    val treeDepth = opt[Int](default = Some(15), short = 'G')
+    val gcDelay = opt[Int](default = Some(60), short = 'J')
+    val p9iters = opt[Int](default = Some(15), short = 'G')
+    var p9depth = opt[Int](default = Some(9), short='p')
+
+    var debug = opt[Boolean](default = Some(false), short='D')
     val help = opt[Boolean]()
 
     version("Scala Perm9 0.1.0")
@@ -139,43 +241,21 @@ object Perm9 {
     verify()
   }
 
+
   def main(args: Array[String]) {
-    var n: Int = 4
-    var m: Perm = null
-    var m2: Perm = null
-    var sum: Long = 0l
-    var k: Int = 0
-
-    var one_to_n: Pair = null
-    var nn: Int = n
-
-    println("Create list of [1,2,...,n]: ")
-    while (nn > 0) {
-      one_to_n = new Pair(nn, one_to_n)
-      nn = nn - 1
+    val conf = new Conf(args)
+    if (conf.help()) {
+      conf.printHelp();
     }
-
-    printints(one_to_n)
-
-    println("Generate permutations of that list:")
-
-
-    m = Perm9.permutations(one_to_n)
-    println("Permutations >>>")
-    printperms(m)
-    println("<<< Permutations")
-
-    k = 3
-    while (k > 0) {
-      println(k)
-      val m2 = Perm9.permutations(one_to_n)
-      m = m2
-      k = k - 1
+    else {
+      if (conf.debug()) println("Start compute threads")
+      start_comp_threads(conf.computeThreads(), conf.computeDepth(), conf.iterations(), conf.computeSleep(), conf.debug())
+      Thread.sleep(conf.gcDelay() * 1000)
+      if (conf.debug()) println("Start GC threads")
+      start_gc_threads(conf.gcThreads(), conf.p9iters(), conf.p9depth(), conf.iterations(), conf.gcSleep(), conf.debug())
     }
-    println("sumperms")
-    sum = Perm9.sumperms(m)
-    if (sum != (n * (n + 1) * Perm9.factorial(n)) / 2) println("*** wrong result ***")
   }
+
 
   /** ****************************************************************************
     *
