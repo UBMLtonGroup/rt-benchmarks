@@ -1,8 +1,7 @@
 {-# LANGUAGE BangPatterns #-}
 
--- ghc fragger2.hs -rtsopts -XFlexibleContexts
--- ./fragger2 478510 +RTS -T -M39231489 -s -RTS
-
+-- ghc fragger2.hs -rtsopts -XFlexibleContexts -fforce-recomp
+-- ./fragger2 233570 +RTS -T -M32477184 -RTS
 import Data.Array as AR
 import Data.Array.IO as MA
 import Control.Monad
@@ -17,19 +16,22 @@ import Control.Concurrent
 import System.IO
 import Data.Time.Clock.POSIX
 
-
---allocateArray :: Int -> Array Int Int
+data SmallObj = SmallArray (IOArray Int Int) | Void
+--allocateArray :: Int -> IO (IOArray Int Int)  
 allocateArray num = do
-    Just (AR.array (1, 1) [(1, num)])
+    smallarr <- MA.newArray (1,2) num
+    return smallarr
 
 increment :: (Integral a) => a -> a
 increment i = i + 1
 
-fillHeap :: Int -> IO (IOArray Int (Maybe (Array Integer Int)))
+--fillHeap :: Int -> IO (IOArray Int (Maybe (IO(IOArray Int Int))))
 fillHeap n = do
     --let ls = empty
     --lsref <- newIORef ls
-    arr <- MA.newArray (1,n) Nothing :: IO (IOArray Int (Maybe(Array i e )))
+    temparr <- MA.newArray(1,2) 10
+    let tempsarr = SmallArray (temparr)
+    arr <- MA.newArray (1,n) tempsarr :: IO (IOArray Int SmallObj)
     traverseArray arr 1 n
     --forM_ [1..n] (\a -> do
             ----modifyIORef' lsref $! (((<|) (allocateArray a)) ) 
@@ -49,21 +51,32 @@ fillHeap n = do
 
 traverseArray arr n size
     | n <= size = do
-                    MA.writeArray arr n $!(allocateArray n) 
+                    smallarr <- allocateArray n
+                    let ssmallarr = SmallArray (smallarr)
+                    MA.writeArray arr n ssmallarr
                     traverseArray arr (n+1) size
     | otherwise = return arr
 
 treadArray arr n size
     | n<=size = do
-            print $ arr ! n
+            --putProgress $ arr ! n
+            b <- readArray arr n
+            --MA.writeArray arr n n
+            --putProgress b
             treadArray arr (n+1) size
     | otherwise = return ()
 
-fragmentHeap :: IOArray Int (Maybe (Array Integer Int)) -> Int -> Int -> IO (IOArray Int (Maybe (Array Integer Int)))
+goThroughArray arr n size
+    | n<=size = do
+            b <- readArray arr n
+            goThroughArray arr (n+1) size
+    | otherwise = return ()
+
+--fragmentHeap :: IOArray Int (Maybe (IOArray Int Int)) -> Int -> Int -> IO (IOArray Int (Maybe (IOArray Int Int)))
 fragmentHeap lref n size
     | n <= size = do 
-                          writeArray lref n Nothing
-                          putProgress n
+                          writeArray lref n Void
+                          --putProgress n
                           fragmentHeap lref (n+2) size
     | otherwise = return lref
 
@@ -72,7 +85,7 @@ putProgress s = hPutStr stdout $ "\r\ESC[K" ++ show s
 
 main = do
     args <- getArgs
-    let size = read $ args!!0 :: Int -- 478510 --407262
+    let size = read $ args!!0 :: Int -- 478510 --234000 --277452 --233580
     --lstref <- fillHeap size
     putStrLn "fillHeap"
     arr <- fillHeap size
@@ -87,17 +100,21 @@ main = do
     --threadDelay 100000
     arr <- fragmentHeap arr 2 size
     putStrLn "\nmake small array"
-    --b <- readArray arr 2
+    --b <- readArray arr 4000
     --print b
     --readIORef lstref >>= print
+    --arr2 <- fillHeap (20000)
+    --traverseArray arr2 1 20000
+    --putStrLn $ "took " ++ show (tStop - tStart)
+    --let arr2 = AR.array (1, 780000) [(i,i) | i <- [1..780000]]
+    --treadArray arr2 1 780000
     tStart <- getPOSIXTime
-    arr2 <- fillHeap (20000)
+    arr2 <- MA.newArray(1,1831167) 10 :: IO (IOArray Int Int)
+    --arr2 <- fillHeap 110352
+    treadArray arr2 1 1831167
     tStop <- getPOSIXTime
-    traverseArray arr2 1 20000
     putStrLn $ "took " ++ show (tStop - tStart)
-    --let arr2 = AR.array (1, 650000) [(i,i) | i <- [1..650000]]
-    -- arr2 <-  fillHeap(200)
-    --treadArray arr2 1 650000
+    goThroughArray arr 1 size    
     stats <- getGCStats
     putStrLn $ "Bytes allocated " ++ show(maxBytesUsed stats)
     putStrLn ("done")
