@@ -141,7 +141,7 @@ object Perm9 {
 
 
   def start_gc_threads(num_threads : Int, p9iters: Int, p9depth: Int, iterations: Int, gcsleep: Int, debug: Boolean) {
-    for(i <- 1 until num_threads+1) {
+    for (i <- 1 until num_threads+1) {
       if (debug) println(s"starting gc thread ${i}")
 
       val t = new Thread(new Runnable {
@@ -159,7 +159,7 @@ object Perm9 {
 
   def gc_func(p9iters: Int, p9depth: Int, id: Int, iterations: Int, comp_sleep: Int, debug: Boolean): ListBuffer[String] = {
     var listOfTimeStamps = new ListBuffer[String]()
-    for(i <- 1 until iterations+1) {
+    for (i <- 1 until iterations+1) {
       if (debug) println(s"gc iter ${i}")
       val tStart = System.currentTimeMillis()
       val runtime3 = Runtime.getRuntime
@@ -176,7 +176,7 @@ object Perm9 {
 
 
   def start_comp_threads(num_threads : Int, depth: Int, iterations: Int, comp_sleep: Int, debug: Boolean) {
-    for(i <- 1 until num_threads+1) {
+    for (i <- 1 until num_threads+1) {
       if (debug) println(s"starting comp thread ${i}")
       val t = new Thread(new Runnable {
         def run() {
@@ -201,7 +201,7 @@ object Perm9 {
 
   def comp_func(depth: Int, id: Int, iterations: Int, comp_sleep: Int, debug: Boolean): ListBuffer[String] = {
     var listOfTimeStamps = new ListBuffer[String]()
-    for(i <- 1 until iterations+1) {
+    for (i <- 1 until iterations+1) {
       if (debug) println(s"comp iter ${i}")
       val tStart = System.currentTimeMillis()
       val runtime3 = Runtime.getRuntime
