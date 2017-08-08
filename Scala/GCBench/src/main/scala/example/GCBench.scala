@@ -90,11 +90,14 @@ object GCBench {
             return fibonacci(num-2) + fibonacci(num-1)
         }
     }
-    def start_gc_thread(num_threads : Int, tree_depth: Int, iterations: Int, gcsleep: Int) {
-        for(i <- 1 until num_threads+1){
+
+    def start_gc_thread(num_threads : Int, tree_depth: Int, iterations: Int, gcsleep: Int, debug: Boolean) {
+        for (i <- 1 until num_threads+1) {
+            if (debug) println(s"starting gc thread ${i}")
+
             val t = new Thread(new Runnable {
                 def run() {
-                    var listofTimeStamps = gc_func(tree_depth, i, iterations, gcsleep)
+                    var listofTimeStamps = gc_func(tree_depth, i, iterations, gcsleep, debug)
                     for (timeStamp <- listofTimeStamps.toList){
                         println(timeStamp)
                     }
@@ -105,9 +108,11 @@ object GCBench {
         }
     }
 
-    def gc_func(tree_depth: Int, id: Int, iterations: Int, gcsleep: Int): ListBuffer[String] = {
+    def gc_func(tree_depth: Int, id: Int, iterations: Int, gcsleep: Int, debug: Boolean): ListBuffer[String] = {
         var listOfTimeStamps = new ListBuffer[String]()
-        for(i <- 1 until iterations+1){
+        for (i <- 1 until iterations+1) {
+            if (debug) println(s"gc iter ${i}")
+
             val start = System.currentTimeMillis()
             val runtime1 = Runtime.getRuntime
             listOfTimeStamps += "gc:start:"+ id +":" + i+ ":" +start + ":" + (runtime1.totalMemory - runtime1.freeMemory)
@@ -161,11 +166,13 @@ object GCBench {
         listOfTimeStamps
     }
 
-    def start_comp_threads(num_threads : Int, depth: Int, iterations: Int, comp_sleep: Int){
-        for(i <- 1 until num_threads+1){
+    def start_comp_threads(num_threads : Int, depth: Int, iterations: Int, comp_sleep: Int, debug: Boolean){
+        for (i <- 1 until num_threads+1) {
+            if (debug) println(s"starting comp thread ${i}")
+
             val t = new Thread(new Runnable {
                 def run() {
-                    var listofTimeStamps = comp_func(depth, i, iterations, comp_sleep)
+                    var listofTimeStamps = comp_func(depth, i, iterations, comp_sleep, debug)
                     for (timeStamp <- listofTimeStamps.toList){
                         println(timeStamp)
                     }
@@ -176,9 +183,11 @@ object GCBench {
         }
     }
 
-    def comp_func(depth: Int, id: Int, iterations: Int, comp_sleep: Int): ListBuffer[String] = {
+    def comp_func(depth: Int, id: Int, iterations: Int, comp_sleep: Int, debug: Boolean): ListBuffer[String] = {
         var listOfTimeStamps = new ListBuffer[String]()
-        for(i <- 1 until iterations+1){
+        for (i <- 1 until iterations+1) {
+            if (debug) println(s"comp iter ${i}")
+
             val tStart = System.currentTimeMillis()
             val runtime3 = Runtime.getRuntime
             listOfTimeStamps += ("compute:start:"+ id +":" + i + ":" +tStart  + ":" + (runtime3.totalMemory - runtime3.freeMemory))
@@ -200,6 +209,8 @@ object GCBench {
         val gcSleep = opt[Int](default = Some(1), short = 'S')
         val gcDelay = opt[Int](default = Some(60), short = 'J')
         val treeDepth = opt[Int](default = Some(15), short = 'G')
+
+        var debug = opt[Boolean](default = Some(false), short='D')
         val help = opt[Boolean]()
 
         version("Scala GCBench 0.1.0")
@@ -217,9 +228,15 @@ object GCBench {
             conf.printHelp();
         }
         else {
-            start_comp_threads(conf.computeThreads(), conf.computeDepth(), conf.iterations(), conf.computeSleep() * 1000)
+            if (conf.debug()) println("Start compute threads")
+            start_comp_threads(conf.computeThreads(), conf.computeDepth(), conf.iterations(),
+                               conf.computeSleep(), conf.debug())
+
             Thread.sleep(conf.gcDelay() * 1000)
-            start_gc_thread(conf.gcThreads(), conf.treeDepth(), conf.iterations(), conf.gcSleep() * 1000)
+
+            if (conf.debug()) println("Start GC threads")
+            start_gc_thread(conf.gcThreads(), conf.treeDepth(), conf.iterations(),
+                            conf.gcSleep(), conf.debug())
         }
     }
 }
