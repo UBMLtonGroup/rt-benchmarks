@@ -10,7 +10,10 @@ In our version we allow for multiple heap mutation threads and multiple computat
 
 ## Usage
 
-```lein run -- -h```
+```
+$ lein uberjar
+$ taskset -c 0 java -Xmx16m -Xms16m -jar target/perm9-1.0.0-SNAPSHOT-standalone.jar -d 1500 -e 7 -i 500 -J 60 -G 2000
+```
 
 ## License
 

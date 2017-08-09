@@ -17,7 +17,7 @@
       (fib compute-depth)
       (println (format "compute:stop:%d:%d:%d:%d" id niter (System/currentTimeMillis) (heap-used)))
       (Thread/sleep compute-sleep)
-      (compute-thread-helper compute-depth id (- niter 1) compute-sleep debug)
+      (recur compute-depth id (- niter 1) compute-sleep debug)
      )
     )
   )
