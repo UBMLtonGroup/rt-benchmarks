@@ -78,7 +78,6 @@
     (cond
       (:help options) (exit 0 (usage summary))
       errors (exit 1 (error-msg errors)))
-  (make-tree-bottom-up (+ 2 (:tree-depth options))) ;; stretch memory
 
       (make-compute-threads (:compute-threads options)
                          (:compute-depth options)
@@ -87,6 +86,7 @@
                          (:debug options))
 
        (Thread/sleep (* 1000 (:gc-delay options)))
+       (make-tree-bottom-up (+ 2 (:tree-depth options))) ;; stretch memory
 
        (make-gc-threads (:gc-threads options)
                    (:tree-depth options)
