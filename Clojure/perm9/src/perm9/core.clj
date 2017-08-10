@@ -82,7 +82,7 @@
       (:help options) (exit 0 (usage summary))
       errors (exit 1 (error-msg errors)))
 
-       (perm9_benchmark 5 (:compute-depth options))         ; stretch memory
+       (perm9_benchmark 5 (:digits options))         ; stretch memory
 
        (make-compute-threads (:compute-threads options)
                          (:compute-depth options)
