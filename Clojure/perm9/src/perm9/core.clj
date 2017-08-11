@@ -37,7 +37,7 @@
     :parse-fn #(Integer/parseInt %)
     :validate [#(<= 0 % 0x10000) "Must be a number between 0 and 65536"]]
    ["-J" "--gc-delay NUM" "GC thread startup delay (in sec)"
-    :default 30
+    :default 60
     :parse-fn #(Integer/parseInt %)
     :validate [#(<= 0 % 0x10000) "Must be a number between 0 and 65536"]]
    ["-e" "--digits NUM" "Number of digits to use in Perm9 algorithm"
@@ -82,13 +82,17 @@
       (:help options) (exit 0 (usage summary))
       errors (exit 1 (error-msg errors)))
 
-  (make-compute-threads (:compute-threads options)
-                     (:compute-depth options)
-                     (:iterations options)
-                     (:compute-sleep options)
-                     (:debug options))
+       (perm9_benchmark 5 (:digits options))         ; stretch memory
 
-  (make-gc-threads (:gc-threads options)
+       (make-compute-threads (:compute-threads options)
+                         (:compute-depth options)
+                         (:iterations options)
+                         (:compute-sleep options)
+                         (:debug options))
+
+       (Thread/sleep (* 1000  (:gc-delay options)))
+
+       (make-gc-threads (:gc-threads options)
                    (:digits options)
                    (:iterations options)
                    (:gc-sleep options)

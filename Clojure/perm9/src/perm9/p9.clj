@@ -94,7 +94,7 @@
       (perm9_benchmark 5 digits)
       (println (format "gc:stop:%d:%d:%d:%d" id niter (System/currentTimeMillis) (heap-used)))
       (Thread/sleep gc-sleep)
-      (gc-thread-helper digits id (- niter 1) gc-sleep debug))
+      (recur digits id (- niter 1) gc-sleep debug))
     )
   )
 
@@ -112,7 +112,6 @@
 (defn make-gc-threads [num-threads digits niter gc-sleep gc-delay debug]
   (if (> num-threads 0)
       (do
-        (Thread/sleep (* 1000 gc-delay))
         (dotimes [i num-threads] (.start (Thread. (fn [] (gc-thread digits i niter gc-sleep debug)))))
     )
   )

@@ -30,7 +30,7 @@
     :parse-fn #(Integer/parseInt %)
     :validate [#(<= 0 % 0x10000) "Must be a number between 0 and 65536"]]
    ["-J" "--gc-delay NUM" "GC thread startup delay (in sec)"
-    :default 30
+    :default 60
     :parse-fn #(Integer/parseInt %)
     :validate [#(<= 0 % 0x10000) "Must be a number between 0 and 65536"]]
    ["-G" "--gc-sleep NUM" "GC Sleep (in ms)"
@@ -78,15 +78,18 @@
     (cond
       (:help options) (exit 0 (usage summary))
       errors (exit 1 (error-msg errors)))
-  (make-tree-bottom-up (+ 2 (:tree-depth options))) ;; stretch memory
 
-  (make-compute-threads (:compute-threads options)
-                     (:compute-depth options)
-                     (:iterations options)
-                     (:compute-sleep options)
-                     (:debug options))
+       (make-tree-bottom-up (+ 2 (:tree-depth options))) ;; stretch memory
 
-  (make-gc-threads (:gc-threads options)
+       (make-compute-threads (:compute-threads options)
+                         (:compute-depth options)
+                         (:iterations options)
+                         (:compute-sleep options)
+                         (:debug options))
+
+       (Thread/sleep (* 1000 (:gc-delay options)))
+
+       (make-gc-threads (:gc-threads options)
                    (:tree-depth options)
                    (:iterations options)
                    true
