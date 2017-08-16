@@ -4,7 +4,6 @@
 import os
 import commands
 import subprocess
-import matplotlib.pyplot as plt
 import numpy as np
 import csv
 

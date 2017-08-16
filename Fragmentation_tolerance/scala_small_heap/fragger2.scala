@@ -93,7 +93,15 @@ def main(args: Array[String])
     //println("out of loop")
     fragmentArray(arrlist)
 //    Thread.sleep(1000)
+    //System.gc() 
+    //var free = Runtime.getRuntime().freeMemory()
+    //print("free space "+free)
     var arr2 = allocateArray2((524288*3.78).toInt)
+    
+    var refval = arrlist(10000)
+
+    //var free = Runtime.getRuntime().freeMemory()
+    //print("free space "+free)
     
 }
 

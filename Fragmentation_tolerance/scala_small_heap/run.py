@@ -5,7 +5,7 @@ import subprocess
 import csv
 
 def main():
-    start = 35 *1024 *1024
+    start = 29 *1024 *1024
     increment = 600 *1024 
     values = [x for x in range(start,(start + (increment * 50)),increment)]
     #values = [x for x in range(1033895940,(1033895940 + (500000 *100)),500000)]
