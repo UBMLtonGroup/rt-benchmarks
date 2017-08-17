@@ -1,16 +1,18 @@
+
+#This script runs the benchmark over different increment values and saves the graph as pdf
+
 import os
 import commands
 import subprocess
-#import matplotlib.pyplot as plt
-import re
+import numpy as np
 import csv
+import re
 
-def main():
-    start = 30 * 1024 * 1024 #524288000
-    increment = 1 *1024 *1024
-    values = [x for x in range(start,(start + (increment * 50)),increment)]
-    res =[]
-    print("Starting script\n")
+def run(st,inc):
+    start = st *1024 *1024
+    increment = inc *1024 
+    values = [x for x in range(start,(start + (increment * 3)),increment)]
+    res = []
     for i in values:
         com = "taskset 0x1 lein with-profile +minheap run"
         heapcomm = "export JVM_OPTS=\-Xms"+str(i)+"\ -Xmx"+str(i)
@@ -25,16 +27,19 @@ def main():
     res = [float(x) for [x] in res]
     values = [float(x) for x in values]
     d = zip(values,res,free)
-    with open("cljfrag.txt",'wb') as myFile:
+    name = "clj_"+str(inc)+"k.txt"
+    with open(name,'wb') as myFile:
         wr = csv.writer(myFile, delimiter=',')
         for a,b,c in d:
             e =[a,b,c]
             wr.writerow(e)
-    #plt.plot(values,res)
-    #plt.xlabel('Heap size (MB)')
-    #plt.ylabel('Time (ms)')
-    #plt.title('Clojure Fragmentation tolerance \n'+'Start size: '+str(start/(1024*1024))+' MB\n'+'Increment: '+str(increment/(1024*1024))+' MB')
-    #plt.show()
+
+   
+
+def main():
+    for i in range(100,300,50):
+        run(30,i)
+
 
 
 main()
