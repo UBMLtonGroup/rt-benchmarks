@@ -6,8 +6,8 @@ import csv
 
 def main():
     start = 29 *1024 *1024
-    increment = 600 *1024 
-    values = [x for x in range(start,(start + (increment * 50)),increment)]
+    increment = 250 *1024 
+    values = [x for x in range(start,(start + (increment * 70)),increment)]
     #values = [x for x in range(1033895940,(1033895940 + (500000 *100)),500000)]
     #start =28*1024*1024
     #iterations=10
@@ -29,8 +29,8 @@ def main():
     print(res)
     a = [x.split(',') for x in res]
     res = [int(x)/1000000 for x,y in a]
-    free = [int(y)/1000000 for x,y in a]
-    values = [x/1000000 for x in values]
+    free = [y for x,y in a]
+    values = [x for x in values]
     d = zip(values,res,free)
     with open("scalafrag.txt",'wb') as myFile:
         wr = csv.writer(myFile, delimiter=',')

@@ -96,7 +96,7 @@ def main(args: Array[String])
     //System.gc() 
     //var free = Runtime.getRuntime().freeMemory()
     //print("free space "+free)
-    var arr2 = allocateArray2((524288*3.78).toInt)
+    var arr2 = allocateArray2((524288*3.99).toInt)
     
     var refval = arrlist(10000)
 

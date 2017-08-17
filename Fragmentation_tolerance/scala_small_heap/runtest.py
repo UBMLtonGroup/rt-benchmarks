@@ -10,7 +10,7 @@ import csv
 def run(st,inc):
     start = st *1024 *1024
     increment = inc *1024 
-    values = [x for x in range(start,(start + (increment * 50)),increment)]
+    values = [x for x in range(start,(start + (increment * 70)),increment)]
     res = []
     for i in values:
         com = "taskset 0x1 scala -J-Xms"+str(i)+" -J-Xmx"+str(i)+" -J-XX:+UseSerialGC fragger2.scala"
@@ -22,8 +22,8 @@ def run(st,inc):
     print(res)
     a = [x.split(',') for x in res]
     res = [int(x)/1000000 for x,y in a]
-    free = [int(y)/1000000 for x,y in a]
-    values = [x/1000000 for x in values]
+    free = [y for x,y in a]
+    values = [x for x in values]
     d = zip(values,res,free)
     name = "scala_"+str(inc)+"k.txt"
     with open(name,'wb') as myFile:
@@ -36,7 +36,7 @@ def run(st,inc):
 
 def main():
     for i in range(100,1000,50):
-        run(35,i)
+        run(29,i)
 
 
 
