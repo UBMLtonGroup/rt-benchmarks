@@ -5,9 +5,9 @@ import subprocess
 import csv
 
 def main():
-    start = 29 *1024 *1024
-    increment = 250 *1024 
-    values = [x for x in range(start,(start + (increment * 70)),increment)]
+    start = 30721 
+    increment = 200 #kb
+    values = [x for x in range(start,(start + (increment * 30)),increment)]
     #values = [x for x in range(1033895940,(1033895940 + (500000 *100)),500000)]
     #start =28*1024*1024
     #iterations=10
@@ -17,9 +17,7 @@ def main():
     #print(values)
     res = []
     for i in values:
-        #com = "taskset 0x1 scala -J-Xms"+str(i)+" -J-Xmx"+str(i)+" -J-XX:-UseGCOverheadLimit fragger.scala"
-        com = "taskset 0x1 scala -J-Xms"+str(i)+" -J-Xmx"+str(i)+" -J-XX:+UseSerialGC fragger2.scala"
-        #com = "scalac fragger.scala && taskset 0x1 java -cp .:/usr/share/java/scala-library.jar -Xms"+str(i)+" -Xmx"+str(i)+" -XX:-UseGCOverheadLimit fragger"
+        com = "mlton fragger2.sml && taskset 0x1 ./fragger2 @MLton fixed-heap "+str(i)+"k -- 433259"
         #os.system(com)
         result =subprocess.check_output(com, shell=True)
         print(result)
@@ -27,15 +25,15 @@ def main():
         #os.system("rm *.class")
     print("Plotting graph\n")
     print(res)
-    a = [x.split(',') for x in res]
-    res = [int(x)/1000000 for x,y in a]
-    free = [y for x,y in a]
-    values = [x for x in values]
-    d = zip(values,res,free)
-    with open("scalafrag.txt",'wb') as myFile:
+    a = [x.split('\n') for x in res]
+    res = [float(x) for x,y in a]
+    #free = [int(y)/1000000 for x,y in a]
+    values = [x/1000 for x in values]
+    d = zip(values,res)
+    with open("smlfrag.txt",'wb') as myFile:
         wr = csv.writer(myFile, delimiter=',')
-        for a,b,c in d:
-            e =[a,b,c]
+        for a,b in d:
+            e =[a,b]
             wr.writerow(e)
 
 
