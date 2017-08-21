@@ -28,7 +28,7 @@ def main():
     a = [x.split('\n') for x in res]
     res = [float(x) for x,y in a]
     #free = [int(y)/1000000 for x,y in a]
-    values = [x/1000 for x in values]
+    values = [x for x in values]
     d = zip(values,res)
     with open("smlfrag.txt",'wb') as myFile:
         wr = csv.writer(myFile, delimiter=',')
