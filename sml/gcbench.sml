@@ -80,18 +80,19 @@ fun gcbench kStretchTreeDepth =
     
       (*  Build tree top down, assigning to older objects.  *)
       fun Populate (iDepth, Node { left=lr, right=rr, i, j }) =
-        if iDepth <= 0
-            then false
-            else let val iDepth = iDepth - 1
-                 in
-                 (
-                     lr := make_empty_node();
-                     rr := make_empty_node();
-                     Populate (iDepth, !lr);
-                     Populate (iDepth, !rr)
-                 )
-                 end
-      
+            if iDepth <= 0
+                then false
+                else let val iDepth = iDepth - 1
+                     in
+                     (
+                         lr := make_empty_node();
+                         rr := make_empty_node();
+                         Populate (iDepth, !lr);
+                         Populate (iDepth, !rr)
+                     )
+                     end
+         | Populate (_, Dummy) = (print "no"  ; false)
+
       (*  Build tree bottom-up  *)
       fun MakeTree iDepth =
         if iDepth <= 0
@@ -197,5 +198,6 @@ struct
   fun doit () = gcbench 18
 end
 
-Main.doit ();
-print "Done\n";
+val _ = Main.doit ()
+
+val _ = print "Done\n"
