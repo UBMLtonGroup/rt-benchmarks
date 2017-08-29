@@ -1,7 +1,3 @@
-fun nanotime () = IntInf.toString (Time.toNanoseconds (Time.now ()))
-
-(* val _ = print ((nanotime ()) ^ ":hi")
- *)
 
 fun usage (name, msg) =
 let
@@ -25,6 +21,7 @@ end
 fun harness (name, arguments) =
 let
     open GetOpt
+    open Posix
 
     (*
      -t  computeThreads  1
@@ -41,7 +38,7 @@ let
       *)
 
     val computeThreads = ref 1
-    val computeDepth   = ref 1
+    val computeDepth   = ref 40
     val iterations     = ref 1100
     val computeSleep   = ref 1
     val gcThreads      = ref 1
@@ -61,7 +58,7 @@ let
       | assignopt (Flag x)         = usage(CommandLine.name(), "unknown flag opt matched")
 
       | assignopt (Int (#"t", i')) = computeThreads := i'
-      | assignopt (Int (#"d", i')) = computeThreads := i'
+      | assignopt (Int (#"d", i')) = computeDepth := i'
       | assignopt (Int (#"i", i')) = iterations := i'
       | assignopt (Int (#"s", i')) = computeSleep := i'
       | assignopt (Int (#"g", i')) = gcThreads := i'
@@ -84,9 +81,19 @@ let
 
     val args2 = getopt opts1 assignopt2 [] arguments
 
+    fun dbg x = (if (!debug) then print (x^"\n") else ());
+
+
 in (
-   print (Int.toString(!iterations));
-   OS.Process.success
+    if !iterations < 1 then
+        (usage (CommandLine.name(), "iterations < 1") ; OS.Process.failure)
+    else (
+        dbg "Start compute threads";
+        computation(!computeThreads, !computeDepth, !iterations, !computeSleep, !debug);
+        Posix.Process.sleep(Time.fromSeconds(IntInf.fromInt(!gcDelay)));
+        dbg "Start GC threads";
+        OS.Process.success
+    )
 ) end
 
 handle UnknownOption => (usage (CommandLine.name(), "unknown option raised") ; OS.Process.failure)

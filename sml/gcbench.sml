@@ -198,6 +198,8 @@ struct
   fun doit () = gcbench 18
 end
 
+(*
 val _ = Main.doit ()
 
 val _ = print "Done\n"
+*)
