@@ -185,6 +185,47 @@ fun gcbench kStretchTreeDepth =
   in main()
   end
 
+
+
+fun grinder (numThr, treeDepth, iterations, gcSleep, debug) =
+let
+    fun dbg x = (if (debug) then print (x^"\n") else ());
+
+    val xx = ref 0
+
+    val rec delay =
+       fn 0 => ()
+        | n => (xx := n ; delay (n - 1))
+
+    fun comp_func2 (tnum, i) = (
+        dbg(" iteration #" ^ Int.toString(i));
+        starttime(tnum, i);
+
+        gcbench(treeDepth);
+
+        stoptime(tnum, i);
+        delay(gcSleep * 10000);
+        NPThread.yield();
+    ())
+
+    val rec comp_func =
+        fn (_   , 0 ) => ()
+         | (tnum, i') => (comp_func2 (tnum, i'); comp_func (tnum, (i'-1)))
+
+    val rec start_comp_threads =
+        fn 0 => ()
+         | n => (print("spawn #"^Int.toString(n)^"\n");
+                 NPThread.spawn (fn () => comp_func (n, iterations));
+                 start_comp_threads (n-1))
+in
+    dbg("treeDepth is " ^ Int.toString(treeDepth));
+    dbg("gcSleep is " ^ Int.toString(gcSleep));
+    start_comp_threads(numThr);
+    NPThread.run()
+end
+
+
+
 (*
 fun main () =
   run_benchmark ("gcbench",

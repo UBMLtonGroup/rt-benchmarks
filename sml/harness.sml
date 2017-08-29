@@ -3,8 +3,8 @@ fun usage (name, msg) =
 let
     val help' = " -t  computeThreads  1\n" ^
                 " -d  computeDepth    40\n" ^
-                " -i  iterations      1100\n" ^
                 " -s  computeSleep    1\n" ^
+                " -i  iterations      1100\n" ^
                 " -g  gcThreads       1\n" ^
                 " -S  gcSleep         1\n" ^
                 " -J  gcDelay         60\n" ^
@@ -92,6 +92,8 @@ in (
         computation(!computeThreads, !computeDepth, !iterations, !computeSleep, !debug);
         Posix.Process.sleep(Time.fromSeconds(IntInf.fromInt(!gcDelay)));
         dbg "Start GC threads";
+        grinder(!gcThreads, !treeDepth, !iterations, !gcSleep, !debug);
+
         OS.Process.success
     )
 ) end
