@@ -18,12 +18,12 @@ let
         | n => (xx := n ; delay (n - 1))
 
     fun comp_func2 (tnum, i) = (
-        dbg(" iteration #" ^ Int.toString(i));
-        starttime(tnum, i);
-        (*fib(compDepth);*)
+        dbg(" comp-iteration #" ^ Int.toString(i));
+        starttime("comp", tnum, i);
+        (* xx := fib(compDepth);*)
         delay(compSleep * 50);
 
-        stoptime(tnum, i);
+        stoptime("comp", tnum, i);
         (*delay(compSleep * 10000);*)
         NPThread.yield();
     ())
@@ -34,12 +34,11 @@ let
 
     val rec start_comp_threads =
         fn 0 => ()
-         | n => (print("spawn #"^Int.toString(n)^"\n");
+         | n => (dbg("comp-spawn #"^Int.toString(n)^"\n");
                  NPThread.spawn (fn () => comp_func (n, iterations));
                  start_comp_threads (n-1))
 in
     dbg("computeDepth is " ^ Int.toString(compDepth));
     dbg("computeSleep is " ^ Int.toString(compSleep));
-    start_comp_threads(numThr);
-    NPThread.run()
+    start_comp_threads(numThr)
 end

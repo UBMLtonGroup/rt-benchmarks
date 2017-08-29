@@ -83,17 +83,22 @@ let
 
     fun dbg x = (if (!debug) then print (x^"\n") else ());
 
+    fun start_threads () = (
+        dbg("Start compute threads");
+        computation(!computeThreads, !computeDepth, !iterations, !computeSleep, !debug);
+        Posix.Process.sleep(Time.fromSeconds(IntInf.fromInt(!gcDelay)));
+        dbg "Start GC threads";
+        grinder(!gcThreads, !treeDepth, !iterations, !gcSleep, !debug);
+        ()
+    )
 
 in (
     if !iterations < 1 then
         (usage (CommandLine.name(), "iterations < 1") ; OS.Process.failure)
     else (
-        dbg "Start compute threads";
-        computation(!computeThreads, !computeDepth, !iterations, !computeSleep, !debug);
-        Posix.Process.sleep(Time.fromSeconds(IntInf.fromInt(!gcDelay)));
-        dbg "Start GC threads";
-        grinder(!gcThreads, !treeDepth, !iterations, !gcSleep, !debug);
-
+        dbg("spawn main thread\n");
+        NPThread.spawn (fn () => start_threads ());
+        NPThread.run();
         OS.Process.success
     )
 ) end

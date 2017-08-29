@@ -47,9 +47,11 @@ fun make_node (l, r) =
 
 fun PrintDiagnostics () = ()
 
-fun gcbench kStretchTreeDepth =
+fun gcbench (kStretchTreeDepth, debug) =
 
   let open Int
+
+      fun dbg x = (if (debug) then print (x^"\n") else ());
 
       fun expt (m:int, n:int) =
         if n = 0 then 1 else m * expt (m, n - 1)
@@ -91,7 +93,7 @@ fun gcbench kStretchTreeDepth =
                          Populate (iDepth, !rr)
                      )
                      end
-         | Populate (_, Dummy) = (print "no"  ; false)
+         | Populate (_, Dummy) = (dbg "no"  ; false)
 
       (*  Build tree bottom-up  *)
       fun MakeTree iDepth =
@@ -104,11 +106,10 @@ fun gcbench kStretchTreeDepth =
         let val iNumIters = NumIters depth
         in
         (
-          print (concat ["Creating ",
+          dbg (concat ["Creating ",
                          toString iNumIters,
                          " trees of depth ",
-                         toString depth,
-                         "\n"]);
+                         toString depth]);
           let fun loop i =
                 if i < iNumIters
                   then (Populate (depth, make_empty_node());
@@ -128,27 +129,25 @@ fun gcbench kStretchTreeDepth =
       
       fun main () =
         (
-        print "Garbage Collector Test\n";
-        print (concat [" Stretching memory with a binary tree of depth ",
-                       toString kStretchTreeDepth,
-                       "\n"]);
+        dbg "Garbage Collector Test";
+        dbg (concat [" Stretching memory with a binary tree of depth ",
+                       toString kStretchTreeDepth]);
         PrintDiagnostics();
         (*  Stretch the memory space quickly  *)
         MakeTree kStretchTreeDepth;
                          
         (*  Create a long lived object  *)
-        print (concat[" Creating a long-lived binary tree of depth ",
-                      toString kLongLivedTreeDepth,
-                      "\n"]);
+        dbg (concat[" Creating a long-lived binary tree of depth ",
+                      toString kLongLivedTreeDepth]);
         let val longLivedTree = make_empty_node()
         in
         (
           Populate (kLongLivedTreeDepth, longLivedTree);
           
           (*  Create long-lived array, filling half of it  *)
-          print (concat [" Creating a long-lived array of ",
+          dbg (concat [" Creating a long-lived array of ",
                          toString kArraySize,
-                         " inexact reals\n"]);
+                         " inexact reals"]);
           let open Array
               val arr = array (kArraySize, 0.0)
               fun loop1 i =
@@ -173,7 +172,7 @@ fun gcbench kStretchTreeDepth =
                let val n = min (1000, (length(arr) div 2) - 1)
                in Real.!= (sub (arr, n), (1.0 / Real.fromInt(n)))
                end
-              then print "Failed\n"
+              then dbg "Failed"
               else ()
             (*  fake reference to LongLivedTree
                 and array to keep them from being optimized away
@@ -198,12 +197,12 @@ let
         | n => (xx := n ; delay (n - 1))
 
     fun comp_func2 (tnum, i) = (
-        dbg(" iteration #" ^ Int.toString(i));
-        starttime(tnum, i);
+        dbg(" gc-iteration #" ^ Int.toString(i));
+        starttime("gc", tnum, i);
 
-        gcbench(treeDepth);
+        gcbench(treeDepth, debug);
 
-        stoptime(tnum, i);
+        stoptime("gc", tnum, i);
         delay(gcSleep * 10000);
         NPThread.yield();
     ())
@@ -214,33 +213,12 @@ let
 
     val rec start_comp_threads =
         fn 0 => ()
-         | n => (print("spawn #"^Int.toString(n)^"\n");
+         | n => (dbg("gc-spawn #"^Int.toString(n)^"\n");
                  NPThread.spawn (fn () => comp_func (n, iterations));
                  start_comp_threads (n-1))
 in
     dbg("treeDepth is " ^ Int.toString(treeDepth));
     dbg("gcSleep is " ^ Int.toString(gcSleep));
-    start_comp_threads(numThr);
-    NPThread.run()
+    start_comp_threads(numThr)
 end
 
-
-
-(*
-fun main () =
-  run_benchmark ("gcbench",
-                 1,
-                 fn () => gcbench 18,
-                 fn (result) => true)
-*)
-structure Main =
-struct
-  fun testit out = TextIO.output (out, "OK\n")
-  fun doit () = gcbench 18
-end
-
-(*
-val _ = Main.doit ()
-
-val _ = print "Done\n"
-*)
