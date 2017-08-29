@@ -97,8 +97,8 @@ in (
         (usage (CommandLine.name(), "iterations < 1") ; OS.Process.failure)
     else (
         dbg("spawn main thread\n");
-        NPThread.spawn (fn () => start_threads ());
-        NPThread.run();
+        PThread.spawn (fn () => start_threads ());
+        PThread.run();
         OS.Process.success
     )
 ) end

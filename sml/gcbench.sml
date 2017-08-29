@@ -204,7 +204,7 @@ let
 
         stoptime("gc", tnum, i);
         delay(gcSleep * 10000);
-        NPThread.yield();
+        (*NPThread.yield();*)
     ())
 
     val rec comp_func =
@@ -214,7 +214,7 @@ let
     val rec start_comp_threads =
         fn 0 => ()
          | n => (dbg("gc-spawn #"^Int.toString(n)^"\n");
-                 NPThread.spawn (fn () => comp_func (n, iterations));
+                 PThread.spawn (fn () => comp_func (n, iterations));
                  start_comp_threads (n-1))
 in
     dbg("treeDepth is " ^ Int.toString(treeDepth));

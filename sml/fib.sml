@@ -25,7 +25,7 @@ let
 
         stoptime("comp", tnum, i);
         (*delay(compSleep * 10000);*)
-        NPThread.yield();
+        (*NPThread.yield();*)
     ())
 
     val rec comp_func =
@@ -35,7 +35,7 @@ let
     val rec start_comp_threads =
         fn 0 => ()
          | n => (dbg("comp-spawn #"^Int.toString(n)^"\n");
-                 NPThread.spawn (fn () => comp_func (n, iterations));
+                 PThread.spawn (fn () => comp_func (n, iterations));
                  start_comp_threads (n-1))
 in
     dbg("computeDepth is " ^ Int.toString(compDepth));
