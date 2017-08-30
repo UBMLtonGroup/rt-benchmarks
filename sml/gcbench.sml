@@ -203,7 +203,7 @@ let
         gcbench(treeDepth, debug);
 
         stoptime("gc", tnum, i);
-        delay(gcSleep * 10000);
+        delay(gcSleep * 200000000);
         (*NPThread.yield();*)
     ())
 

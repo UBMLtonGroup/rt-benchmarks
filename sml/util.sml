@@ -6,7 +6,7 @@ fun heaputil () =
 let
     open MLton.GC
 in
-    IntInf.toString(Statistics.maxBytesLive())
+    IntInf.toString(Statistics.lastBytesLive())
 end
 
 fun stoptime (typ, tid, iter) =
