@@ -1,9 +1,11 @@
 
-fun computation (numThr, compDepth, iterations, compSleep, debug) =
+fun computation (numThr, compDepth, iterations, compSleep, debug, gcDelay, gcf) =
 let
     fun dbg x = (if (debug) then print (x^"\n") else ());
 
     val xx = ref 0
+
+    val cc = ref 0
 
     fun fib n =
         let
@@ -13,7 +15,7 @@ let
             fib' (n,0,1)
         end
 
-    val rec delay =
+    val rec delay = (* note: only one thread for now *)
        fn 0 => ()
         | n => (xx := n ; delay (n - 1))
 
@@ -21,9 +23,10 @@ let
         dbg(" comp-iteration #" ^ Int.toString(i));
         starttime("comp", tnum, i);
         (* xx := fib(compDepth);*)
-        delay(compSleep * 50);
-
+        delay(compSleep);
         stoptime("comp", tnum, i);
+        cc := !cc + 1;
+        if gcDelay = !cc then gcf() else ();
         (*delay(compSleep * 10000);*)
         (*NPThread.yield();*)
     ())

@@ -47,6 +47,7 @@ let
     val treeDepth      = ref 18
     val debug          = ref false
     val help           = ref false
+    val compCount      = ref 0
 
     val opts1 = [IntOpt #"t", IntOpt #"d", IntOpt #"i", IntOpt #"s",
                  IntOpt #"g", IntOpt #"S", IntOpt #"J", IntOpt #"G",
@@ -83,12 +84,16 @@ let
 
     fun dbg x = (if (!debug) then print (x^"\n") else ());
 
+    val xx = ref 0
+
+    val rec delay =
+        fn 0 => ()
+         | n => (xx := n ; delay (n - 1))
+
     fun start_threads () = (
         dbg("Start compute threads");
-        computation(!computeThreads, !computeDepth, !iterations, !computeSleep, !debug);
-        Posix.Process.sleep(Time.fromSeconds(IntInf.fromInt(!gcDelay)));
-        dbg "Start GC threads";
-        grinder(!gcThreads, !treeDepth, !iterations, !gcSleep, !debug);
+        computation(!computeThreads, !computeDepth, !iterations, !computeSleep, !debug, !gcDelay, 
+             fn () => grinder(!gcThreads, !treeDepth, !iterations, !gcSleep, !debug));
         ()
     )
 
