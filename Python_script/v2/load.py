@@ -24,16 +24,18 @@ def main(args):
 
             ln += 1
             a = line.rstrip().split(":")
+            a = map(lambda x: x.strip(), a)
 
-            if 6 < len(a) < 5:
-                raise Exception("invalid line {}".ln)
+            if 6 >= len(a) >= 5:
 
-            if args.debug is True:
-                print "{} parts in line {}".format(len(a), line)
+                if args.debug is True:
+                    print "{} parts in line {}".format(len(a), line)
 
-            if a[4].endswith('s'): # Haskell format is ####.###s
-                a[4] = a[4][:-1]
-            db.execute("insert into stats values ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(args.desc, title, cmd, a[0],a[1],a[2],a[3],a[4],a[5]))
+                if a[4].endswith('s'): # Haskell format is ####.###s
+                    a[4] = a[4][:-1]
+                db.execute("insert into stats values ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(args.desc, title, cmd, a[0],a[1],a[2],a[3],a[4],a[5]))
+            else:
+                pass #print "skip"
         db.commit()
 
     db.close()
