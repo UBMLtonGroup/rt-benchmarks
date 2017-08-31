@@ -21,10 +21,10 @@ let
 
     fun comp_func2 (tnum, i) = (
         dbg(" comp-iteration #" ^ Int.toString(i));
-        starttime("comp", tnum, i);
+        starttime("compute", tnum, i);
         (* xx := fib(compDepth);*)
         delay(compSleep);
-        stoptime("comp", tnum, i);
+        stoptime("compute", tnum, i);
         cc := !cc + 1;
         if gcDelay = !cc then gcf() else ();
         (*delay(compSleep * 10000);*)

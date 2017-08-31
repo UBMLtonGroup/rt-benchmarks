@@ -114,7 +114,8 @@ fun one2n n =
 fun run_benchmark x = x
 
 fun perm9_benchmark (m, n : int) =
-  let fun factorial n =
+  let
+    fun factorial n =
         if n = 1
           then 1
           else n * factorial (n - 1)
@@ -134,19 +135,60 @@ fun perm9_benchmark (m, n : int) =
                         = Int.quot ((n * (n + 1) * factorial (n)), 2))
   end
 
-fun main () = perm9_benchmark (5, 9)
+fun main (i, d) = perm9_benchmark (i, d)
 
 structure Main =
 struct
   fun testit out =
-      let val (_,_,f,t) = main ()
+      let val (_,_,f,t) = main (15, 9)
       in TextIO.output (out, if t (f ()) then "OK\n" else "Fail\n") end
-  fun doit () =
-      let val (_,n,f,_) = main ()
-          fun loop 0 = () | loop n = (f (); loop (n-1))
-      in loop n end
+  fun doit (iter, digits) =
+      let
+        val (_,n,f,_) = main (iter, digits)
+        fun loop 0 = ()
+          | loop n = (f (); loop (n-1))
+      in (
+        loop n
+      ) end
 end
 
-Main.doit ();
-print "Done\n";
+
+
+
+fun grinder (numThr, treeDepth, iterations, gcSleep, debug) =
+let
+    fun dbg x = (if (debug) then print (x^"\n") else ());
+
+    val xx = ref 0
+
+    val rec delay =
+       fn 0 => ()
+        | n => (xx := n ; delay (n - 1))
+
+    fun comp_func2 (tnum, i) = (
+        dbg(" gc-iteration #" ^ Int.toString(i));
+        starttime("gc", tnum, i);
+
+        Main.doit(treeDepth, 9);
+
+        stoptime("gc", tnum, i);
+        delay(gcSleep * 200000000);
+        (*NPThread.yield();*)
+    ())
+
+    val rec comp_func =
+        fn (_   , 0 ) => ()
+         | (tnum, i') => (comp_func2 (tnum, i'); comp_func (tnum, (i'-1)))
+
+    val rec start_comp_threads =
+        fn 0 => ()
+         | n => (dbg("gc-spawn #"^Int.toString(n)^"\n");
+                 PThread.spawn (fn () => comp_func (n, iterations));
+                 start_comp_threads (n-1))
+in
+    dbg("treeDepth is " ^ Int.toString(treeDepth));
+    dbg("gcSleep is " ^ Int.toString(gcSleep));
+    start_comp_threads(numThr)
+end
+
 
