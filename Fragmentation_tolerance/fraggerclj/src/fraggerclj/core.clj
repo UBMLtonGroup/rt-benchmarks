@@ -54,7 +54,7 @@
    ))
  ;512358 
  ;9230095 
-  (def elem 511800)
+  (def elem 500000)
   (doseq [n (range elem)]
     (def xxx (object-array [n]))
     (.add arrlist xxx)
@@ -62,11 +62,16 @@
    )
   ;;(println "Done")
   ;;(pprint (into [] arrlist))
-  (println (-> (java.lang.Runtime/getRuntime) (.freeMemory) ))
   (fragmentArray arrlist elem)
+  (println (-> (java.lang.Runtime/getRuntime) (.freeMemory) ))
  ;; (pprint (into [] arrlist))
   (def start (+ elem 5))
-  (def stop (+ start (int (/ elem 1.167))))
-  (time (def yyy (object-array (range start stop))))
+  (def stop (+ start (int (/ elem 1.115))))
+  (def begin (System/currentTimeMillis)) 
+  (def yyy (object-array (range start stop)))
+  ;;(println (-> (java.lang.Runtime/getRuntime) (.freeMemory) ))
+  (def stop (System/currentTimeMillis))
+  (println (- stop begin))
+  ;;(def varia (.get arrlist 10000))
 )
 
