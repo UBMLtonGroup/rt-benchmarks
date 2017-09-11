@@ -11,7 +11,7 @@ import re
 def run(st,inc):
     start = st *1024 *1024
     increment = inc *1024 
-    values = [x for x in range(start,(start + (increment * 3)),increment)]
+    values = [x for x in range(start,(start + (increment * 90)),increment)]
     res = []
     for i in values:
         com = "taskset 0x1 lein with-profile +minheap run"
@@ -23,8 +23,8 @@ def run(st,inc):
     print("Plotting graph\n")
     a = [x.split('\n') for x in res]
     free = [float(x) for x,y,z in a]
-    res = [re.findall("\d+\.\d+",x) for y,x,z in a]
-    res = [float(x) for [x] in res]
+    #res = [re.findall("\d+\.\d+",x) for y,x,z in a]
+    res = [float(x) for y,x,z in a]
     values = [float(x) for x in values]
     d = zip(values,res,free)
     name = "clj_"+str(inc)+"k.txt"
@@ -38,8 +38,7 @@ def run(st,inc):
 
 def main():
     for i in range(100,300,50):
-        run(30,i)
-
+        run(29,i)
 
 
 main()

@@ -6,9 +6,9 @@ import re
 import csv
 
 def main():
-    start = 30 * 1024 * 1024 #524288000
-    increment = 1 *1024 *1024
-    values = [x for x in range(start,(start + (increment * 50)),increment)]
+    start = 29 * 1024 * 1024 #524288000
+    increment = 500 *1024
+    values = [x for x in range(start,(start + (increment * 90)),increment)]
     res =[]
     print("Starting script\n")
     for i in values:
@@ -21,8 +21,8 @@ def main():
     print("Plotting graph\n")
     a = [x.split('\n') for x in res]
     free = [float(x) for x,y,z in a]
-    res = [re.findall("\d+\.\d+",x) for y,x,z in a]
-    res = [float(x) for [x] in res]
+    #res = [re.findall("\d+\.\d+",x) for y,x,z in a]
+    res = [float(x) for y,x,z in a]
     values = [float(x) for x in values]
     d = zip(values,res,free)
     with open("cljfrag.txt",'wb') as myFile:
