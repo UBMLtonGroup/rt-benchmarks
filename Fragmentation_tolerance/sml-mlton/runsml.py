@@ -5,9 +5,9 @@ import subprocess
 import csv
 
 def main():
-    start = 30721 
-    increment = 200 #kb
-    values = [x for x in range(start,(start + (increment * 30)),increment)]
+    start = 35450 
+    increment = 75 #kb
+    values = [x for x in range(start,(start + (increment * 70)),increment)]
     #values = [x for x in range(1033895940,(1033895940 + (500000 *100)),500000)]
     #start =28*1024*1024
     #iterations=10
@@ -17,7 +17,8 @@ def main():
     #print(values)
     res = []
     for i in values:
-        com = "mlton fragger2.sml && taskset 0x1 ./fragger2 @MLton fixed-heap "+str(i)+"k -- 433259"
+        #com = "mlton -drop-pass flatten -drop-pass local-flatten -drop-pass deep-flatten -drop-pass ref-flatten fragger2.sml && taskset 0x1 ./fragger2 @MLton fixed-heap "+str(i)+"k -- 433259"
+        com = "mlton fragger2.sml && taskset 0x1 ./fragger2 @MLton max-heap "+str(i)+"k --"
         #os.system(com)
         result =subprocess.check_output(com, shell=True)
         print(result)
@@ -26,14 +27,15 @@ def main():
     print("Plotting graph\n")
     print(res)
     a = [x.split('\n') for x in res]
-    res = [float(x) for x,y in a]
-    #free = [int(y)/1000000 for x,y in a]
-    values = [x for x in values]
-    d = zip(values,res)
+    res = [float(x) for y,x,z in a]
+    free = [x for x,y,z in a]
+    values = [x*1000 for x in values]
+    free = [int(x)-int(y) for (x,y) in zip(values,free)]
+    d = zip(values,res,free)
     with open("smlfrag.txt",'wb') as myFile:
         wr = csv.writer(myFile, delimiter=',')
-        for a,b in d:
-            e =[a,b]
+        for a,b,c in d:
+            e =[a,b,c]
             wr.writerow(e)
 
 
