@@ -44,12 +44,8 @@
     :default 9
     :parse-fn #(Integer/parseInt %)
     :validate [#(< 0 % 0x10000) "Must be a number between 1 and 65536"]]
-   ["-m" "--maxheap NUM" "Maximum heap to allocate (in MB)"
-    :default 4
-    :parse-fn #(Integer/parseInt %)
-    :validate [#(< 0 % 0x10000) "Must be a number between 1 and 65536"]]
+
    ;; A non-idempotent option
-   ["-S" "--gc-stats" "Print GC stats"]
    ["-D" "--debug" "Tell us what you are doing."]
    ;; A boolean option defaulting to nil
    ["-h" "--help"]])
