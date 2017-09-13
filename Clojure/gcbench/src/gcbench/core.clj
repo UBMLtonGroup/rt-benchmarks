@@ -4,7 +4,7 @@
             ;; https://github.com/clojure/tools.cli
             [clojure.tools.cli :refer [parse-opts]]
    )
-  (:use [gcbench.tree] [gcbench.memstats] [gcbench.fib])
+  (:use [gcbench.tree] [gcbench.memstats] [gcbench.fib] [hara.concurrent.ova])
   (:gen-class))
 
 (def cli-options
@@ -72,6 +72,10 @@
   (System/exit status))
 
 
+(def ct (ova []))
+(def gt (ova []))
+
+
 (defn -main [& args]
   (let [{:keys [options arguments errors summary]} (parse-opts args cli-options)]
     ;; Handle help and error conditions
@@ -85,7 +89,8 @@
                          (:compute-depth options)
                          (:iterations options)
                          (:compute-sleep options)
-                         (:debug options))
+                         (:debug options)
+                         ct)
 
        (Thread/sleep (* 1000 (:gc-delay options)))
 
