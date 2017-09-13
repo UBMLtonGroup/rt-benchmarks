@@ -5,12 +5,17 @@
     )
   )
 
+(defn simpleloop [n]
+  "10,000,000,000 ~ 4s on laptop"
+  (dotimes [i n] ())
+  )
+
 (defn fib [max]
   (loop [res [0 1]]
           (if (>= (count res) max)
             res
             (recur (conj res (+' (inc (last res)) (dec (last (butlast res))))))))
-)
+
 
 ;; 
 (defn compute-thread-helper
@@ -18,7 +23,8 @@
   (if (> niter 0)
     (do
       (-> oo (append! [0 id niter (System/currentTimeMillis) (heap-used)]) (<<))
-      (fib compute-depth)
+      ;(fib compute-depth)
+      (simpleloop compute-depth)
       (-> oo (append! [1 id niter (System/currentTimeMillis) (heap-used)]) (<<))
       (Thread/sleep compute-sleep)
       (recur compute-depth id (- niter 1) compute-sleep debug oo)
