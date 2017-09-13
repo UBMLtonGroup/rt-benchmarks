@@ -17,6 +17,15 @@
 
 )
 
+(defn traverseArray
+  [arr elem]
+  (doseq [n (range elem)
+          :when (== (mod n 1000) 0)]
+  (.get arr n )
+    )
+
+)
+
 (defn allocateArray 
   [kArraySize]
   ;;( ova (range kArraySize))
@@ -29,11 +38,6 @@
   ( ova (range sz (+ sz kArraySize) ))
   ;;( object-array (range sz (+ sz kArraySize) ))
 
-)
-(defn traverseArray
-  [arr]
-  (<< (map! arr (fn [n] (+ n 1))))
-  ;;(map-every-nth inc arr 1)
 )
 
 ;17208402
@@ -54,19 +58,24 @@
    ))
  ;512358 
  ;9230095 
-  (def elem 511800)
+  (def elem 500000)
   (doseq [n (range elem)]
     (def xxx (object-array [n]))
     (.add arrlist xxx)
    ; (println n)
    )
-  ;;(println "Done")
+ ;; (println "Done")
   ;;(pprint (into [] arrlist))
-  (println (-> (java.lang.Runtime/getRuntime) (.freeMemory) ))
-  (fragmentArray arrlist elem)
+
  ;; (pprint (into [] arrlist))
   (def start (+ elem 5))
-  (def stop (+ start (int (/ elem 1.167))))
-  (time (def yyy (object-array (range start stop))))
+  (def stop (+ start (int (/ elem 1.115))))
+  (fragmentArray arrlist elem)
+  (println (-> (java.lang.Runtime/getRuntime) (.freeMemory))) 
+  (def begin (System/currentTimeMillis))
+  (def yyy (object-array (range start stop)))
+  (def stop (System/currentTimeMillis))
+  (println (- stop begin))
+  (traverseArray arrlist elem)
 )
 

@@ -6,5 +6,5 @@
   :main fraggerclj.core
   :aot [fraggerclj.core]
   :dependencies [[org.clojure/clojure "1.8.0"][im.chit/ova "1.0.1"]]
-  ;;:profiles {:minheap {:jvm-opts ["-Xms30M" "-Xmx30M" "-Xloggc:gcclj" "-XX:+PrintGCDetails" "-XX:+UseSerialGC" "-XX:-UseGCOverheadLimit"]}})
+  ;;:profiles {:minheap {:jvm-opts ["-Xms29M" "-Xmx29M" "-Xloggc:gcclj" "-XX:+PrintGCDetails" "-XX:+UseSerialGC" "-XX:-UseGCOverheadLimit"]}})
   :profiles {:minheap {:jvm-opts ["-XX:+UseSerialGC" "-XX:-UseGCOverheadLimit"]}})

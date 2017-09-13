@@ -3,10 +3,11 @@ import commands
 import subprocess
 #import matplotlib.pyplot as plt
 import csv
+import re
 
 def main():
-    start = 35450 
-    increment = 75 #kb
+    start = 66*1024*1024
+    increment = 2 *1024*1024 
     values = [x for x in range(start,(start + (increment * 70)),increment)]
     #values = [x for x in range(1033895940,(1033895940 + (500000 *100)),500000)]
     #start =28*1024*1024
@@ -16,23 +17,28 @@ def main():
     #    values.append(int((values[j-1]*0.05) + values[j-1]))
     #print(values)
     res = []
+    count =1
     for i in values:
-        #com = "mlton -drop-pass flatten -drop-pass local-flatten -drop-pass deep-flatten -drop-pass ref-flatten fragger2.sml && taskset 0x1 ./fragger2 @MLton fixed-heap "+str(i)+"k -- 433259"
-        com = "mlton fragger2.sml && taskset 0x1 ./fragger2 @MLton max-heap "+str(i)+"k --"
+        #com = "taskset 0x1 scala -J-Xms"+str(i)+" -J-Xmx"+str(i)+" -J-XX:-UseGCOverheadLimit fragger.scala"
+        com = "ghc fragger2.hs -rtsopts -XFlexibleContexts -fforce-recomp && taskset 0x1 ./fragger2 +RTS -T -M"+str(i)+" -RTS"
+        #com = "scalac fragger.scala && taskset 0x1 java -cp .:/usr/share/java/scala-library.jar -Xms"+str(i)+" -Xmx"+str(i)+" -XX:-UseGCOverheadLimit fragger"
         #os.system(com)
         result =subprocess.check_output(com, shell=True)
         print(result)
         res.append(result)
+        print("Iteration: "+str(count))
+        count=count+1
         #os.system("rm *.class")
     print("Plotting graph\n")
-    print(res)
+    #print(res)
     a = [x.split('\n') for x in res]
-    res = [float(x) for y,x,z in a]
-    free = [x for x,y,z in a]
-    values = [x*1000 for x in values]
+    res = [re.findall("\d+\.\d+",x) for p,q,y,x,z in a]
+    res=[float(x)*1000 for [x] in res]
+    free = [x for p,q,x,y,z in a]
+    values = [x for x in values]
     free = [int(x)-int(y) for (x,y) in zip(values,free)]
     d = zip(values,res,free)
-    with open("smlfrag.txt",'wb') as myFile:
+    with open("hskfrag.txt",'wb') as myFile:
         wr = csv.writer(myFile, delimiter=',')
         for a,b,c in d:
             e =[a,b,c]
