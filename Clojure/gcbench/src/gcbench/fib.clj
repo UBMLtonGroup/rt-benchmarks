@@ -36,14 +36,14 @@
        b. repeat for N iters
    4. collect stop time
    5. output delta time with id"
-  [compute-depth id niter compute-sleep debug oo]
+  [compute-depth id niter compute-sleep debug]
   do 
      (compute-thread-helper compute-depth id niter compute-sleep debug (ova []))
 )
 
-(defn make-compute-threads [num-threads compute-depth niter compute-sleep debug oo]
+(defn make-compute-threads [num-threads compute-depth niter compute-sleep debug]
   (if (> num-threads 0) 
-       (dotimes [i num-threads] (.start (Thread. (fn [] (compute-thread compute-depth i niter compute-sleep debug oo)))))
+       (dotimes [i num-threads] (.start (Thread. (fn [] (compute-thread compute-depth i niter compute-sleep debug)))))
   )
 )
 

@@ -3,7 +3,7 @@
   (:require [clojure.string :as string] 
             ;; https://github.com/clojure/tools.cli
             [clojure.tools.cli :refer [parse-opts]])
-  (:use [perm9.p9] [perm9.memstats] [perm9.fib])
+  (:use [perm9.p9] [perm9.memstats] [perm9.fib] [hara.concurrent.ova])
   (:gen-class))
 
 

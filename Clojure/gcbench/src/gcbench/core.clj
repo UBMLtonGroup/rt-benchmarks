@@ -72,10 +72,6 @@
   (System/exit status))
 
 
-(def ct (ova []))
-(def gt (ova []))
-
-
 (defn -main [& args]
   (let [{:keys [options arguments errors summary]} (parse-opts args cli-options)]
     ;; Handle help and error conditions
@@ -89,8 +85,7 @@
                          (:compute-depth options)
                          (:iterations options)
                          (:compute-sleep options)
-                         (:debug options)
-                         ct)
+                         (:debug options))
 
        (Thread/sleep (* 1000 (:gc-delay options)))
 

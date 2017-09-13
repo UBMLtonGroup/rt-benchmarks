@@ -1,5 +1,9 @@
 (ns perm9.fib
-    (:use [perm9.memstats]))
+    (:use [perm9.memstats])
+   (:require
+       [hara.concurrent.ova :refer :all]
+    )
+  )
 
 (defn fib [max]
   (loop [res [0 1]]
@@ -10,15 +14,18 @@
 
 ;; 
 (defn compute-thread-helper
-  [compute-depth id niter compute-sleep debug]
+  [compute-depth id niter compute-sleep debug oo]
   (if (> niter 0)
     (do
-      (println (format "compute:start:%d:%d:%d:%d" id niter (System/currentTimeMillis) (heap-used)))
+      (-> oo (append! [0 id niter (System/currentTimeMillis) (heap-used)]) (<<))
       (fib compute-depth)
-      (println (format "compute:stop:%d:%d:%d:%d" id niter (System/currentTimeMillis) (heap-used)))
+      (-> oo (append! [1 id niter (System/currentTimeMillis) (heap-used)]) (<<))
       (Thread/sleep compute-sleep)
-      (recur compute-depth id (- niter 1) compute-sleep debug)
+      (recur compute-depth id (- niter 1) compute-sleep debug oo)
      )
+
+    (print-stats "compute" oo)
+
     )
   )
 
@@ -31,7 +38,7 @@
    5. output delta time with id"
   [compute-depth id niter compute-sleep debug]
   do 
-     (compute-thread-helper compute-depth id niter compute-sleep debug)
+     (compute-thread-helper compute-depth id niter compute-sleep debug (ova []))
 )
 
 (defn make-compute-threads [num-threads compute-depth niter compute-sleep debug]

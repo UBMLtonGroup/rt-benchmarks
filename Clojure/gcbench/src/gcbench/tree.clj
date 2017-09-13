@@ -89,7 +89,7 @@
       (Thread/sleep gc-sleep)
       (recur tree-depth id (- niter 1) gc-sleep debug oo))
 
-      (print-stats "gc" oo)
+    (print-stats "gc" oo)
     )
   )
 
