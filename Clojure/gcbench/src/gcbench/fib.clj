@@ -4,6 +4,12 @@
        [hara.concurrent.ova :refer :all]
     ))
 
+
+(defn simpleloop [n]
+  "10,000,000,000 ~ 4s on laptop"
+  (dotimes [i n] ())
+  )
+
 (defn fib [max]
   (loop [res [0 1]]
           (if (>= (count res) max)
@@ -18,7 +24,9 @@
     (do
       (-> oo (append! [0 id niter (System/currentTimeMillis) (heap-used)]) (<<))
 
-      (fib compute-depth)
+      (simpleloop compute-depth)
+      
+      ;(fib compute-depth)
 
       (-> oo (append! [1 id niter (System/currentTimeMillis) (heap-used)]) (<<))
 
