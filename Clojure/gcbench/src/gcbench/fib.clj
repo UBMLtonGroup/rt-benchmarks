@@ -25,7 +25,7 @@
       (-> oo (append! [0 id niter (System/currentTimeMillis) (heap-used)]) (<<))
 
       (simpleloop compute-depth)
-      
+
       ;(fib compute-depth)
 
       (-> oo (append! [1 id niter (System/currentTimeMillis) (heap-used)]) (<<))

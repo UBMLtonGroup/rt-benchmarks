@@ -23,9 +23,8 @@ data Arguments = Arguments {
     computeDepth :: Integer,
     iters :: Integer,
     sleepTime :: Double,
-    gcDelay :: Integer,
     gcThreads :: Integer,
-    gcDelay :: Integer,
+    gcDelay:: Integer,
     treeDepth:: Integer,
     showGCStats :: Bool
 }
@@ -77,6 +76,13 @@ fib 0 = 0
 fib 1 = 1
 fib n = fib (n-1) + fib (n-2)
 
+simpleloop :: Integer -> Integer
+simpleloop 0 = 12344321
+simpleloop n =
+  do
+    simpleloop (n-1)
+
+
 gcFunc :: (Show a) => Integer -> Integer -> (String -> IO ()) -> Integer -> a -> IO ()
 gcFunc depth iters printFun gcDelay threadIdNum = do
     threadDelay . fromIntegral $ gcDelay * 1000000
@@ -108,7 +114,7 @@ compute depth iters sleepTime printFun threadIdNum = do
 
         --printf "%d\n" tStart
         printFun $ "compute:start:" ++ show (threadIdNum) ++  ":" ++ show i ++ ":" ++ show tStart ++ ":" ++ show (currentBytesUsed stats1)
-        _ <- (evaluate . force) $ fib depth
+        _ <- (evaluate . force) $ simpleloop depth
 
         tStop <- getPOSIXTime --timeInMicros
         stats2 <- getGCStats
@@ -181,12 +187,12 @@ benchmarkCLI = Arguments
         <> value 1
         <> help "GC Threads" )
 
-    -- -J, --gc-delay NUM          30   GC startup delay (secs)
+    -- -J, --gc-delay NUM          60   GC startup delay (secs)
     <*> option auto
         ( long "gc-delay"
         <> short 'J'
         <> metavar "NUM"
-        <> value 30
+        <> value 60
         <> help "GC Startup delay" )
 
     -- -e, --tree-depth NUM          10  Maximum tree depth to allocate

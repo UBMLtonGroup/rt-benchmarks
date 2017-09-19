@@ -83,6 +83,14 @@ object GCBench {
 
     }
 
+    def simpleloop(num: Int): Int = {
+        var accum = 0
+        for (i <- 1 until num) {
+            accum = i
+        }
+        accum
+    }
+
     def fibonacci(num: Int): Int = {
         if(num < 2){
             return 1
@@ -191,7 +199,8 @@ object GCBench {
             val tStart = System.currentTimeMillis()
             val runtime3 = Runtime.getRuntime
             listOfTimeStamps += ("compute:start:"+ id +":" + i + ":" +tStart  + ":" + (runtime3.totalMemory - runtime3.freeMemory))
-            fibonacci(depth)
+            //fibonacci(depth)
+            simpleloop(depth)
             val tStop = System.currentTimeMillis()
             val runtime4 = Runtime.getRuntime
             listOfTimeStamps += ("compute:stop:"+ id +":" + i + ":" +tStop  + ":" + (runtime4.totalMemory - runtime4.freeMemory))
