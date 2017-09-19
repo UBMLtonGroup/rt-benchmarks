@@ -16,7 +16,7 @@
    ["-d" "--compute-depth NUM" "Compute Depth"
     :default 1500
     :parse-fn #(Integer/parseInt %)
-    :validate [#(< 0 % 0x10000) "Must be a number between 1 and 65536"]]
+    :validate [#(<= 0 % 0xEFFFFFFF) "Must be a number between 0 and 2**31"]]
    ["-i" "--iterations NUM" "Iterations"
     :default 100
     :parse-fn #(Integer/parseInt %)
