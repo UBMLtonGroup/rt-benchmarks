@@ -12,6 +12,7 @@
 20170808-scala-gcb2
   20170919-scala-gcb-loop
   taskset -c 0 java -Xmx24m -Xms24m  -jar target/scala-2.12/GCBench-assembly-0.1.0-SNAPSHOT.jar -d 700000000 -G 15
+  taskset -c 0 java -Xmx20m -Xms20m  -jar target/scala-2.12/GCBench-assembly-0.1.0-SNAPSHOT.jar -d 400000000 -G 4   -i 1100
 
 20170807-scala-p9
   20170919-scala-p9-loop
