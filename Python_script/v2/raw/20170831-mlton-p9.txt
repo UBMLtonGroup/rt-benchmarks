@@ -1,7 +1,5 @@
-Script started on Thu 31 Aug 2017 09:09:55 AM EDT
-oscar:[35m~/git/rt-benchmarks/sml[m$ #C ./perm9 @MLton gc-summary max-heap 40k --  -d 505 -i 1100 -J 60 -s 200000000 -G 20 
-oscar:[35m~/git/rt-benchmarks/sml[m$ #T MLto [Kn Perm9 1core/40k/1/1
-oscar:[35m~/git/rt-benchmarks/sml[m$ ./perm9 @MLton gc-summary max-heap 40k --  -d 505 -i 1100 -J 60 -s 200000000 -G 20 
+#C ./perm9 @MLton gc-summary max-heap 40k --  -d 505 -i 1100 -J 60 -s 200000000 -G 20 
+#T MLton Perm9 1/40k/1/1
 compute:start:1:1100:1504185009152:23680
 compute:stop :1:1100:1504185010038:23680
 compute:start:1:1099:1504185010038:23680
