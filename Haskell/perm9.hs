@@ -101,9 +101,10 @@ compute depth iters sleepTime printFun threadIdNum = do
         tStart <- getPOSIXTime --timeInMicros
 
         printFun $ "compute:start:" ++ show (threadIdNum) ++  ":" ++ show i ++ ":" ++ show tStart ++ ":" ++ show (currentBytesUsed stats1)
-        _ <- (evaluate . force) $ simpleloop depth
+        -- _ <- (evaluate . force) $ simpleloop depth
+        let r = simpleloop depth
+        tStop <- r `deepseq` getPOSIXTime --timeInMicros
         stats2 <- getGCStats
-        tStop <- getPOSIXTime --timeInMicros
 
         printFun $ "compute:stop:" ++ show (threadIdNum) ++  ":" ++ show i ++ ":" ++ show tStop ++ ":" ++ show (currentBytesUsed stats2)
         threadDelay . fromIntegral . round $ sleepTime * 1000000
