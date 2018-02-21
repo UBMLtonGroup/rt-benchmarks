@@ -114,13 +114,13 @@ compute depth iters sleepTime printFun threadIdNum = do
 
         --printf "%d\n" tStart
         printFun $ "compute:start:" ++ show (threadIdNum) ++  ":" ++ show i ++ ":" ++ show tStart ++ ":" ++ show (currentBytesUsed stats1)
-        _ <- (evaluate . force) $ simpleloop depth
-
-        tStop <- getPOSIXTime --timeInMicros
+        -- _ <- (evaluate . force) $ simpleloop depth
+        let r = simpleloop depth
+        tStop <- r `deepseq` getPOSIXTime --timeInMicros
         stats2 <- getGCStats
 
         printFun $ "compute:stop:" ++ show (threadIdNum) ++  ":" ++ show i ++ ":" ++ show tStop ++ ":" ++ show (currentBytesUsed stats2)
-        threadDelay . fromIntegral . round $ sleepTime * 1000000
+        -- threadDelay . fromIntegral . round $ sleepTime * 1000000
 
     mapM_ compLoop [1..iters]
 
