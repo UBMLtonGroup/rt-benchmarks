@@ -89,9 +89,12 @@ def main(args: Array[String])
         arrlist += allocateArray(j)
         
     }
-    
+    var used = (Runtime.getRuntime().totalMemory() - Runtime.getRuntime.freeMemory())
+    println(used)
     //println("out of loop")
     fragmentArray(arrlist)
+    var us = (Runtime.getRuntime().totalMemory() - Runtime.getRuntime.freeMemory())
+    println(us)
 //    Thread.sleep(1000)
     //System.gc() 
     //var free = Runtime.getRuntime().freeMemory()
