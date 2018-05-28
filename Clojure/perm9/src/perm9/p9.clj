@@ -1,5 +1,8 @@
 (ns perm9.p9
     (:use [perm9.memstats])
+    (:require
+       [hara.concurrent.ova :refer :all]
+    )
 )
 
 (def perms (ref [[]]))	
@@ -87,14 +90,17 @@
 		
 ;; 
 (defn gc-thread-helper
-  [digits id niter gc-sleep debug]
+  [digits id niter gc-sleep debug oo]
   (if (> niter 0)
     (do
-      (println (format "gc:start:%d:%d:%d:%d" id niter (System/currentTimeMillis) (heap-used)))
+      (-> oo (append! [0 id niter (System/currentTimeMillis) (heap-used)]) (<<))
       (perm9_benchmark 5 digits)
-      (println (format "gc:stop:%d:%d:%d:%d" id niter (System/currentTimeMillis) (heap-used)))
+      (-> oo (append! [1 id niter (System/currentTimeMillis) (heap-used)]) (<<))
       (Thread/sleep gc-sleep)
-      (recur digits id (- niter 1) gc-sleep debug))
+      (recur digits id (- niter 1) gc-sleep debug oo))
+
+		(print-stats "gc" oo)
+
     )
   )
 
@@ -106,7 +112,7 @@
    4. output delta time with id"
   [digits id niter gc-sleep debug]
   do 
-     (gc-thread-helper digits id niter gc-sleep debug)
+     (gc-thread-helper digits id niter gc-sleep debug (ova []))
 )
 
 (defn make-gc-threads [num-threads digits niter gc-sleep gc-delay debug]

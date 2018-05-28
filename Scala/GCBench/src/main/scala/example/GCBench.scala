@@ -83,6 +83,14 @@ object GCBench {
 
     }
 
+    def simpleloop(num: Int): Int = {
+        var accum = 0
+        for (i <- 1 until num) {
+            accum = i
+        }
+        accum
+    }
+
     def fibonacci(num: Int): Int = {
         if(num < 2){
             return 1
@@ -129,13 +137,13 @@ object GCBench {
             tStart = System.currentTimeMillis()
 
             // Stretch the memory space quickly
-            tempTree = MakeTree(kStretchTreeDepth)
+            tempTree = MakeTree(tree_depth) //kStretchTreeDepth)
             tempTree = null
 
             // Create a long lived object
             //println(" Creating a long-lived binary tree of depth " +kLongLivedTreeDepth)
             longLivedTree = new Node()
-            Populate(kLongLivedTreeDepth, longLivedTree)
+            Populate(tree_depth, longLivedTree)
 
             // Create long-lived array, filling half of it
             //println(" Creating a long-lived array of "+ kArraySize + " doubles")
@@ -191,7 +199,8 @@ object GCBench {
             val tStart = System.currentTimeMillis()
             val runtime3 = Runtime.getRuntime
             listOfTimeStamps += ("compute:start:"+ id +":" + i + ":" +tStart  + ":" + (runtime3.totalMemory - runtime3.freeMemory))
-            fibonacci(depth)
+            //fibonacci(depth)
+            simpleloop(depth)
             val tStop = System.currentTimeMillis()
             val runtime4 = Runtime.getRuntime
             listOfTimeStamps += ("compute:stop:"+ id +":" + i + ":" +tStop  + ":" + (runtime4.totalMemory - runtime4.freeMemory))

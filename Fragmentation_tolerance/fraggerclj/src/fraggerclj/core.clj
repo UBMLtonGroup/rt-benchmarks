@@ -68,9 +68,11 @@
   ;;(pprint (into [] arrlist))
 
  ;; (pprint (into [] arrlist))
+  ;;(println (- (-> (java.lang.Runtime/getRuntime)(.totalMemory)) (-> (java.lang.Runtime/getRuntime) (.freeMemory))))
   (def start (+ elem 5))
   (def stop (+ start (int (/ elem 1.115))))
   (fragmentArray arrlist elem)
+  (println (- (-> (java.lang.Runtime/getRuntime)(.totalMemory)) (-> (java.lang.Runtime/getRuntime) (.freeMemory))))
   (println (-> (java.lang.Runtime/getRuntime) (.freeMemory))) 
   (def begin (System/currentTimeMillis))
   (def yyy (object-array (range start stop)))

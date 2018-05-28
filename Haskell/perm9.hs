@@ -68,6 +68,13 @@ fib 0 = 0
 fib 1 = 1
 fib n = fib (n-1) + fib (n-2)
 
+simpleloop :: Integer -> Integer
+simpleloop 0 = 12344321
+simpleloop n =
+  do
+    simpleloop (n-1)
+
+
 gcFunc :: (Show a) => Int -> Integer -> (String -> IO ()) -> Integer -> a -> IO ()
 gcFunc len iters printFun gcDelay threadIdNum = do
     threadDelay . fromIntegral $ gcDelay * 1000000
@@ -94,9 +101,10 @@ compute depth iters sleepTime printFun threadIdNum = do
         tStart <- getPOSIXTime --timeInMicros
 
         printFun $ "compute:start:" ++ show (threadIdNum) ++  ":" ++ show i ++ ":" ++ show tStart ++ ":" ++ show (currentBytesUsed stats1)
-        _ <- (evaluate . force) $ fib depth
+        -- _ <- (evaluate . force) $ simpleloop depth
+        let r = simpleloop depth
+        tStop <- r `deepseq` getPOSIXTime --timeInMicros
         stats2 <- getGCStats
-        tStop <- getPOSIXTime --timeInMicros
 
         printFun $ "compute:stop:" ++ show (threadIdNum) ++  ":" ++ show i ++ ":" ++ show tStop ++ ":" ++ show (currentBytesUsed stats2)
         threadDelay . fromIntegral . round $ sleepTime * 1000000

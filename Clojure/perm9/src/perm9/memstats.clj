@@ -14,6 +14,28 @@
     (reduce + 4 (map sizeof (seq coll))))) 
 
 
+(defn print-stats
+  [t a]
+  (dotimes [i (count a) ]
+   (if (= (nth (nth a i) 0) 0)
+       (println (format "%s:start:%d:%d:%d:%d" t
+                 (nth (nth a i) 1)
+                 (nth (nth a i) 2)
+                 (nth (nth a i) 3)
+                 (nth (nth a i) 4)
+                 ))
+       (println (format "%s:stop:%d:%d:%d:%d" t
+                 (nth (nth a i) 1)
+                 (nth (nth a i) 2)
+                 (nth (nth a i) 3)
+                 (nth (nth a i) 4)
+                 ))
+   )
+  )
+)
+
+
+
 (defn heap-used
   "Report a (inconsistent) snapshot of the heap memory used."
   []

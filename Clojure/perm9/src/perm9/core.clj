@@ -3,7 +3,7 @@
   (:require [clojure.string :as string] 
             ;; https://github.com/clojure/tools.cli
             [clojure.tools.cli :refer [parse-opts]])
-  (:use [perm9.p9] [perm9.memstats] [perm9.fib])
+  (:use [perm9.p9] [perm9.memstats] [perm9.fib] [hara.concurrent.ova])
   (:gen-class))
 
 
@@ -19,7 +19,7 @@
    ["-d" "--compute-depth NUM" "Compute Depth"
     :default 1500
     :parse-fn #(Integer/parseInt %)
-    :validate [#(< 0 % 0x10000) "Must be a number between 1 and 65536"]]
+    :validate [#(<= 0 % 0xEFFFFFFF) "Must be a number between 0 and 2**31"]]
    ["-i" "--iterations NUM" "Iterations"
     :default 100
     :parse-fn #(Integer/parseInt %)
@@ -44,12 +44,8 @@
     :default 9
     :parse-fn #(Integer/parseInt %)
     :validate [#(< 0 % 0x10000) "Must be a number between 1 and 65536"]]
-   ["-m" "--maxheap NUM" "Maximum heap to allocate (in MB)"
-    :default 4
-    :parse-fn #(Integer/parseInt %)
-    :validate [#(< 0 % 0x10000) "Must be a number between 1 and 65536"]]
+
    ;; A non-idempotent option
-   ["-S" "--gc-stats" "Print GC stats"]
    ["-D" "--debug" "Tell us what you are doing."]
    ;; A boolean option defaulting to nil
    ["-h" "--help"]])

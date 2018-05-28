@@ -4,7 +4,7 @@
             ;; https://github.com/clojure/tools.cli
             [clojure.tools.cli :refer [parse-opts]]
    )
-  (:use [gcbench.tree] [gcbench.memstats] [gcbench.fib])
+  (:use [gcbench.tree] [gcbench.memstats] [gcbench.fib] [hara.concurrent.ova])
   (:gen-class))
 
 (def cli-options
@@ -16,7 +16,7 @@
    ["-d" "--compute-depth NUM" "Compute Depth"
     :default 1500
     :parse-fn #(Integer/parseInt %)
-    :validate [#(< 0 % 0x10000) "Must be a number between 1 and 65536"]]
+    :validate [#(<= 0 % 0xEFFFFFFF) "Must be a number between 0 and 2**31"]]
    ["-i" "--iterations NUM" "Iterations"
     :default 100
     :parse-fn #(Integer/parseInt %)
@@ -41,12 +41,8 @@
     :default 20
     :parse-fn #(Integer/parseInt %)
     :validate [#(< 0 % 0x10000) "Must be a number between 1 and 65536"]]
-   ["-m" "--maxheap NUM" "Maximum heap to allocate (in MB)"
-    :default 4
-    :parse-fn #(Integer/parseInt %)
-    :validate [#(< 0 % 0x10000) "Must be a number between 1 and 65536"]]
+
    ;; A non-idempotent option
-   ["-S" "--gc-stats" "Print GC stats"]
    ["-D" "--debug" "Tell us what you are doing."]
    ;; A boolean option defaulting to nil
    ["-h" "--help"]])

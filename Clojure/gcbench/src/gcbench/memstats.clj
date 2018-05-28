@@ -20,6 +20,29 @@
     (- (.totalMemory runtime) (.freeMemory runtime))))
 
 
+
+(defn print-stats
+  [t a]
+  (dotimes [i (count a) ]
+   (if (= (nth (nth a i) 0) 0)
+       (println (format "%s:start:%d:%d:%d:%d" t
+                 (nth (nth a i) 1)
+                 (nth (nth a i) 2)
+                 (nth (nth a i) 3)
+                 (nth (nth a i) 4)
+                 ))
+       (println (format "%s:stop:%d:%d:%d:%d" t
+                 (nth (nth a i) 1)
+                 (nth (nth a i) 2)
+                 (nth (nth a i) 3)
+                 (nth (nth a i) 4)
+                 ))
+   )
+  )
+)
+
+
+
 (comment "
 ;; duck types no long available:
 ;; with-in-reader migrated to https://clojuredocs.org/clojure.java.io

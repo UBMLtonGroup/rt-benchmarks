@@ -1,7 +1,9 @@
 (ns gcbench.tree
     (:use [gcbench.memstats])
+    (:require
+       [hara.concurrent.ova :refer :all]
+    )
 )
-
 
 ;; global state management 
 ;; really just stashing long-lived objects
@@ -74,15 +76,20 @@
 
 ;; 
 (defn gc-thread-helper
-  [tree-depth id niter gc-sleep debug]
+  [tree-depth id niter gc-sleep debug oo]
   (if (> niter 0)
     (do
-      (println (format "gc:start:%d:%d:%d:%d" id niter (System/currentTimeMillis) (heap-used)))
+      (-> oo (append! [0 id niter (System/currentTimeMillis) (heap-used)]) (<<))
+
       (make-tree-bottom-up tree-depth)
       (make-tree-top-down tree-depth make-empty-node)
-      (println (format "gc:stop:%d:%d:%d:%d" id niter (System/currentTimeMillis) (heap-used)))
+
+      (-> oo (append! [1 id niter (System/currentTimeMillis) (heap-used)]) (<<))
+
       (Thread/sleep gc-sleep)
-      (recur tree-depth id (- niter 1) gc-sleep debug))
+      (recur tree-depth id (- niter 1) gc-sleep debug oo))
+
+    (print-stats "gc" oo)
     )
   )
 
@@ -96,7 +103,7 @@
    5. output delta time with id"
   [tree-depth id niter gc-sleep debug]
   do 
-     (gc-thread-helper tree-depth id niter gc-sleep debug)
+     (gc-thread-helper tree-depth id niter gc-sleep debug (ova []))
 )
 
 (defn make-gc-threads [num-threads tree-depth niter warm-up gc-sleep gc-delay debug]
