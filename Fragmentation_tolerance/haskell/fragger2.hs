@@ -47,8 +47,8 @@ traverseArray arr n size
 treadArray arr n size
     | n<=size = do
             --putProgress $ arr ! n
-            b <- readArray arr n
-            --MA.writeArray arr n n
+            --b <- readArray arr n
+            writeArray arr n 11
             --putProgress b
             treadArray arr (n+1) size
     | otherwise = return ()
@@ -81,16 +81,18 @@ main = do
     --print $ "Bytes allocated " ++ show(maxBytesUsed stats)
     --performGC
     --threadDelay 100000
-    arr <- fragmentHeap arr 2 size
-    --putStrLn "\nmake small array"
     stats <- GC.getGCStats
     putStrLn $ show(currentBytesUsed stats)
     
     tStart <- getPOSIXTime
+    arr <- fragmentHeap arr 2 size
+    --putStrLn "\nmake small array"
     arr2 <- MA.newArray(1,3832957) 10 :: IO (IOUArray Int Int)
+    
+    treadArray arr2 1 3832957
     tStop <- getPOSIXTime
     putStrLn $ show (tStop - tStart)
-    treadArray arr2 1 3832957
+
     goThroughArray arr 1 size    
     --stats <- GC.getGCStats
     --putStrLn $ "Bytes allocated " ++ show(currentBytesUsed stats)
