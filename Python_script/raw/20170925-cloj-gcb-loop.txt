@@ -1,5 +1,5 @@
 #C time taskset -c 0 java -Xmx73730k -Xms73730k -jar target/gcbench-1.0.0-SNAPSHOT-standalone.jar -d 500000000 -e 18 -i 500 -J 60
-#T Clojure GCBench 1/73730k/1/1
+#T Clojure GCBench 1/73m/1/1
 compute:start:0:500:1506366648833:4424544
 compute:stop:0:500:1506366649320:4424544
 compute:start:0:499:1506366650320:4424544
