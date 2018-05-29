@@ -154,7 +154,7 @@ object GCBench {
             //PrintDiagnostics()
 
             var d : Int = kMinTreeDepth
-            while(d <= kMaxTreeDepth){
+            while(d <= tree_depth){
                 TimeConstruction(d)
                 d += 2
             }
