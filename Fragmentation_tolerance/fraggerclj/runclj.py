@@ -8,7 +8,7 @@ import csv
 def main():
     start = 29 * 1024 * 1024 #524288000
     increment = 500 *1024
-    values = [x for x in range(start,(start + (increment * 90)),increment)]
+    values = [x for x in range(start,(start + (increment * 30)),increment)]
     res =[]
     print("Starting script\n")
     for i in values:
@@ -20,15 +20,16 @@ def main():
         res.append(result)
     print("Plotting graph\n")
     a = [x.split('\n') for x in res]
-    free = [float(x) for x,y,z in a]
+    free = [float(x) for q,x,y,z in a]
     #res = [re.findall("\d+\.\d+",x) for y,x,z in a]
-    res = [float(x) for y,x,z in a]
+    used=[float(x) for x,q,y,z in a]
+    res = [float(x) for q,y,x,z in a]
     values = [float(x) for x in values]
-    d = zip(values,res,free)
+    d = zip(values,res,free,used)
     with open("cljfrag.txt",'wb') as myFile:
         wr = csv.writer(myFile, delimiter=',')
-        for a,b,c in d:
-            e =[a,b,c]
+        for a,b,c,x in d:
+            e =[a,b,c,x]
             wr.writerow(e)
     #plt.plot(values,res)
     #plt.xlabel('Heap size (MB)')
