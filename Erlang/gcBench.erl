@@ -4,12 +4,11 @@
 -export([nonEmptyNode/2, populate/2, makeTree/1, emptyNode/0,numIters/1,treeSize/1,timeConstruction/1]).
 -export([printDiagnostics/0,fillArray/2]).
 -export([makeArr/0,kArraySize/0]).
--export([fib/1]).
+-export([fib/1,simpleLoop/1]).
 -export([start_gc_thread/4, gc_func/5]).
 -export([start_comp_thread/5, comp_func/6]).
 
 
--export([getTime/0]).
 -export([main/1]).
 
 
@@ -40,10 +39,6 @@ makeTree(0) ->
 
 kArraySize () -> 500000.
 
-getTime () ->
-	{Time1, Time2, Decimals} = erlang:timestamp(),
-	Time = integer_to_list(Time1) ++ integer_to_list(Time2) ++ "." ++ integer_to_list(Decimals),
-	Time.
 
 
 
@@ -63,12 +58,6 @@ populate(IDepth,ThisNode) when IDepth >0 ->
     end;
 populate(0, _) ->
 	ok. 
-    %Left = emptyNode(),
-    %Right = emptyNode(),
-    %N = {node,{Left,Right}},
-    %populate(IDepth-1, Left),
-    %populate(IDepth-1,Right).
-     
 
 %populate(IDepth,N) when IDepth > 0 ->
 %       N = N#{left:= emptyNode(), right:= emptyNode()},
@@ -133,12 +122,17 @@ fib(0) -> 0 ;
 fib(1) -> 1 ; 
 fib(N) when N > 0 -> fib(N-1) + fib(N-2) .
 
+simpleLoop(I) when I > 0->
+   simpleLoop(I-1);
+simpleLoop(0)-> ok.
+
+
 
 start_gc_thread(Num_threads, Tree_depth, Iterations, ID) when Num_threads > 0 ->
 
 	io:format("~s~w~n", ["starting GC thread #", ID] ),
 
-	spawn(gcBench, gc_func, [self(), Tree_depth, ID, Iterations , 0]),%[{max_heap_size, #{size => 1024000, kill => true, error_logger => true}}]),
+	spawn_opt(gcBench, gc_func, [self(), Tree_depth, ID, Iterations , 0],[{max_heap_size, #{size => 7048608, kill => true, error_logger => true}}]),
 	
         start_gc_thread(Num_threads - 1, Tree_depth, Iterations, ID + 1);
 
@@ -147,7 +141,8 @@ start_gc_thread(0, _, _, _) ->
 
 gc_func(PID, Tree_depth, ID, Iterations, I) when Iterations > 0 ->
 
-
+        
+        %io:format("~w~n",[process_info(self(),total_heap_size)]),
         Start_time = erlang:timestamp(),
     	
         %stretch the memory space quicklyy
@@ -211,6 +206,8 @@ comp_func(PID, Depth, ID, Iterations, I, Comp_sleep) when Iterations > 0 ->
 	Stop_time = erlang:timestamp(),
 	%io:format("~s~w~s~w~s~s~n", ["comp:stop:",ID,":",I,":",Stop_time]),
         
+       % io:format("~w~n",[process_info(self(),total_heap_size)]),
+       % io:format("~w~n",[process_info(self(),memory)]),
         Total_time = timer:now_diff(Stop_time,Start_time),
         io:format("~s~w~s~w~n",["comp:",ID,": Time taken = ",Total_time]),
 
@@ -232,8 +229,8 @@ main(Args) ->
 	{D, _} = string:to_integer( _d ),
 	{I, _} = string:to_integer( _i ),
 	{S, _} = string:to_integer( _s ),
-	{G, _} = string:to_integer( _g ),
-	{E, _} = string:to_integer( _e ),
+	%{G, _} = string:to_integer( _g ),
+	%{E, _} = string:to_integer( _e ),
         
         if
 		(T > 0 ) ->
@@ -242,11 +239,11 @@ main(Args) ->
 	end,
 
        
-	if
-		(G > 0 ) ->
-			start_gc_thread(G,E,I,1);
-		true -> ok
-	end,
+	%if
+	%	(G > 0 ) ->
+	%		start_gc_thread(G,E,I,1);
+	%	true -> ok
+	%end,
 
          
 	timer:sleep(30000),
