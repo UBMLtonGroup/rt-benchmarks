@@ -143,7 +143,7 @@ gc_func(PID, Tree_depth, ID, Iterations, I) when Iterations > 0 ->
 
         
         %io:format("~w~n",[process_info(self(),total_heap_size)]),
-        Start_time = erlang:timestamp(),
+%        Start_time = erlang:timestamp(),
     	
         %stretch the memory space quicklyy
         makeTree(Tree_depth),
@@ -175,9 +175,9 @@ gc_func(PID, Tree_depth, ID, Iterations, I) when Iterations > 0 ->
             true -> ok
         end,
     
-	Stop_time = erlang:timestamp(),
-        Total_time = timer:now_diff (Stop_time,Start_time),
-        io:format("~s~w~s~w~n",["gc:",ID,": Time taken = ",Total_time]),
+%	Stop_time = erlang:timestamp(),
+%        Total_time = timer:now_diff (Stop_time,Start_time),
+%        io:format("~s~w~s~w~n",["gc:",ID,": Time taken = ",Total_time]),
         
         timer:sleep(3000),
 
@@ -209,7 +209,8 @@ comp_func(PID, Depth, ID, Iterations, I, Comp_sleep) when Iterations > 0 ->
        % io:format("~w~n",[process_info(self(),total_heap_size)]),
        % io:format("~w~n",[process_info(self(),memory)]),
         Total_time = timer:now_diff(Stop_time,Start_time),
-        io:format("~s~w~s~w~n",["comp:",ID,": Time taken = ",Total_time]),
+	{_,HeapSize} = process_info(self(),memory), 
+        io:format("~s~w~s~w~s~w~s~w~n",["comp:",Iterations,": Time taken: ",Total_time,": total memory: ",erlang:memory(processes_used),": comp memory: ",HeapSize ]),
 
 	timer:sleep(Comp_sleep * 1000),
 	comp_func(PID, Depth, ID, Iterations - 1 , I + 1, Comp_sleep);
