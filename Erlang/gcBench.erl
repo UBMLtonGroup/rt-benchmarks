@@ -184,7 +184,7 @@ gc_func(PID, Tree_depth, ID, Iterations, I) when Iterations > 0 ->
 	gc_func(PID, Tree_depth, ID, Iterations - 1 , I + 1 );
 
 gc_func(PID,_,_,0,_) ->
-	PID ! done.
+	PID ! gcdone.
 
 				%    1			37       10        1      1
 start_comp_thread(Num_threads, Depth, Iterations, ID, Comp_sleep) when Num_threads > 0 ->
@@ -201,7 +201,7 @@ start_comp_thread(0, _, _, _, _) ->
 comp_func(PID, Depth, ID, Iterations, I, Comp_sleep) when Iterations > 0 ->
 	Start_time = erlang:timestamp(),
 	%io:format("~s~w~s~w~s~s~n", ["comp:start:",ID,":",I,":",Start_time]),
-	fib(Depth),
+	simpleLoop(Depth),
 
 	Stop_time = erlang:timestamp(),
 	%io:format("~s~w~s~w~s~s~n", ["comp:stop:",ID,":",I,":",Stop_time]),
@@ -214,7 +214,7 @@ comp_func(PID, Depth, ID, Iterations, I, Comp_sleep) when Iterations > 0 ->
 	timer:sleep(Comp_sleep * 1000),
 	comp_func(PID, Depth, ID, Iterations - 1 , I + 1, Comp_sleep);
 comp_func(PID,_,_,0,_,_)->
-	PID ! done.
+	PID ! compdone.
 
 
 main(Args) ->
@@ -229,8 +229,8 @@ main(Args) ->
 	{D, _} = string:to_integer( _d ),
 	{I, _} = string:to_integer( _i ),
 	{S, _} = string:to_integer( _s ),
-	%{G, _} = string:to_integer( _g ),
-	%{E, _} = string:to_integer( _e ),
+	{G, _} = string:to_integer( _g ),
+	{E, _} = string:to_integer( _e ),
         
         if
 		(T > 0 ) ->
@@ -239,14 +239,22 @@ main(Args) ->
 	end,
 
        
-	%if
-	%	(G > 0 ) ->
-	%		start_gc_thread(G,E,I,1);
-	%	true -> ok
-	%end,
+	if
+		(G > 0 ) ->
+			start_gc_thread(G,E,I,1);
+		true -> ok
+	end,
 
-         
-	timer:sleep(30000),
+        
+        receive 
+            gcdone -> true
+        end,
+
+        receive
+            compdone -> true
+        end,
+	
+        %timer:sleep(30000),
 	init:stop().
 
 
