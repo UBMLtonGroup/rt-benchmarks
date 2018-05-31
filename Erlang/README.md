@@ -8,4 +8,4 @@ Erlang version: V8.0.2
 
 ### Running
     erl -noshell -run gcBench main -t -d -i -s -g -e -s
-    erl -noshell -run gcBench main 1 37 10 1 1 10 -s
+    erl -noshell -run gcBench main 1 1000000 100 1 1 17 -s
