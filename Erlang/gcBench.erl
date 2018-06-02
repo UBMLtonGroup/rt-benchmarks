@@ -130,7 +130,7 @@ simpleLoop(0)-> ok.
 
 start_gc_thread(Num_threads, Tree_depth, Iterations, ID) when Num_threads > 0 ->
 
-	io:format("~s~w~n", ["starting GC thread #", ID] ),
+	%io:format("~s~w~n", ["starting GC thread #", ID] ),
 
 	spawn_opt(gcBench, gc_func, [self(), Tree_depth, ID, Iterations , 0],[{max_heap_size, #{size => 7048608, kill => true, error_logger => true}}]),
 	
@@ -188,7 +188,7 @@ gc_func(PID,_,_,0,_) ->
 
 				%    1			37       10        1      1
 start_comp_thread(Num_threads, Depth, Iterations, ID, Comp_sleep) when Num_threads > 0 ->
-	io:format("~s~w~n", ["starting computing thread #", ID] ),
+	%io:format("~s~w~n", ["starting computing thread #", ID] ),
 
 	spawn(gcBench, comp_func, [self(), Depth, ID, Iterations , 0, Comp_sleep] ),
 
@@ -210,7 +210,9 @@ comp_func(PID, Depth, ID, Iterations, I, Comp_sleep) when Iterations > 0 ->
        % io:format("~w~n",[process_info(self(),memory)]),
         Total_time = timer:now_diff(Stop_time,Start_time),
 	{_,HeapSize} = process_info(self(),memory), 
-        io:format("~s~w~s~w~s~w~s~w~n",["comp:",Iterations,": Time taken: ",Total_time,": total memory: ",erlang:memory(processes_used),": comp memory: ",HeapSize ]),
+       % io:format("~s~w~s~w~s~w~s~w~n",["comp:",Iterations,": Time taken: ",Total_time,": total memory: ",erlang:memory(processes_used),": comp memory: ",HeapSize ]),
+       
+	 io:format("~w~s~w~s~w~s~w~n",[Iterations,":",Total_time,":",erlang:memory(processes_used),":",HeapSize ]),
 
 	timer:sleep(Comp_sleep * 1000),
 	comp_func(PID, Depth, ID, Iterations - 1 , I + 1, Comp_sleep);
@@ -232,13 +234,16 @@ main(Args) ->
 	{S, _} = string:to_integer( _s ),
 	{G, _} = string:to_integer( _g ),
 	{E, _} = string:to_integer( _e ),
-        
+       
+	io:format("~s~n",["#Iterations:RunTime(comp thread):Total Memory:Heap used by comp thread"]),
+ 
         if
 		(T > 0 ) ->
 			start_comp_thread(T,D,I,1,S);
 		true -> ok
 	end,
-
+%Wait for approx 20 iterations before starting gc thread	
+	timer:sleep(20000),
        
 	if
 		(G > 0 ) ->
@@ -247,9 +252,9 @@ main(Args) ->
 	end,
 
         
-        receive 
-            gcdone -> true
-        end,
+        %receive 
+        %    gcdone -> true
+        %end,
 
         receive
             compdone -> true

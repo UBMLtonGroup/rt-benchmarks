@@ -1,102 +1,101 @@
-starting computing thread #1
-starting GC thread #1
-comp:100: Time taken: 88050: total memory: 14609248: comp memory: 2704
-comp:99: Time taken: 44753: total memory: 18475000: comp memory: 372208
-comp:98: Time taken: 15464: total memory: 26317520: comp memory: 601736
-comp:97: Time taken: 14693: total memory: 26419832: comp memory: 701024
-comp:96: Time taken: 14691: total memory: 26087992: comp memory: 372208
-comp:95: Time taken: 54317: total memory: 13031024: comp memory: 372208
-comp:94: Time taken: 16440: total memory: 27826424: comp memory: 372208
-comp:93: Time taken: 16433: total memory: 27831312: comp memory: 372208
-comp:92: Time taken: 15981: total memory: 27839216: comp memory: 372208
-comp:91: Time taken: 51954: total memory: 14964776: comp memory: 372208
-comp:90: Time taken: 15473: total memory: 26095896: comp memory: 372208
-comp:89: Time taken: 14579: total memory: 26095896: comp memory: 372208
-comp:88: Time taken: 15220: total memory: 26095896: comp memory: 372208
-comp:87: Time taken: 77497: total memory: 13031024: comp memory: 372208
-comp:86: Time taken: 70517: total memory: 21964392: comp memory: 372208
-comp:85: Time taken: 16483: total memory: 27918984: comp memory: 459880
-comp:84: Time taken: 15556: total memory: 28029200: comp memory: 559168
-comp:83: Time taken: 16421: total memory: 28068744: comp memory: 601736
-comp:82: Time taken: 43004: total memory: 15296616: comp memory: 701024
-comp:81: Time taken: 15458: total memory: 26041712: comp memory: 318024
-comp:80: Time taken: 15689: total memory: 26183568: comp memory: 459880
-comp:79: Time taken: 15473: total memory: 26089840: comp memory: 559168
-comp:78: Time taken: 47226: total memory: 13018232: comp memory: 372208
-comp:77: Time taken: 15474: total memory: 27918984: comp memory: 459880
-comp:76: Time taken: 14733: total memory: 27785032: comp memory: 318024
-comp:75: Time taken: 14697: total memory: 27926888: comp memory: 459880
-comp:74: Time taken: 49306: total memory: 14958720: comp memory: 559168
-comp:73: Time taken: 16435: total memory: 26095896: comp memory: 372208
-comp:72: Time taken: 16421: total memory: 26183568: comp memory: 459880
-comp:71: Time taken: 16426: total memory: 26041712: comp memory: 318024
-comp:70: Time taken: 77920: total memory: 13105904: comp memory: 459880
-comp:69: Time taken: 63529: total memory: 27825256: comp memory: 559168
-comp:68: Time taken: 16423: total memory: 27839216: comp memory: 372208
-comp:67: Time taken: 15034: total memory: 27926888: comp memory: 459880
-comp:66: Time taken: 74244: total memory: 14910592: comp memory: 318024
-comp:65: Time taken: 69307: total memory: 19543440: comp memory: 459880
-comp:64: Time taken: 15120: total memory: 26089840: comp memory: 559168
-comp:63: Time taken: 15476: total memory: 26095896: comp memory: 372208
-comp:62: Time taken: 15504: total memory: 26170776: comp memory: 459880
-comp:61: Time taken: 56783: total memory: 12968936: comp memory: 318024
-comp:60: Time taken: 16434: total memory: 27926888: comp memory: 459880
-comp:59: Time taken: 16424: total memory: 27833160: comp memory: 559168
-comp:58: Time taken: 16507: total memory: 27839216: comp memory: 372208
-comp:57: Time taken: 51634: total memory: 15052448: comp memory: 459880
-comp:56: Time taken: 16408: total memory: 26041712: comp memory: 318024
-comp:55: Time taken: 16430: total memory: 26183568: comp memory: 459880
-comp:54: Time taken: 16507: total memory: 26077048: comp memory: 559168
-comp:53: Time taken: 48323: total memory: 13023120: comp memory: 372208
-comp:52: Time taken: 14695: total memory: 27926888: comp memory: 459880
-comp:51: Time taken: 15481: total memory: 27785032: comp memory: 318024
-comp:50: Time taken: 16437: total memory: 27926888: comp memory: 459880
-comp:49: Time taken: 82873: total memory: 14958720: comp memory: 559168
-comp:48: Time taken: 80769: total memory: 26095896: comp memory: 372208
-comp:47: Time taken: 16405: total memory: 26183568: comp memory: 459880
-comp:46: Time taken: 15456: total memory: 26028920: comp memory: 318024
-comp:45: Time taken: 15464: total memory: 26175664: comp memory: 459880
-comp:44: Time taken: 52060: total memory: 13024968: comp memory: 559168
-comp:43: Time taken: 16421: total memory: 27839216: comp memory: 372208
-comp:42: Time taken: 15126: total memory: 27926888: comp memory: 459880
-comp:41: Time taken: 16432: total memory: 27785032: comp memory: 318024
-comp:40: Time taken: 54429: total memory: 15052448: comp memory: 459880
-comp:39: Time taken: 16407: total memory: 26089840: comp memory: 559168
-comp:38: Time taken: 16423: total memory: 26083104: comp memory: 372208
-comp:37: Time taken: 15628: total memory: 26175664: comp memory: 459880
-comp:36: Time taken: 45064: total memory: 12976840: comp memory: 318024
-comp:35: Time taken: 16421: total memory: 27926888: comp memory: 459880
-comp:34: Time taken: 16427: total memory: 27833160: comp memory: 559168
-comp:33: Time taken: 16514: total memory: 27839216: comp memory: 372208
-comp:32: Time taken: 81808: total memory: 15052448: comp memory: 459880
-comp:31: Time taken: 82920: total memory: 26041712: comp memory: 318024
-comp:30: Time taken: 16435: total memory: 26170776: comp memory: 459880
-comp:29: Time taken: 16419: total memory: 26081936: comp memory: 559168
-comp:28: Time taken: 16415: total memory: 26095896: comp memory: 372208
-comp:27: Time taken: 48881: total memory: 13118696: comp memory: 459880
-comp:26: Time taken: 15460: total memory: 27785032: comp memory: 318024
-comp:25: Time taken: 14705: total memory: 27926888: comp memory: 459880
-comp:24: Time taken: 14706: total memory: 27833160: comp memory: 559168
-comp:23: Time taken: 43277: total memory: 14964776: comp memory: 372208
-comp:22: Time taken: 16412: total memory: 26170776: comp memory: 459880
-comp:21: Time taken: 15161: total memory: 26033808: comp memory: 318024
-comp:20: Time taken: 16416: total memory: 26183568: comp memory: 459880
-comp:19: Time taken: 46821: total memory: 13024968: comp memory: 559168
-comp:18: Time taken: 15872: total memory: 27839216: comp memory: 372208
-comp:17: Time taken: 16417: total memory: 27926888: comp memory: 459880
-comp:16: Time taken: 16438: total memory: 27785032: comp memory: 318024
-comp:15: Time taken: 80578: total memory: 15052448: comp memory: 459880
-comp:14: Time taken: 52236: total memory: 26077048: comp memory: 559168
-comp:13: Time taken: 16408: total memory: 26087992: comp memory: 372208
-comp:12: Time taken: 16411: total memory: 26183568: comp memory: 459880
-comp:11: Time taken: 25002: total memory: 26041712: comp memory: 318024
-comp:10: Time taken: 49043: total memory: 13118696: comp memory: 459880
-comp:9: Time taken: 16419: total memory: 27833160: comp memory: 559168
-comp:8: Time taken: 15467: total memory: 27839216: comp memory: 372208
-comp:7: Time taken: 15471: total memory: 27926888: comp memory: 459880
-comp:6: Time taken: 43943: total memory: 14910592: comp memory: 318024
-comp:5: Time taken: 15448: total memory: 26183568: comp memory: 459880
-comp:4: Time taken: 14702: total memory: 26074032: comp memory: 559168
-comp:3: Time taken: 14680: total memory: 26080088: comp memory: 372208
-comp:2: Time taken: 46874: total memory: 13102888: comp memory: 459880
-comp:1: Time taken: 16403: total memory: 27769224: comp memory: 318024
+#Iterations:RunTime(comp thread):Total Memory:Heap used by comp thread
+100:15836:5011944:2704
+99:14707:5372408:372208
+98:14699:5610408:601736
+97:14677:5712720:701024
+96:14664:5380880:372208
+95:15506:5380880:372208
+94:15594:5380880:372208
+93:15500:5380880:372208
+92:15507:5380880:372208
+91:15511:5380880:372208
+90:15482:5380880:372208
+89:15490:5380880:372208
+88:15491:5380880:372208
+87:14650:5380880:372208
+86:15495:5380880:372208
+85:15487:5468552:459880
+84:15506:5570864:559168
+83:15512:5610408:601736
+82:14796:5712720:701024
+81:15491:5326696:318024
+80:52782:18558352:459880
+79:15479:26077048:559168
+78:15485:26083104:372208
+77:15498:26170776:459880
+76:84205:12964048:318024
+75:62163:21833792:459880
+74:16037:27820368:559168
+73:16439:27826424:372208
+72:15695:27914096:459880
+71:46062:14897800:318024
+70:15465:26170776:459880
+69:16420:26077048:559168
+68:16439:26083104:372208
+67:49424:13105904:459880
+66:16440:27772240:318024
+65:15670:27914096:459880
+64:15490:27820368:559168
+63:51735:14951984:372208
+62:16439:26170776:459880
+61:15040:26028920:318024
+60:16512:26170776:459880
+59:79487:13012176:559168
+58:61686:27826424:372208
+57:16448:27914096:459880
+56:16447:27772240:318024
+55:74765:15039656:459880
+54:43833:14945928:559168
+53:15005:26083104:372208
+52:16464:26170776:459880
+51:16451:26028920:318024
+50:48439:13105904:459880
+49:14726:27820368:559168
+48:14810:27826424:372208
+47:14720:27914096:459880
+46:45903:14897800:318024
+45:15123:26170776:459880
+44:15498:26077048:559168
+43:14743:26083104:372208
+42:51928:13105904:459880
+41:35866:27772240:318024
+40:15496:27914096:459880
+39:16553:27820368:559168
+38:83168:14951984:372208
+37:86109:19288288:459880
+36:15154:26028920:318024
+35:15648:26170776:459880
+34:15478:26077048:559168
+33:46741:13018232:372208
+32:16436:27914096:459880
+31:16452:27772240:318024
+30:16434:27914096:459880
+29:44511:14945928:559168
+28:16435:26083104:372208
+27:16435:26170776:459880
+26:16525:26028920:318024
+25:44404:13105904:459880
+24:15480:27820368:559168
+23:15004:27826424:372208
+22:15482:27914096:459880
+21:83295:14897800:318024
+20:53308:26170776:459880
+19:15479:26077048:559168
+18:14706:26083104:372208
+17:16830:26170776:459880
+16:51089:16497208:318024
+15:16445:27914096:459880
+14:16443:27820368:559168
+13:16563:27826424:372208
+12:50199:15039656:459880
+11:15472:26028920:318024
+10:14771:26170776:459880
+9:14638:26077048:559168
+8:49465:13018232:372208
+7:14631:27914096:459880
+6:14639:27772240:318024
+5:15502:27914096:459880
+4:82480:14945928:559168
+3:46842:26083104:372208
+2:15504:26170776:459880
+1:14733:26028920:318024
