@@ -22,7 +22,7 @@ simpleLoop(0)-> ok.
 
 
 start_fib_thread(Num_threads, Depth, Iterations, ID) when Num_threads > 0 ->
-	io:format("~s~w~n", ["starting fib thread #", ID] ),
+	%io:format("~s~w~n", ["starting fib thread #", ID] ),
 
 	spawn(complex, fib_func, [self(), Depth, ID, Iterations] ),
 
@@ -48,7 +48,7 @@ fib_func(PID,_,_,0)->
 
 
 start_comp_thread(Num_threads, Depth, Iterations, ID, Comp_sleep) when Num_threads > 0 ->
-	io:format("~s~w~n", ["starting computing thread #", ID] ),
+	%io:format("~s~w~n", ["starting computing thread #", ID] ),
 
 	spawn(complex, comp_func, [self(), Depth, ID, Iterations , 0, Comp_sleep] ),
 
@@ -70,9 +70,10 @@ comp_func(PID, Depth, ID, Iterations, I, Comp_wait) when Iterations > 0 ->
        % io:format("~w~n",[process_info(self(),memory)]),
         Total_time = timer:now_diff(Stop_time,Start_time),
 	{_,HeapSize} = process_info(self(),memory), 
-        io:format("~s~w~s~w~s~w~s~w~n",["comp:",Iterations,": Time taken: ",Total_time,": total memory: ",erlang:memory(processes_used),": comp memory: ",HeapSize ]),
+%        io:format("~s~w~s~w~s~w~s~w~n",["comp:",Iterations,": Time taken: ",Total_time,": total memory: ",erlang:memory(processes_used),": comp memory: ",HeapSize ]),
 
-	%timer:sleep(Comp_sleep * 1000),
+        io:format("~w~s~w~s~w~s~w~n",[Iterations,":",Total_time,":",erlang:memory(processes_used),":",HeapSize ]),
+	timer:sleep(2000),
 
         if
             Iterations =:= Comp_wait -> PID ! startfib;
